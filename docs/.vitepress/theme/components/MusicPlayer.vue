@@ -582,41 +582,28 @@ const collapse = () => {
   snapToNearestCorner()
 }
 
-// 收起时回到最近的角落
+// 收起时回到最近的角落（只在底部左右）
 const snapToNearestCorner = () => {
   const currentX = position.value.x
-  const currentY = position.value.y
   const windowWidth = window.innerWidth
   const windowHeight = window.innerHeight
   
-  // 计算到四个角的距离
+  // 计算到左右两边的距离
   const distToLeft = currentX  // 到左边的距离
   const distToRight = windowWidth - currentX  // 到右边的距离
-  const distToTop = currentY  // 到顶部的距离
-  const distToBottom = windowHeight - currentY  // 到底部的距离
   
-  // 判断左右：偏左回到左边，偏右回到右边
+  // 判断左右：偏左回到左下角，偏右回到右下角
   let targetX: number
   if (distToLeft < distToRight) {
-    // 偏左，回到左边
+    // 偏左，回到左下角
     targetX = circleSize / 2 + 20
   } else {
-    // 偏右，回到右边
+    // 偏右，回到右下角
     targetX = windowWidth - circleSize / 2 - 20
   }
   
-  // 判断上下：优先回到底部（因为播放器通常在底部）
-  let targetY: number
-  if (distToBottom < 200) {
-    // 如果已经在底部附近，保持在底部
-    targetY = windowHeight - circleSize / 2 - 20
-  } else if (distToTop < distToBottom) {
-    // 偏上，回到顶部
-    targetY = circleSize / 2 + 20
-  } else {
-    // 偏下，回到底部
-    targetY = windowHeight - circleSize / 2 - 20
-  }
+  // 始终回到底部
+  const targetY = windowHeight - circleSize / 2 - 20
   
   position.value = { x: targetX, y: targetY }
 }
