@@ -12,7 +12,7 @@ export const enSidebar: DefaultTheme.Sidebar = {
       ],
     },
     {
-      text: '🌐 Frontend Basics',
+      text: '🌐 Frontend',
       collapsed: false,
       items: [
         {text: 'HTML', link: '/en/HTML/index.md'},

@@ -17,13 +17,13 @@ export const zhNav: DefaultTheme.NavItem[] = [
     text: '📚 文档',
     items: [
       {
-        text: '🌐 前端基础',
+        text: '🌐 前端',
         items: [
           {text: 'HTML', link: '/HTML/index.md'},
           {text: 'CSS', link: '/CSS/index.md'},
           {text: 'JavaScript', link: '/fundamentals/javascript.md'},
           {text: '正则表达式', link: '/JavaScript/regex.md'},
-          {text: 'DOM操作', link: '/WebApi/index.md'},
+          {text: 'DOM 操作', link: '/WebApi/index.md'},
           {text: 'ECharts', link: '/Echarts/index.md'},
         ]
       },
@@ -34,7 +34,7 @@ export const zhNav: DefaultTheme.NavItem[] = [
           {text: '百度地图', link: '/WebGIS/baidu.md'},
           {text: '高德地图', link: '/WebGIS/gaode.md'},
           {text: '天地图', link: '/WebGIS/tianditu.md'},
-          {text: 'ECharts地图', link: '/WebGIS/echarts-map.md'},
+          {text: 'ECharts 地图', link: '/WebGIS/echarts-map.md'},
         ]
       },
       {
@@ -47,7 +47,7 @@ export const zhNav: DefaultTheme.NavItem[] = [
       },
     ]
   },
-  {text: '🍎 导航', link: '/Navigation/index.md', activeMatch: '/Navigation/index.md'},
+  {text: '🧭 导航', link: '/Navigation/index.md', activeMatch: '/Navigation/index.md'},
   {text: `VitePress ${devDependencies.vitepress.replace('^', '')}`, link: 'https://vitepress.dev/'},
   {text: '📅 日志', link: '/log/changelog.md', activeMatch: '/log/changelog.md'}
 ]

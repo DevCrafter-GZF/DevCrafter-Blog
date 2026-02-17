@@ -45,7 +45,7 @@ export const enNav: DefaultTheme.NavItem[] = [
         },
       ]
     },
-    {text: '🍎 Navigation', link: '/en/Navigation/index.md', activeMatch: '/en/Navigation/index.md'},
+    {text: '🧭 Navigation', link: '/en/Navigation/index.md', activeMatch: '/en/Navigation/index.md'},
     {text: `VitePress ${devDependencies.vitepress.replace('^', '')}`, link: 'https://vitepress.dev/'},
     {text: '📅 Changelog', link: '/en/log/changelog.md', activeMatch: '/en/log/changelog.md'}
 ]

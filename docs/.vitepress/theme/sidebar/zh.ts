@@ -11,7 +11,7 @@ export const zhSidebar: DefaultTheme.Sidebar = {
       ],
     },
     {
-      text: '🌐 前端基础',
+      text: '🌐 前端',
       collapsed: false,
       items: [
         { text: 'HTML', link: '/HTML/index.md' },
