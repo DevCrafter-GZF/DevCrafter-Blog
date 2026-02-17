@@ -224,10 +224,7 @@ onMounted(() => {
   }
   window.addEventListener('resize', handleResize)
 
-  // 加载默认歌曲详情
-  defaultSongs.forEach((song, index) => {
-    fetchSongDetail(song.id, index)
-  })
+  // 加载默认本地音乐
   playlist.value = [...defaultSongs]
 })
 
