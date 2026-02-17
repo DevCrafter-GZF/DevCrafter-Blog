@@ -31,7 +31,7 @@ hero:
 
 features:
   - icon: 🌐
-    title: Frontend Basics
+    title: Frontend
     details: HTML, CSS, JavaScript core technologies, complete learning path from beginner to advanced
     linkText: Start Learning →
     link: /en/HTML/index.md

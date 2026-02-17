@@ -16,7 +16,7 @@ docs/
 │   │   ├── about.md            # 关于作者
 │   │   ├── updates.md          # 更新日志
 │   │   └── preface.md          # 序言
-│   ├── fundamentals/            # 前端基础
+│   ├── fundamentals/            # 前端
 │   │   └── javascript.md       # JavaScript 完全指南
 │   ├── frameworks/              # 前端框架
 │   │   ├── vue.md              # Vue 完全指南

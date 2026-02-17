@@ -16,7 +16,7 @@ docs/
 │   │   ├── about.md            # About Author
 │   │   ├── updates.md          # Updates
 │   │   └── preface.md          # Preface
-│   ├── fundamentals/            # Frontend Basics
+│   ├── fundamentals/            # Frontend
 │   │   └── javascript.md       # JavaScript Guide
 │   ├── frameworks/              # Frontend Frameworks
 │   │   ├── vue.md              # Vue Guide

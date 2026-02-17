@@ -32,7 +32,7 @@
 │   │   └── config.mts            # 主配置
 │   ├── zh/                       # 中文文档
 │   │   ├── guide/                # 指南（快速开始、学习路线等）
-│   │   ├── fundamentals/         # 前端基础（JavaScript）
+│   │   ├── fundamentals/         # 前端（JavaScript）
 │   │   ├── frameworks/           # 前端框架（Vue、TypeScript）
 │   │   ├── WebGIS/               # WebGIS 地图开发
 │   │   ├── HTML/                 # HTML 基础
@@ -61,7 +61,7 @@
 - 关于作者 - 作者介绍和联系方式
 - 更新日志 - 版本更新记录
 
-### 前端基础
+### 前端
 - HTML - 标签、表单、语义化、HTML5 新特性
 - CSS - 选择器、Flex/Grid 布局、动画、响应式设计
 - JavaScript - 从基础到高级，ES6+、异步编程、面向对象
@@ -133,7 +133,7 @@ npm run docs:preview
 ```
 🏠 首页
 📖 指南（快速开始、学习路线、关于作者、更新日志）
-📚 文档（前端基础、WebGIS、框架）
+📚 文档（前端、WebGIS、框架）
 🍎 导航
 VitePress x.x.x（外链）
 📅 日志

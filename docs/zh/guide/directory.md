@@ -22,7 +22,7 @@ graph LR
 
 **推荐学习顺序：**
 
-1. **阶段一：前端基础** → HTML → CSS → JavaScript
+1. **阶段一：前端** → HTML → CSS → JavaScript
 2. **阶段二：进阶技能** → Web API → ES6+ → 正则表达式
 3. **阶段三：框架学习** → Vue 2/3 或 React
 4. **阶段四：后端入门** → Node.js → MySQL
@@ -38,7 +38,7 @@ graph LR
 | [关于作者](./about.md)   | 作者介绍和联系方式           |
 | [更新日志](./updates.md) | 博客更新记录和版本历史         |
 
-## 🌐 前端基础
+## 🌐 前端
 
 ### HTML
 

@@ -22,7 +22,7 @@ graph LR
 
 **Recommended Learning Order:**
 
-1. **Phase 1: Frontend Basics** → HTML → CSS → JavaScript
+1. **Phase 1: Frontend** → HTML → CSS → JavaScript
 2. **Phase 2: Advanced Skills** → Web API → ES6+ → Regex
 3. **Phase 3: Framework Learning** → Vue 2/3 or React
 4. **Phase 4: Backend Introduction** → Node.js → MySQL
@@ -38,7 +38,7 @@ graph LR
 | [About Author](./about.md) | Author introduction and contact information |
 | [Updates](./updates.md) | Blog update records and version history |
 
-## 🌐 Frontend Basics
+## 🌐 Frontend
 
 ### HTML
 

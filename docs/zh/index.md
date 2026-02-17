@@ -30,7 +30,7 @@ hero:
 
 features:
   - icon: 🌐
-    title: 前端基础
+    title: 前端
     details: HTML、CSS、JavaScript 核心技术，从入门到进阶的完整学习路径
     linkText: 开始学习 →
     link: /HTML/index.md
