@@ -81,10 +81,4 @@ features:
 
 <HomeUnderline />
 <confetti />
-
-## 🎵 音乐空间
-
-> [!TIP]
-> 学习累了？来首音乐放松一下吧！
-
 <MusicPlayer />

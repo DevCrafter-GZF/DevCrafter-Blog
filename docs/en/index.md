@@ -84,10 +84,4 @@ features:
 
 <HomeUnderline />
 <confetti />
-
-## 🎵 Music Space
-
-> [!TIP]
-> Tired of studying? Play some music to relax!
-
 <MusicPlayer />
