@@ -1,6 +1,6 @@
 <!--
  * @Author: GZF
- * @Description: 悬浮网易云音乐播放器组件 - 优化版
+ * @Description: 悬浮网易云音乐播放器组件 - 智能交互版
 -->
 
 <template>
@@ -10,133 +10,225 @@
       :class="{
         'expanded': isExpanded,
         'playing': isPlaying,
-        'dragging': isDragging
+        'dragging': isDragging,
+        'hovered': isHovered
       }"
       :style="positionStyle"
+      @mouseenter="onMouseEnter"
+      @mouseleave="onMouseLeave"
       @mousedown="startDrag"
     >
-      <!-- 圆形收缩状态 -->
-      <div v-if="!isExpanded" class="player-collapsed" @click.stop="expand">
+      <!-- 圆形状态 -->
+      <div v-if="!isExpanded" class="player-circle" @click.stop="handleCircleClick">
+        <!-- 唱片旋转 -->
         <div class="album-rotate" :class="{ 'rotating': isPlaying }">
           <img :src="currentSong?.cover || defaultCover" alt="album">
         </div>
-        <div class="play-indicator" v-if="isPlaying">
-          <span></span><span></span><span></span>
+        
+        <!-- 播放/暂停指示器 -->
+        <div class="play-overlay" :class="{ 'show': showPlayOverlay }">
+          <span class="play-icon">{{ isPlaying ? '⏸' : '▶' }}</span>
+        </div>
+        
+        <!-- 悬浮提示 -->
+        <div class="hover-hint" v-if="isHovered && !isExpanded">
+          <span>{{ isPlaying ? '点击暂停' : '点击播放' }}</span>
+          <span class="hint-sub">悬浮2秒展开</span>
+        </div>
+        
+        <!-- 音频波纹 -->
+        <div class="sound-waves" v-if="isPlaying">
+          <span></span><span></span><span></span><span></span>
         </div>
       </div>
 
-      <!-- 长方形展开状态 -->
-      <div v-else class="player-expanded" @click.stop>
-        <!-- 头部：搜索和关闭 -->
+      <!-- 展开状态 -->
+      <div v-else class="player-expanded" @click.stop @mouseenter="clearCollapseTimer" @mouseleave="startCollapseTimer">
+        <!-- 头部 -->
         <div class="player-header">
+          <div class="header-title">
+            <span class="music-icon">🎵</span>
+            <span>音乐播放器</span>
+          </div>
+          <button class="header-btn minimize" @click="collapse" title="收起">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- 搜索区域 -->
+        <div class="search-section">
           <div class="search-box">
+            <span class="search-icon">🔍</span>
             <input
               v-model="searchKeyword"
               @focus="onSearchFocus"
               @blur="onSearchBlur"
               @input="onSearchInput"
+              @keyup.enter="searchMusic"
               placeholder="搜索歌曲、歌手..."
               type="text"
             >
-            <button @click="searchMusic" class="search-btn">🔍</button>
+            <button v-if="searchKeyword" class="clear-search" @click="clearSearch">✕</button>
           </div>
-          <button class="close-btn" @click="collapse">✕</button>
         </div>
 
         <!-- 搜索下拉框 -->
-        <div v-if="showDropdown" class="search-dropdown">
+        <div v-if="showDropdown" class="search-dropdown" @mouseenter="clearCollapseTimer" @mouseleave="startCollapseTimer">
           <!-- 搜索结果 -->
           <div v-if="searchResults.length > 0" class="dropdown-section">
-            <div class="dropdown-title">🔍 搜索结果</div>
-            <div
-              v-for="song in searchResults"
-              :key="song.id"
-              class="dropdown-item"
-              @click="playSong(song)"
-            >
-              <img :src="song.cover" class="item-cover">
-              <div class="item-info">
-                <div class="item-name">{{ song.name }}</div>
-                <div class="item-artist">{{ song.artist }}</div>
+            <div class="dropdown-title">
+              <span>🔍 搜索结果</span>
+              <span class="result-count">{{ searchResults.length }}首</span>
+            </div>
+            <div class="dropdown-list">
+              <div
+                v-for="song in searchResults"
+                :key="song.id"
+                class="dropdown-item"
+                :class="{ 'active': currentSong?.id === song.id }"
+                @click="playSong(song)"
+              >
+                <img :src="song.cover" class="item-cover" loading="lazy">
+                <div class="item-info">
+                  <div class="item-name">{{ song.name }}</div>
+                  <div class="item-artist">{{ song.artist }}</div>
+                </div>
+                <button class="item-play-btn">
+                  <span v-if="currentSong?.id === song.id && isPlaying">♪</span>
+                  <span v-else>▶</span>
+                </button>
               </div>
-              <span class="play-icon">▶</span>
             </div>
           </div>
 
           <!-- 热门歌曲 -->
           <div v-else class="dropdown-section">
-            <div class="dropdown-title">🔥 热门歌曲</div>
-            <div
-              v-for="song in hotSongs"
-              :key="song.id"
-              class="dropdown-item"
-              :class="{ 'active': currentSong?.id === song.id }"
-              @click="playSong(song)"
-            >
-              <img :src="song.cover" class="item-cover">
-              <div class="item-info">
-                <div class="item-name">{{ song.name }}</div>
-                <div class="item-artist">{{ song.artist }}</div>
+            <div class="dropdown-title">
+              <span>🔥 热门推荐</span>
+              <button class="refresh-btn" @click="refreshHotSongs" title="换一批" :disabled="loadingHot">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" :class="{ 'spinning': loadingHot }">
+                  <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                </svg>
+              </button>
+            </div>
+            <div class="dropdown-list">
+              <div v-if="loadingHot" class="loading-state">
+                <span class="loading-spinner"></span>
+                <span>加载中...</span>
               </div>
-              <span class="play-icon" v-if="currentSong?.id === song.id && isPlaying">♪</span>
-              <span class="play-icon" v-else>▶</span>
+              <template v-else>
+                <div
+                  v-for="song in hotSongs"
+                  :key="song.id"
+                  class="dropdown-item"
+                  :class="{ 'active': currentSong?.id === song.id }"
+                  @click="playSong(song)"
+                >
+                  <img :src="song.cover" class="item-cover" loading="lazy">
+                  <div class="item-info">
+                    <div class="item-name">{{ song.name }}</div>
+                    <div class="item-artist">{{ song.artist }}</div>
+                  </div>
+                  <button class="item-play-btn">
+                    <span v-if="currentSong?.id === song.id && isPlaying">♪</span>
+                    <span v-else>▶</span>
+                  </button>
+                </div>
+              </template>
             </div>
           </div>
         </div>
 
         <!-- 当前播放 -->
-        <div v-if="currentSong" class="now-playing">
-          <img :src="currentSong.cover" class="current-cover" :class="{ 'rotating': isPlaying }">
-          <div class="current-info">
-            <div class="current-name" :title="currentSong.name">{{ currentSong.name }}</div>
-            <div class="current-artist">{{ currentSong.artist }}</div>
+        <div class="now-playing" v-if="currentSong">
+          <div class="album-section">
+            <img :src="currentSong.cover" class="current-cover" :class="{ 'rotating': isPlaying }" loading="lazy">
+            <div class="vinyl-center"></div>
+          </div>
+          <div class="song-info">
+            <div class="song-name" :title="currentSong.name">{{ currentSong.name }}</div>
+            <div class="song-artist">{{ currentSong.artist }}</div>
           </div>
         </div>
 
         <!-- 进度条 -->
         <div class="progress-section" v-if="currentSong">
-          <span class="time">{{ formatTime(currentTime) }}</span>
-          <div class="progress-bar" @click="seekProgress" ref="progressBar">
-            <div class="progress-fill" :style="{ width: progressPercent + '%' }"></div>
-            <div class="progress-handle" :style="{ left: progressPercent + '%' }"></div>
+          <span class="time current">{{ formatTime(currentTime) }}</span>
+          <div class="progress-wrapper">
+            <div class="progress-bar" @click="seekProgress" ref="progressBar">
+              <div class="progress-bg"></div>
+              <div class="progress-fill" :style="{ width: progressPercent + '%' }"></div>
+              <div class="progress-handle" :style="{ left: progressPercent + '%' }"></div>
+            </div>
           </div>
-          <span class="time">{{ formatTime(duration) }}</span>
+          <span class="time total">{{ formatTime(duration) }}</span>
         </div>
 
         <!-- 控制按钮 -->
         <div class="controls">
           <button class="ctrl-btn mode-btn" @click="toggleMode" :title="playModeText">
-            {{ playModeIcon }}
+            <span class="mode-icon">{{ playModeIcon }}</span>
           </button>
-          <button class="ctrl-btn" @click="prevSong">⏮</button>
-          <button class="ctrl-btn play-btn" @click="togglePlay">
-            {{ isPlaying ? '⏸' : '▶' }}
+          
+          <button class="ctrl-btn skip-btn" @click="prevSong" title="上一首">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+            </svg>
           </button>
-          <button class="ctrl-btn" @click="nextSong">⏭</button>
-          <button class="ctrl-btn list-btn" @click="showPlaylist = !showPlaylist" :class="{ 'active': showPlaylist }">
-            📋
+          
+          <button class="ctrl-btn play-btn-large" @click="togglePlay" :title="isPlaying ? '暂停' : '播放'">
+            <svg v-if="isPlaying" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+            </svg>
+            <svg v-else viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </button>
+          
+          <button class="ctrl-btn skip-btn" @click="nextSong" title="下一首">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+            </svg>
+          </button>
+          
+          <button class="ctrl-btn list-btn" @click="showPlaylist = !showPlaylist" :class="{ 'active': showPlaylist }" title="播放列表">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/>
+            </svg>
+            <span class="list-badge" v-if="playlist.length > 0">{{ playlist.length }}</span>
           </button>
         </div>
 
         <!-- 播放列表 -->
-        <div v-if="showPlaylist" class="playlist">
-          <div class="playlist-header">
-            <span>播放列表 ({{ playlist.length }})</span>
-            <button class="clear-btn" @click="showPlaylist = false">✕</button>
+        <Transition name="slide">
+          <div v-if="showPlaylist" class="playlist-panel" @mouseenter="clearCollapseTimer" @mouseleave="startCollapseTimer">
+            <div class="playlist-header">
+              <span class="playlist-title">播放列表</span>
+              <span class="playlist-count">{{ playlist.length }}首</span>
+              <button class="close-playlist" @click="showPlaylist = false">✕</button>
+            </div>
+            <div class="playlist-content">
+              <div
+                v-for="(song, index) in playlist"
+                :key="song.id"
+                class="playlist-item"
+                :class="{ 'active': currentSong?.id === song.id }"
+                @click="playSong(song)"
+              >
+                <span class="item-number">{{ index + 1 }}</span>
+                <div class="item-detail">
+                  <span class="item-title">{{ song.name }}</span>
+                  <span class="item-singer">{{ song.artist }}</span>
+                </div>
+                <span v-if="currentSong?.id === song.id && isPlaying" class="playing-indicator">
+                  <span></span><span></span><span></span>
+                </span>
+              </div>
+            </div>
           </div>
-          <div
-            v-for="(song, index) in playlist"
-            :key="song.id"
-            class="playlist-item"
-            :class="{ 'active': currentSong?.id === song.id }"
-            @click="playSong(song)"
-          >
-            <span class="song-index">{{ index + 1 }}</span>
-            <span class="song-name">{{ song.name }}</span>
-            <span class="song-artist">{{ song.artist }}</span>
-            <span v-if="currentSong?.id === song.id && isPlaying" class="playing-icon">♪</span>
-          </div>
-        </div>
+        </Transition>
       </div>
     </div>
 
@@ -155,39 +247,34 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
 
 // 默认封面
 const defaultCover = 'https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg'
-
-// 热门歌曲列表
-const hotSongs = [
-  { id: '25706282', name: '起风了', artist: '买辣椒也用券', cover: 'https://p1.music.126.net/diGAyEmpymX8G7JcnElncQ==/109951163699673355.jpg' },
-  { id: '1293886117', name: '体面', artist: '于文文', cover: 'https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg' },
-  { id: '863046037', name: '告白气球', artist: '周杰伦', cover: 'https://p1.music.126.net/W5LJG0CjPF9e5z7nSvbBbg==/18874216602702134.jpg' },
-  { id: '1293951677', name: '追光者', artist: '岑宁儿', cover: 'https://p1.music.126.net/8N1fsMRm2L5HyZccc6I3ew==/109951163020571782.jpg' },
-  { id: '27808044', name: '平凡之路', artist: '朴树', cover: 'https://p1.music.126.net/Wp4L-I7qwn_sX0SOe33Qrw==/109951163221161145.jpg' },
-  { id: '186016', name: '晴天', artist: '周杰伦', cover: 'https://p1.music.126.net/W5LJG0CjPF9e5z7nSvbBbg==/18874216602702134.jpg' },
-  { id: '25706285', name: '后来', artist: '刘若英', cover: 'https://p1.music.126.net/e0gGQI-4KdVqEYHsWiXxbg==/109951163424196263.jpg' },
-  { id: '531295576', name: '稻香', artist: '周杰伦', cover: 'https://p1.music.126.net/W5LJG0CjPF9e5z7nSvbBbg==/18874216602702134.jpg' },
-  { id: '1901371647', name: '孤勇者', artist: '陈奕迅', cover: 'https://p1.music.126.net/W5LJG0CjPF9e5z7nSvbBbg==/18874216602702134.jpg' },
-  { id: '1807799505', name: '错位时空', artist: '艾辰', cover: 'https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg' }
-]
 
 // 状态
 const isExpanded = ref(false)
 const isPlaying = ref(false)
 const isDragging = ref(false)
+const isHovered = ref(false)
 const showPlaylist = ref(false)
 const showDropdown = ref(false)
-const currentSong = ref(hotSongs[0])
-const playlist = ref([...hotSongs])
+const showPlayOverlay = ref(false)
+const loadingHot = ref(false)
+const currentSong = ref<any>(null)
+const playlist = ref<any[]>([])
+const hotSongs = ref<any[]>([])
 const playMode = ref<'sequence' | 'random' | 'single'>('sequence')
 const currentTime = ref(0)
 const duration = ref(0)
 const searchKeyword = ref('')
 const searchResults = ref<any[]>([])
 const isSearching = ref(false)
+
+// 定时器
+let expandTimer: ReturnType<typeof setTimeout> | null = null
+let collapseTimer: ReturnType<typeof setTimeout> | null = null
+let overlayTimer: ReturnType<typeof setTimeout> | null = null
 
 // 位置
 const position = ref({ x: 0, y: 0 })
@@ -197,29 +284,89 @@ const dragOffset = ref({ x: 0, y: 0 })
 const audioPlayer = ref<HTMLAudioElement>()
 const progressBar = ref<HTMLElement>()
 
-// 初始化位置
+// 初始化
 onMounted(() => {
   position.value = {
     x: window.innerWidth - 80,
     y: window.innerHeight - 80
   }
+  // 获取热门歌曲
+  fetchHotSongs()
 })
+
+onUnmounted(() => {
+  clearAllTimers()
+})
+
+// 获取热门歌曲
+const fetchHotSongs = async () => {
+  loadingHot.value = true
+  try {
+    // 使用网易云音乐 API 获取热门歌曲
+    const response = await fetch('https://cloud-music-api-f494k233t-azhe403.vercel.app/personalized/newsong?limit=10')
+    const data = await response.json()
+    
+    if (data.result) {
+      hotSongs.value = data.result.map((item: any) => ({
+        id: item.id.toString(),
+        name: item.name,
+        artist: item.artists?.map((a: any) => a.name).join('/') || '未知歌手',
+        cover: item.picUrl || item.album?.picUrl || defaultCover
+      }))
+    }
+    
+    // 设置默认歌曲和播放列表
+    if (hotSongs.value.length > 0 && !currentSong.value) {
+      currentSong.value = hotSongs.value[0]
+      playlist.value = [...hotSongs.value]
+    }
+  } catch (error) {
+    console.error('获取热门歌曲失败:', error)
+    // 使用备用数据
+    hotSongs.value = [
+      { id: '25706282', name: '起风了', artist: '买辣椒也用券', cover: 'https://p1.music.126.net/diGAyEmpymX8G7JcnElncQ==/109951163699673355.jpg' },
+      { id: '1293886117', name: '体面', artist: '于文文', cover: 'https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg' },
+      { id: '863046037', name: '告白气球', artist: '周杰伦', cover: 'https://p1.music.126.net/W5LJG0CjPF9e5z7nSvbBbg==/18874216602702134.jpg' },
+      { id: '1293951677', name: '追光者', artist: '岑宁儿', cover: 'https://p1.music.126.net/8N1fsMRm2L5HyZccc6I3ew==/109951163020571782.jpg' },
+      { id: '27808044', name: '平凡之路', artist: '朴树', cover: 'https://p1.music.126.net/Wp4L-I7qwn_sX0SOe33Qrw==/109951163221161145.jpg' },
+      { id: '186016', name: '晴天', artist: '周杰伦', cover: 'https://p1.music.126.net/W5LJG0CjPF9e5z7nSvbBbg==/18874216602702134.jpg' }
+    ]
+    if (!currentSong.value) {
+      currentSong.value = hotSongs.value[0]
+      playlist.value = [...hotSongs.value]
+    }
+  } finally {
+    loadingHot.value = false
+  }
+}
+
+// 刷新热门歌曲
+const refreshHotSongs = () => {
+  fetchHotSongs()
+}
+
+// 清除所有定时器
+const clearAllTimers = () => {
+  if (expandTimer) clearTimeout(expandTimer)
+  if (collapseTimer) clearTimeout(collapseTimer)
+  if (overlayTimer) clearTimeout(overlayTimer)
+}
 
 // 监听展开状态
 watch(isExpanded, (expanded) => {
   if (expanded) {
-    const expandedWidth = 320
-    const expandedHeight = 500
+    const expandedWidth = 360
+    const expandedHeight = 520
     position.value = {
       x: Math.max(20, Math.min(window.innerWidth - expandedWidth - 20, position.value.x)),
       y: Math.max(20, Math.min(window.innerHeight - expandedHeight - 20, position.value.y))
     }
-    // 展开时显示下拉框
     showDropdown.value = true
   } else {
     showDropdown.value = false
     searchResults.value = []
     searchKeyword.value = ''
+    showPlaylist.value = false
   }
 })
 
@@ -259,24 +406,88 @@ const playModeText = computed(() => {
   return texts[playMode.value]
 })
 
+// 鼠标交互
+const onMouseEnter = () => {
+  isHovered.value = true
+  // 清除收起定时器
+  if (collapseTimer) {
+    clearTimeout(collapseTimer)
+    collapseTimer = null
+  }
+  // 2秒后展开
+  if (!isExpanded.value) {
+    expandTimer = setTimeout(() => {
+      expand()
+    }, 2000)
+  }
+}
+
+const onMouseLeave = () => {
+  isHovered.value = false
+  // 清除展开定时器
+  if (expandTimer) {
+    clearTimeout(expandTimer)
+    expandTimer = null
+  }
+  // 如果已展开，2秒后收起
+  if (isExpanded.value) {
+    startCollapseTimer()
+  }
+}
+
+const startCollapseTimer = () => {
+  if (collapseTimer) clearTimeout(collapseTimer)
+  collapseTimer = setTimeout(() => {
+    collapse()
+  }, 2000)
+}
+
+const clearCollapseTimer = () => {
+  if (collapseTimer) {
+    clearTimeout(collapseTimer)
+    collapseTimer = null
+  }
+}
+
+// 圆形按钮点击 - 播放/暂停
+const handleCircleClick = () => {
+  // 清除展开定时器，防止点击后展开
+  if (expandTimer) {
+    clearTimeout(expandTimer)
+    expandTimer = null
+  }
+  togglePlay()
+  // 显示播放状态提示
+  showPlayOverlay.value = true
+  if (overlayTimer) clearTimeout(overlayTimer)
+  overlayTimer = setTimeout(() => {
+    showPlayOverlay.value = false
+  }, 1000)
+}
+
 // 展开/收起
-const expand = () => isExpanded.value = true
+const expand = () => {
+  isExpanded.value = true
+}
+
 const collapse = () => {
   isExpanded.value = false
   showPlaylist.value = false
   showDropdown.value = false
+  searchKeyword.value = ''
+  searchResults.value = []
 }
 
 // 搜索相关
 const onSearchFocus = () => {
   showDropdown.value = true
+  clearCollapseTimer()
 }
 
 const onSearchBlur = () => {
-  // 延迟隐藏，让点击事件先执行
   setTimeout(() => {
     if (!searchKeyword.value) {
-      showDropdown.value = false
+      searchResults.value = []
     }
   }, 200)
 }
@@ -289,16 +500,21 @@ const onSearchInput = () => {
   }
 }
 
+const clearSearch = () => {
+  searchKeyword.value = ''
+  searchResults.value = []
+}
+
 // 拖拽
 const startDrag = (e: MouseEvent) => {
   if (isExpanded.value && !(e.target as HTMLElement).closest('.player-header')) return
-
+  
   isDragging.value = true
   dragOffset.value = {
     x: e.clientX - position.value.x,
     y: e.clientY - position.value.y
   }
-
+  
   document.addEventListener('mousemove', onDrag)
   document.addEventListener('mouseup', stopDrag)
 }
@@ -319,7 +535,7 @@ const stopDrag = () => {
 
 // 播放控制
 const togglePlay = () => {
-  if (!audioPlayer.value) return
+  if (!audioPlayer.value || !currentSong.value) return
   if (isPlaying.value) {
     audioPlayer.value.pause()
   } else {
@@ -331,7 +547,6 @@ const togglePlay = () => {
 
 const playSong = (song: any) => {
   currentSong.value = song
-  showDropdown.value = false
   // 添加到播放列表（如果不存在）
   if (!playlist.value.find(s => s.id === song.id)) {
     playlist.value.push(song)
@@ -344,12 +559,14 @@ const playSong = (song: any) => {
 }
 
 const prevSong = () => {
+  if (playlist.value.length === 0) return
   const index = playlist.value.findIndex(s => s.id === currentSong.value?.id)
   const prevIndex = index <= 0 ? playlist.value.length - 1 : index - 1
   playSong(playlist.value[prevIndex])
 }
 
 const nextSong = () => {
+  if (playlist.value.length === 0) return
   if (playMode.value === 'random') {
     const randomIndex = Math.floor(Math.random() * playlist.value.length)
     playSong(playlist.value[randomIndex])
@@ -409,17 +626,16 @@ const formatTime = (time: number) => {
 // 搜索
 const searchMusic = async () => {
   if (!searchKeyword.value.trim() || isSearching.value) return
-
+  
   isSearching.value = true
-
+  
   try {
-    // 使用网易云音乐搜索API
     const response = await fetch(`https://cloud-music-api-f494k233t-azhe403.vercel.app/search?keywords=${encodeURIComponent(searchKeyword.value)}&limit=10`)
     const data = await response.json()
-
+    
     if (data.result?.songs) {
       searchResults.value = data.result.songs.map((song: any) => ({
-        id: song.id,
+        id: song.id.toString(),
         name: song.name,
         artist: song.artists?.map((a: any) => a.name).join('/') || '未知歌手',
         cover: song.album?.picUrl || defaultCover
@@ -429,15 +645,7 @@ const searchMusic = async () => {
     }
   } catch (error) {
     console.error('搜索失败:', error)
-    // 模拟搜索结果
-    searchResults.value = [
-      {
-        id: Date.now().toString(),
-        name: searchKeyword.value,
-        artist: '搜索结果',
-        cover: defaultCover
-      }
-    ]
+    searchResults.value = []
   } finally {
     isSearching.value = false
   }
@@ -456,33 +664,39 @@ const searchMusic = async () => {
   transition: none;
 }
 
-/* 圆形收缩状态 */
-.player-collapsed {
-  width: 60px;
-  height: 60px;
+/* 圆形状态 */
+.player-circle {
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4), 0 0 0 4px rgba(102, 126, 234, 0.1);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-.player-collapsed:hover {
+.player-circle:hover {
   transform: scale(1.1);
-  box-shadow: 0 6px 30px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 6px 30px rgba(102, 126, 234, 0.5), 0 0 0 6px rgba(102, 126, 234, 0.15);
+}
+
+.player-circle:active {
+  transform: scale(0.95);
 }
 
 .album-rotate {
-  width: 50px;
-  height: 50px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   overflow: hidden;
   animation: rotate 20s linear infinite;
   animation-play-state: paused;
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .album-rotate.rotating {
@@ -500,71 +714,117 @@ const searchMusic = async () => {
   to { transform: rotate(360deg); }
 }
 
-.play-indicator {
+/* 播放覆盖层 */
+.play-overlay {
   position: absolute;
-  bottom: 8px;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.play-overlay.show {
+  opacity: 1;
+}
+
+.play-overlay .play-icon {
+  font-size: 24px;
+  color: #fff;
+}
+
+/* 悬浮提示 */
+.hover-hint {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 2px;
 }
 
-.play-indicator span {
+.player-circle:hover .hover-hint {
+  opacity: 1;
+}
+
+.hover-hint .hint-sub {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* 音频波纹 */
+.sound-waves {
+  position: absolute;
+  bottom: 8px;
+  display: flex;
+  gap: 3px;
+}
+
+.sound-waves span {
   width: 3px;
   height: 12px;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.8);
   border-radius: 2px;
-  animation: sound 0.5s ease-in-out infinite;
+  animation: wave 0.5s ease-in-out infinite;
 }
 
-.play-indicator span:nth-child(2) { animation-delay: 0.1s; }
-.play-indicator span:nth-child(3) { animation-delay: 0.2s; }
+.sound-waves span:nth-child(1) { animation-delay: 0s; height: 8px; }
+.sound-waves span:nth-child(2) { animation-delay: 0.1s; height: 14px; }
+.sound-waves span:nth-child(3) { animation-delay: 0.2s; height: 10px; }
+.sound-waves span:nth-child(4) { animation-delay: 0.3s; height: 16px; }
 
-@keyframes sound {
-  0%, 100% { height: 8px; }
-  50% { height: 16px; }
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.6); }
+  50% { transform: scaleY(1); }
 }
 
-/* 长方形展开状态 */
+/* 展开状态 */
 .player-expanded {
-  width: 320px;
+  width: 360px;
   background: var(--vp-c-bg);
-  border-radius: 16px;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  box-shadow: 0 12px 50px rgba(0, 0, 0, 0.25);
   border: 1px solid var(--vp-c-divider);
   overflow: hidden;
 }
 
+/* 头部 */
 .player-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px;
+  justify-content: space-between;
+  padding: 16px 20px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  cursor: move;
 }
 
-.search-box {
-  flex: 1;
+.header-title {
   display: flex;
-  gap: 6px;
-  position: relative;
-}
-
-.search-box input {
-  flex: 1;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.2);
+  align-items: center;
+  gap: 8px;
   color: #fff;
-  font-size: 14px;
-  outline: none;
+  font-weight: 600;
+  font-size: 15px;
 }
 
-.search-box input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
+.music-icon {
+  font-size: 18px;
 }
 
-.search-btn, .close-btn {
+.header-btn {
   width: 32px;
   height: 32px;
   border: none;
@@ -575,11 +835,77 @@ const searchMusic = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 
-.search-btn:hover, .close-btn:hover {
+.header-btn:hover {
   background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.header-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* 搜索区域 */
+.search-section {
+  padding: 12px 16px;
+  background: var(--vp-c-bg-soft);
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--vp-c-bg);
+  border-radius: 25px;
+  padding: 10px 14px;
+  border: 1px solid var(--vp-c-divider);
+  transition: border-color 0.2s;
+}
+
+.search-box:focus-within {
+  border-color: var(--vp-c-brand);
+}
+
+.search-icon {
+  font-size: 14px;
+  color: var(--vp-c-text-2);
+}
+
+.search-box input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--vp-c-text-1);
+  font-size: 14px;
+  outline: none;
+}
+
+.search-box input::placeholder {
+  color: var(--vp-c-text-2);
+}
+
+.clear-search {
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  background: var(--vp-c-text-2);
+  color: var(--vp-c-bg);
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.clear-search:hover {
+  opacity: 1;
 }
 
 /* 搜索下拉框 */
@@ -595,38 +921,107 @@ const searchMusic = async () => {
 }
 
 .dropdown-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 8px 16px;
   font-size: 12px;
   font-weight: 600;
   color: var(--vp-c-text-2);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+}
+
+.result-count {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: var(--vp-c-brand-soft);
+  color: var(--vp-c-brand);
+  border-radius: 10px;
+}
+
+.refresh-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--vp-c-text-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.refresh-btn:hover {
+  background: var(--vp-c-bg-mute);
+  color: var(--vp-c-brand);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.refresh-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.refresh-btn svg.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.dropdown-list {
+  padding: 0 8px;
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  color: var(--vp-c-text-2);
+  font-size: 13px;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--vp-c-divider);
+  border-top-color: var(--vp-c-brand);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 
 .dropdown-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 16px;
+  padding: 10px;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
-  border-left: 3px solid transparent;
+  margin-bottom: 4px;
 }
 
 .dropdown-item:hover {
   background: var(--vp-c-bg-mute);
-  border-left-color: var(--vp-c-brand);
 }
 
 .dropdown-item.active {
   background: var(--vp-c-brand-soft);
-  border-left-color: var(--vp-c-brand);
 }
 
 .item-cover {
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
   object-fit: cover;
 }
 
@@ -647,25 +1042,27 @@ const searchMusic = async () => {
 .item-artist {
   font-size: 12px;
   color: var(--vp-c-text-2);
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
-.play-icon {
-  width: 28px;
-  height: 28px;
+.item-play-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
   border-radius: 50%;
   background: var(--vp-c-brand);
   color: #fff;
+  font-size: 12px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: all 0.2s;
 }
 
-.dropdown-item:hover .play-icon,
-.dropdown-item.active .play-icon {
+.dropdown-item:hover .item-play-btn,
+.dropdown-item.active .item-play-btn {
   opacity: 1;
 }
 
@@ -673,40 +1070,59 @@ const searchMusic = async () => {
 .now-playing {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
-  background: var(--vp-c-bg-soft);
+  gap: 16px;
+  padding: 20px;
+  background: var(--vp-c-bg);
+}
+
+.album-section {
+  position: relative;
+  width: 70px;
+  height: 70px;
 }
 
 .current-cover {
-  width: 60px;
-  height: 60px;
-  border-radius: 8px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
   object-fit: cover;
   animation: rotate 20s linear infinite;
   animation-play-state: paused;
+  border: 3px solid var(--vp-c-divider);
 }
 
 .current-cover.rotating {
   animation-play-state: running;
 }
 
-.current-info {
+.vinyl-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background: var(--vp-c-bg);
+  border-radius: 50%;
+  border: 2px solid var(--vp-c-divider);
+}
+
+.song-info {
   flex: 1;
   min-width: 0;
 }
 
-.current-name {
-  font-size: 15px;
+.song-name {
+  font-size: 16px;
   font-weight: 600;
   color: var(--vp-c-text-1);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
-.current-artist {
+.song-artist {
   font-size: 13px;
   color: var(--vp-c-text-2);
 }
@@ -715,45 +1131,57 @@ const searchMusic = async () => {
 .progress-section {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 0 16px 12px;
-  background: var(--vp-c-bg-soft);
+  gap: 10px;
+  padding: 0 20px 16px;
 }
 
 .time {
   font-size: 11px;
   color: var(--vp-c-text-2);
-  min-width: 32px;
-  text-align: center;
+  min-width: 36px;
+  font-variant-numeric: tabular-nums;
+}
+
+.progress-wrapper {
+  flex: 1;
 }
 
 .progress-bar {
-  flex: 1;
-  height: 4px;
+  height: 6px;
   background: var(--vp-c-divider);
-  border-radius: 2px;
+  border-radius: 3px;
   cursor: pointer;
   position: relative;
+  overflow: visible;
+}
+
+.progress-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--vp-c-divider);
+  border-radius: 3px;
 }
 
 .progress-fill {
+  position: absolute;
   height: 100%;
   background: linear-gradient(90deg, #667eea, #764ba2);
-  border-radius: 2px;
+  border-radius: 3px;
   transition: width 0.1s;
 }
 
 .progress-handle {
   position: absolute;
   top: 50%;
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   background: #fff;
-  border: 2px solid #667eea;
+  border: 3px solid #667eea;
   border-radius: 50%;
   transform: translate(-50%, -50%);
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .progress-bar:hover .progress-handle {
@@ -765,19 +1193,17 @@ const searchMusic = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: var(--vp-c-bg);
+  gap: 16px;
+  padding: 0 20px 20px;
 }
 
 .ctrl-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border: none;
   border-radius: 50%;
   background: var(--vp-c-bg-mute);
   color: var(--vp-c-text-1);
-  font-size: 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -796,38 +1222,77 @@ const searchMusic = async () => {
   color: #fff;
 }
 
-.play-btn {
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-  font-size: 20px;
+.ctrl-btn svg {
+  width: 20px;
+  height: 20px;
 }
 
-.mode-btn, .list-btn {
-  font-size: 14px;
+.play-btn-large {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+}
+
+.play-btn-large svg {
+  width: 28px;
+  height: 28px;
+}
+
+.mode-btn .mode-icon {
+  font-size: 16px;
+}
+
+.list-btn {
+  position: relative;
+}
+
+.list-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: var(--vp-c-brand);
+  color: #fff;
+  font-size: 10px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* 播放列表 */
-.playlist {
-  max-height: 200px;
-  overflow-y: auto;
+.playlist-panel {
   background: var(--vp-c-bg-soft);
   border-top: 1px solid var(--vp-c-divider);
+  max-height: 220px;
+  display: flex;
+  flex-direction: column;
 }
 
 .playlist-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 16px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--vp-c-text-2);
+  padding: 12px 16px;
   border-bottom: 1px solid var(--vp-c-divider);
 }
 
-.clear-btn {
+.playlist-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+}
+
+.playlist-count {
+  font-size: 11px;
+  color: var(--vp-c-text-2);
+  margin-left: 8px;
+}
+
+.close-playlist {
   width: 24px;
   height: 24px;
   border: none;
@@ -838,21 +1303,28 @@ const searchMusic = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 14px;
 }
 
-.clear-btn:hover {
+.close-playlist:hover {
   background: var(--vp-c-bg-mute);
+  color: var(--vp-c-text-1);
+}
+
+.playlist-content {
+  overflow-y: auto;
+  padding: 8px;
 }
 
 .playlist-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
   font-size: 13px;
-  border-left: 3px solid transparent;
 }
 
 .playlist-item:hover {
@@ -861,60 +1333,90 @@ const searchMusic = async () => {
 
 .playlist-item.active {
   background: var(--vp-c-brand-soft);
-  border-left-color: var(--vp-c-brand);
 }
 
-.song-index {
+.item-number {
   width: 24px;
   text-align: center;
   color: var(--vp-c-text-2);
-  font-size: 11px;
-}
-
-.song-name {
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.song-artist {
-  color: var(--vp-c-text-2);
-  font-size: 11px;
-  max-width: 80px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.playing-icon {
-  color: var(--vp-c-brand);
   font-size: 12px;
-  animation: pulse 1s ease-in-out infinite;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+.item-detail {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-/* 深色模式适配 */
-.dark .player-collapsed {
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+.item-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--vp-c-text-1);
+}
+
+.item-singer {
+  font-size: 11px;
+  color: var(--vp-c-text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.playing-indicator {
+  display: flex;
+  gap: 2px;
+  align-items: flex-end;
+  height: 16px;
+}
+
+.playing-indicator span {
+  width: 3px;
+  background: var(--vp-c-brand);
+  border-radius: 2px;
+  animation: soundBar 0.5s ease-in-out infinite;
+}
+
+.playing-indicator span:nth-child(1) { height: 8px; animation-delay: 0s; }
+.playing-indicator span:nth-child(2) { height: 14px; animation-delay: 0.1s; }
+.playing-indicator span:nth-child(3) { height: 10px; animation-delay: 0.2s; }
+
+@keyframes soundBar {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.5); }
+}
+
+/* 动画 */
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* 深色模式 */
+.dark .player-circle {
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3), 0 0 0 4px rgba(102, 126, 234, 0.1);
 }
 
 .dark .player-expanded {
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 50px rgba(0, 0, 0, 0.4);
 }
 
-/* 滚动条样式 */
+/* 滚动条 */
 .search-dropdown::-webkit-scrollbar,
-.playlist::-webkit-scrollbar {
+.playlist-content::-webkit-scrollbar {
   width: 4px;
 }
 
 .search-dropdown::-webkit-scrollbar-thumb,
-.playlist::-webkit-scrollbar-thumb {
+.playlist-content::-webkit-scrollbar-thumb {
   background: var(--vp-c-divider);
   border-radius: 2px;
 }
