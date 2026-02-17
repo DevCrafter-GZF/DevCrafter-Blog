@@ -13,7 +13,7 @@ outline: [2, 3, 4]
 import { NAV_DATA } from './data.ts'
 </script>
 
-# 我的导航
+# DevCrafter's 导航
 
 <MNavLinks
   v-for="{ title, items } in NAV_DATA"
