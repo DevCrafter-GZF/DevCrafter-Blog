@@ -1,4 +1,41 @@
-# 📅 Update log
+# 📅 Changelog
+
+## 2025-02-17
+
+### ✨ New Features
+
+- **Project Architecture Restructure**: Complete documentation structure reorganization for better reading experience
+  - Merged Vue 2/3 documents into unified complete guide
+  - Merged JavaScript basic+advanced into complete guide
+  - Merged TypeScript + TSX into unified document
+  - Created independent WebGIS category (Baidu Map, AMap, Tianditu, ECharts Map)
+
+- **Complete English Documentation Sync**: Added 6 complete English technical documents
+  - Python Basics (624 lines)
+  - MySQL Basic Operations (404 lines)
+  - Web API - DOM Manipulation (484 lines)
+  - Node.js Backend Development (573 lines)
+  - React Framework (695 lines)
+  - Project Practice Cases (587 lines)
+
+### 🔄 Updates & Improvements
+
+- **Navigation Structure Optimization**:
+  - Navigation bar streamlined to 6 buttons (Home, Guide, Docs, Navigation, VitePress, Changelog)
+  - Unified navigation naming (Frontend Basics → Frontend)
+  - Sidebar structure aligned with navigation
+
+- **GitHub Pages Deployment**:
+  - Configured automatic deployment workflow
+  - Fixed path issues, supporting base path configuration
+  - Fixed homepage image paths
+
+### 🐛 Bug Fixes
+
+- Fixed incorrect links in quick start documentation
+- Fixed directory structure description (preface → guide)
+- Unified Chinese and English navigation naming conventions
+- Fixed all empty document issues
 
 ## 2025-02-13
 
