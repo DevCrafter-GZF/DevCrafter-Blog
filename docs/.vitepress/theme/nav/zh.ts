@@ -17,6 +17,12 @@ export const zhNav: DefaultTheme.NavItem[] = [
     text: '📚 文档',
     items: [
       {
+        text: '📝 写作指南',
+        items: [
+          {text: 'Markdown 教程', link: '/default/markdown-examples.md'},
+        ]
+      },
+      {
         text: '🌐 前端',
         items: [
           {text: 'HTML', link: '/HTML/index.md'},
