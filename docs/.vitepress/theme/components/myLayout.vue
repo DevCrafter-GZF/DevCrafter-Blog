@@ -7,15 +7,21 @@
 <script setup lang="ts">
 import MouseClick from "./MouseClick.vue";
 import MouseFollower from "./MouseFollower.vue";
-import { useData } from 'vitepress'
+import { useData, useRoute } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
-import { nextTick, provide } from 'vue'
+import { nextTick, provide, computed } from 'vue'
 
 import BackToTop from "./backToTop.vue"
 // import notice from "./notice.vue"
 // import bsz from "./bsz.vue"
 
 const { isDark } = useData()
+const route = useRoute()
+
+// 判断是否在导航页面，导航页面不显示评论
+const isNavigationPage = computed(() => {
+  return route.path.includes('/navigation/') || route.path.includes('/Navigation/')
+})
 
 const enableTransitions = () =>
   'startViewTransition' in document &&
@@ -57,7 +63,7 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }: MouseEvent) => {
       <BackToTop />
     </template>
     <template #doc-after>
-      <GiscusComment />
+      <GiscusComment v-if="!isNavigationPage" />
     </template>
     <template #layout-top>
       <MouseFollower />
