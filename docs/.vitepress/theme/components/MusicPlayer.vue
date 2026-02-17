@@ -155,7 +155,7 @@
 </template>
 
 <script setup lang="ts">
-仿import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 
 // 默认封面
 const defaultCover = 'https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg'
