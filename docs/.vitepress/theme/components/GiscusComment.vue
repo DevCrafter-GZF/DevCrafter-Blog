@@ -30,7 +30,7 @@ const loadGiscus = () => {
   giscusScript.src = 'https://giscus.app/client.js'
   giscusScript.setAttribute('data-repo', 'DevCrafter-GZF/BlogComments')
   giscusScript.setAttribute('data-repo-id', '') // Need to get from GitHub
-  giscusScript.setAttribute('data-category', 'General')
+  giscusScript.setAttribute('data-category', 'Announcements')
   giscusScript.setAttribute('data-category-id', '') // Need to get from GitHub
   giscusScript.setAttribute('data-mapping', 'pathname')
   giscusScript.setAttribute('data-strict', '0')
