@@ -38,7 +38,7 @@ export default {
     const route = useRoute();
     const initZoom = () => {
       // mediumZoom('[data-zoomable]', { background: 'var(--vp-c-bg)' }); // 默认
-      mediumZoom('.main img', {background: 'var(--vp-c-bg)'}); // 不显式添加{data-zoomable}的情况下为所有图像启用此功能
+      mediumZoom('.VPContent img', {background: 'var(--vp-c-bg)'}); // VitePress 主内容区图片缩放
     };
     onMounted(() => {
       initZoom();
