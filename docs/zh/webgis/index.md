@@ -7,10 +7,10 @@
 
 | 章节 | 内容 | 难度 |
 |------|------|------|
-| [百度地图](./baidu.md) | 百度地图 JavaScript API | ⭐⭐ |
-| [高德地图](./gaode.md) | 高德地图 JS API | ⭐⭐ |
-| [天地图](./tianditu.md) | 国家地理信息公共服务平台 | ⭐⭐ |
-| [ECharts 地图](./echarts-map.md) | 数据可视化地图 | ⭐⭐ |
+| [百度地图](/WebGIS/baidu) | 百度地图 JavaScript API | ⭐⭐ |
+| [高德地图](/WebGIS/gaode) | 高德地图 JS API | ⭐⭐ |
+| [天地图](/WebGIS/tianditu) | 国家地理信息公共服务平台 | ⭐⭐ |
+| [ECharts 地图](/WebGIS/echarts-map) | 数据可视化地图 | ⭐⭐ |
 
 ---
 
