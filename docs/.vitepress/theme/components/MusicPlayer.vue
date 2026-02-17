@@ -577,6 +577,48 @@ const collapse = () => {
   showDropdown.value = false
   searchKeyword.value = ''
   searchResults.value = []
+  
+  // 收起时回到最近的角落
+  snapToNearestCorner()
+}
+
+// 收起时回到最近的角落
+const snapToNearestCorner = () => {
+  const currentX = position.value.x
+  const currentY = position.value.y
+  const windowWidth = window.innerWidth
+  const windowHeight = window.innerHeight
+  
+  // 计算到四个角的距离
+  const distToLeft = currentX  // 到左边的距离
+  const distToRight = windowWidth - currentX  // 到右边的距离
+  const distToTop = currentY  // 到顶部的距离
+  const distToBottom = windowHeight - currentY  // 到底部的距离
+  
+  // 判断左右：偏左回到左边，偏右回到右边
+  let targetX: number
+  if (distToLeft < distToRight) {
+    // 偏左，回到左边
+    targetX = circleSize / 2 + 20
+  } else {
+    // 偏右，回到右边
+    targetX = windowWidth - circleSize / 2 - 20
+  }
+  
+  // 判断上下：优先回到底部（因为播放器通常在底部）
+  let targetY: number
+  if (distToBottom < 200) {
+    // 如果已经在底部附近，保持在底部
+    targetY = windowHeight - circleSize / 2 - 20
+  } else if (distToTop < distToBottom) {
+    // 偏上，回到顶部
+    targetY = circleSize / 2 + 20
+  } else {
+    // 偏下，回到底部
+    targetY = windowHeight - circleSize / 2 - 20
+  }
+  
+  position.value = { x: targetX, y: targetY }
 }
 
 // 搜索相关
@@ -591,13 +633,14 @@ const onSearchFocus = () => {
 const adjustPositionForDropdown = () => {
   if (!isExpanded.value) return
   
-  // 计算当前需要的总高度
+  // 计算当前需要的总高度（增加边距避免遮挡）
   const dropdownHeight = 180  // max-height of search-dropdown
-  const baseHeight = 280  // 播放器基础部分高度（头部+搜索+当前播放+控制按钮）
-  const totalHeight = baseHeight + dropdownHeight
+  const baseHeight = 280  // 播放器基础部分高度
+  const margin = 60  // 额外边距，避免遮挡底部内容
+  const totalHeight = baseHeight + dropdownHeight + margin
   
   // 检查是否超出底部
-  const maxY = window.innerHeight - totalHeight - 20
+  const maxY = window.innerHeight - totalHeight
   if (position.value.y > maxY) {
     position.value.y = Math.max(20, maxY)
   }
