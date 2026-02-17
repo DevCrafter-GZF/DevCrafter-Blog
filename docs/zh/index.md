@@ -23,7 +23,7 @@ hero:
       link: /zh/
     - theme: alt
       text: 🤔 DevCrafter Blog 是做什么的?
-      link: /zh/guide/about.md
+      link: /guide/start.md
     - theme: alt
       text: GitHub
       link: https://github.com/DevCrafter-GZF/DevCrafter-Blog

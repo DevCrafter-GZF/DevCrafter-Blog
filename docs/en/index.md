@@ -24,7 +24,7 @@ hero:
       link: /en/
     - theme: alt
       text: 🤔 What is the DevCrafter Blog about?
-      link: /en/guide/about.md
+      link: /en/guide/start.md
     - theme: alt
       text: GitHub
       link: https://github.com/DevCrafter-GZF/DevCrafter-Blog
