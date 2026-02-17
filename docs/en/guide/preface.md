@@ -34,22 +34,41 @@ Therefore, I decided to create this blog:
 ::: code-group
 
 ```markdown [Technical Categories]
-├── Git Version Control
-├── ECharts Data Visualization
-├── Frontend Development
-│   ├── Vue Ecosystem
-│   ├── React Ecosystem
-│   └── Engineering Tools
-├── Developer Tools Navigation
-│   ├── IDE & Editors
-│   ├── AI Tools
-│   └── UI Design Tools
-└── Learning Resources
+├── 🌐 Frontend Basics
+│   ├── HTML / CSS
+│   ├── JavaScript Complete Guide
+│   ├── Web API / DOM Operations
+│   └── Regular Expressions
+├── ⚡ Frontend Frameworks
+│   ├── Vue 2/3 Complete Guide
+│   ├── React Basics
+│   └── TypeScript Complete Guide
+├── 🗺️ WebGIS Development
+│   ├── Baidu Map / AMap
+│   ├── Tianditu
+│   └── ECharts Map
+├── 🖥️ Backend Development
+│   ├── Node.js Basics
+│   ├── Python Programming
+│   └── MySQL Database
+├── 📈 Data Visualization
+│   └── ECharts Chart Configuration
+├── 🔧 Development Tools
+│   └── Git Version Control
+├── 🚀 Project Cases
+│   ├── NetEase Cloud Music App
+│   └── E-commerce Admin System
+└── 🧭 Developer Navigation
+    ├── IDE & Editors
+    ├── AI Tools Collection
+    └── Frontend Framework Ecosystem
 ```
 
 ```markdown [Features]
 ├── Bilingual Support (Chinese/English)
-├── Developer Navigation
+├── Mermaid Diagram Support
+├── Giscus Comment System
+├── Developer Tools Navigation
 ├── Technical Documentation Quick Reference
 └── Practical Experience Sharing
 ```
@@ -62,10 +81,11 @@ This blog is suitable for the following people:
 
 | Audience | Content Recommendation |
 |----------|------------------------|
-| **Frontend Developers** | Vue/React ecosystem, engineering tools, ECharts visualization |
-| **Full-stack Developers** | Git configuration, development tools, AI tools navigation |
-| **Technical Learners** | Learning resources, technical documentation, getting started guides |
-| **Designers** | UI design tools, prototyping tools, design resources |
+| **Frontend Beginners** | HTML/CSS basics, JavaScript introduction, learning path |
+| **Frontend Developers** | Vue/React/TypeScript, WebGIS map development |
+| **Full-stack Developers** | Node.js, Python, MySQL, project practice |
+| **Technical Learners** | Regular expressions, ECharts visualization, Git version control |
+| **Tool Seekers** | Developer navigation, AI tools collection, productivity tools |
 
 ## 🤝 Contributing
 
@@ -82,12 +102,13 @@ Welcome to participate in the following ways:
 
 ## 📮 Contact
 
-- 🌐 **Blog**: [https://blog.devcrafter.cn](https://blog.devcrafter.cn)
-- 💬 **Discussion**: Welcome to exchange technical issues through GitHub Issues
+- 🌐 **Blog**: [https://devcrafter-gzf.github.io/DevCrafter-Blog/](https://devcrafter-gzf.github.io/DevCrafter-Blog/)
+- 💻 **GitHub**: [https://github.com/DevCrafter-GZF/DevCrafter-Blog](https://github.com/DevCrafter-GZF/DevCrafter-Blog)
+- 💬 **Discussion**: Welcome to exchange technical issues through [GitHub Issues](https://github.com/DevCrafter-GZF/DevCrafter-Blog/issues)
 
 > [!IMPORTANT]
 > **Start Exploring**
 > 
-> It is recommended to start with [Quick Start](/guide/start.html) to understand the blog structure, or browse [Navigation](/navigation/index.html) directly to find the resources you need.
+> It is recommended to start with [Quick Start](/guide/start.html) to understand the blog structure, or check [Directory](/guide/directory.html) to browse complete content, or browse [Navigation](/navigation/index.html) directly to find the resources you need.
 
 **Happy Coding!** 🎉

@@ -12,6 +12,9 @@ graph LR
     C --> D[前端框架]
     D --> E[Vue 2/3]
     D --> F[React]
+    C --> K[TypeScript]
+    K --> E
+    K --> F
     B --> G[Node.js后端]
     G --> H[MySQL数据库]
     B --> I[Python编程]
@@ -22,11 +25,12 @@ graph LR
 
 **推荐学习顺序：**
 
-1. **阶段一：前端** → HTML → CSS → JavaScript
+1. **阶段一：前端基础** → HTML → CSS → JavaScript
 2. **阶段二：进阶技能** → Web API → ES6+ → 正则表达式
-3. **阶段三：框架学习** → Vue 2/3 或 React
-4. **阶段四：后端入门** → Node.js → MySQL
-5. **阶段五：项目实战** → 完整项目开发
+3. **阶段三：类型系统** → TypeScript 类型安全开发
+4. **阶段四：框架学习** → Vue 2/3 或 React
+5. **阶段五：后端入门** → Node.js → MySQL
+6. **阶段六：项目实战** → 完整项目开发
 
 ## 📖 介绍
 

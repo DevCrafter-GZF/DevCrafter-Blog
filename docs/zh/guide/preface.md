@@ -34,22 +34,41 @@
 ::: code-group
 
 ```markdown [技术分类]
-├── Git 版本控制
-├── ECharts 数据可视化
-├── 前端开发
-│ ├── Vue 生态
-│ ├── React 生态
-│ └── 工程化工具
-├── 开发工具导航
-│ ├── IDE & 编辑器
-│ ├── AI 工具
-│ └── UI 设计工具
-└── 学习资源
+├── 🌐 前端基础
+│   ├── HTML / CSS
+│   ├── JavaScript 完全指南
+│   ├── Web API / DOM 操作
+│   └── 正则表达式
+├── ⚡ 前端框架
+│   ├── Vue 2/3 完全指南
+│   ├── React 基础
+│   └── TypeScript 完全指南
+├── 🗺️ WebGIS 开发
+│   ├── 百度地图 / 高德地图
+│   ├── 天地图
+│   └── ECharts 地图
+├── 🖥️ 后端开发
+│   ├── Node.js 基础
+│   ├── Python 编程
+│   └── MySQL 数据库
+├── 📈 数据可视化
+│   └── ECharts 图表配置
+├── 🔧 开发工具
+│   └── Git 版本控制
+├── 🚀 项目实战
+│   ├── 网易云音乐 App
+│   └── 电商后台管理系统
+└── 🧭 程序员导航
+    ├── IDE & 编辑器
+    ├── AI 工具集
+    └── 前端框架生态
 ```
 
 ```markdown [特色功能]
 ├── 双语支持 (中文/English)
-├── 程序员导航栏
+├── Mermaid 流程图支持
+├── Giscus 评论系统
+├── 程序员工具导航
 ├── 技术文档速查
 └── 实战经验分享
 ```
@@ -62,10 +81,11 @@
 
 | 人群        | 内容推荐                           |
 |-----------|--------------------------------|
-| **前端开发者** | Vue/React 生态、工程化工具、ECharts 可视化 |
-| **全栈开发者** | Git 配置、开发工具、AI 工具导航            |
-| **技术学习者** | 学习资源、技术文档、入门指南                 |
-| **设计师**   | UI 设计工具、原型工具、设计资源              |
+| **前端初学者** | HTML/CSS 基础、JavaScript 入门、学习路线 |
+| **前端开发者** | Vue/React/TypeScript、WebGIS 地图开发 |
+| **全栈开发者** | Node.js、Python、MySQL、项目实战 |
+| **技术学习者** | 正则表达式、ECharts 可视化、Git 版本控制 |
+| **工具寻找者** | 程序员导航、AI 工具集、开发效率工具 |
 
 ## 🤝 参与贡献
 
@@ -82,12 +102,13 @@
 
 ## 📮 联系方式
 
-- 🌐 **博客地址**: [https://blog.devcrafter.cn](https://blog.devcrafter.cn)
-- 💬 **交流讨论**: 欢迎通过 GitHub Issues 交流技术问题
+- 🌐 **博客地址**: [https://devcrafter-gzf.github.io/DevCrafter-Blog/](https://devcrafter-gzf.github.io/DevCrafter-Blog/)
+- 💻 **GitHub**: [https://github.com/DevCrafter-GZF/DevCrafter-Blog](https://github.com/DevCrafter-GZF/DevCrafter-Blog)
+- 💬 **交流讨论**: 欢迎通过 [GitHub Issues](https://github.com/DevCrafter-GZF/DevCrafter-Blog/issues) 交流技术问题
 
 > [!IMPORTANT]
 > **开始探索**
 >
-> 建议从 [快速开始](/guide/start.html) 了解博客结构，或直接浏览 [导航](/navigation/index.html) 查找你需要的资源。
+> 建议从 [快速开始](/guide/start.html) 了解博客结构，或查看 [目录](/guide/directory.html) 浏览完整内容，或直接浏览 [导航](/navigation/index.html) 查找你需要的资源。
 
 **Happy Coding!** 🎉

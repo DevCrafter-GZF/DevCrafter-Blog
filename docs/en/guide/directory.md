@@ -12,6 +12,9 @@ graph LR
     C --> D[Frontend Frameworks]
     D --> E[Vue 2/3]
     D --> F[React]
+    C --> K[TypeScript]
+    K --> E
+    K --> F
     B --> G[Node.js Backend]
     G --> H[MySQL Database]
     B --> I[Python Programming]
@@ -22,11 +25,12 @@ graph LR
 
 **Recommended Learning Order:**
 
-1. **Phase 1: Frontend** → HTML → CSS → JavaScript
+1. **Phase 1: Frontend Basics** → HTML → CSS → JavaScript
 2. **Phase 2: Advanced Skills** → Web API → ES6+ → Regex
-3. **Phase 3: Framework Learning** → Vue 2/3 or React
-4. **Phase 4: Backend Introduction** → Node.js → MySQL
-5. **Phase 5: Project Practice** → Complete project development
+3. **Phase 3: Type System** → TypeScript type-safe development
+4. **Phase 4: Framework Learning** → Vue 2/3 or React
+5. **Phase 5: Backend Introduction** → Node.js → MySQL
+6. **Phase 6: Project Practice** → Complete project development
 
 ## 📖 Introduction
 
