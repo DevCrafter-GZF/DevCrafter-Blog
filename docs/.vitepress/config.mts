@@ -8,6 +8,7 @@ import { enConfig } from '../.vitepress/theme/config/en'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   ...sharedConfig,
+  base: '/DevCrafter-Blog/',
   locales: {
     root: {
       label: '简体中文',
