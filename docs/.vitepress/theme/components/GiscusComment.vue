@@ -29,15 +29,15 @@ const loadGiscus = () => {
   giscusScript = document.createElement('script')
   giscusScript.src = 'https://giscus.app/client.js'
   giscusScript.setAttribute('data-repo', 'DevCrafter-GZF/BlogComments')
-  giscusScript.setAttribute('data-repo-id', '') // Need to get from GitHub
+  giscusScript.setAttribute('data-repo-id', 'R_kgDONrPFWQ')
   giscusScript.setAttribute('data-category', 'Announcements')
-  giscusScript.setAttribute('data-category-id', '') // Need to get from GitHub
+  giscusScript.setAttribute('data-category-id', 'DIC_kwDONrPFWc4CmD5f')
   giscusScript.setAttribute('data-mapping', 'pathname')
   giscusScript.setAttribute('data-strict', '0')
   giscusScript.setAttribute('data-reactions-enabled', '1')
   giscusScript.setAttribute('data-emit-metadata', '0')
   giscusScript.setAttribute('data-input-position', 'bottom')
-  giscusScript.setAttribute('data-theme', isDark.value ? 'dark' : 'light')
+  giscusScript.setAttribute('data-theme', isDark.value ? 'catppuccin_mocha' : 'catppuccin_frappe')
   giscusScript.setAttribute('data-lang', 'zh-CN')
   giscusScript.setAttribute('data-loading', 'lazy')
   giscusScript.setAttribute('crossorigin', 'anonymous')
@@ -51,7 +51,7 @@ watch(isDark, (newVal) => {
   const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame')
   if (iframe) {
     iframe.contentWindow?.postMessage(
-      { giscus: { setConfig: { theme: newVal ? 'dark' : 'light' } } },
+      { giscus: { setConfig: { theme: newVal ? 'catppuccin_mocha' : 'catppuccin_frappe' } } },
       'https://giscus.app'
     )
   }
