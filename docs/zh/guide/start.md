@@ -10,20 +10,35 @@ DevCrafter Blog 采用模块化组织，主要内容分布如下：
 ```
 docs/
 ├── zh/                          # 中文文档
-│   ├── preface/                 # 序言与介绍
-│   │   ├── preface.md          # 序言
+│   ├── guide/                   # 指南
 │   │   ├── start.md            # 快速开始
-│   │   ├── directory.md        # 目录
-│   │   └── about.md            # 关于作者
-│   ├── Git/                     # Git 教程
-│   │   └── gitSetting.md       # Git 配置指南
-│   ├── Echarts/                 # ECharts 教程
-│   │   └── index.md            # ECharts 配置指南
+│   │   ├── directory.md        # 学习路线
+│   │   ├── about.md            # 关于作者
+│   │   ├── updates.md          # 更新日志
+│   │   └── preface.md          # 序言
+│   ├── fundamentals/            # 前端基础
+│   │   └── javascript.md       # JavaScript 完全指南
+│   ├── frameworks/              # 前端框架
+│   │   ├── vue.md              # Vue 完全指南
+│   │   └── typescript.md       # TypeScript 完全指南
+│   ├── WebGIS/                  # WebGIS 开发
+│   │   ├── index.md            # 概述
+│   │   ├── baidu.md            # 百度地图
+│   │   ├── gaode.md            # 高德地图
+│   │   ├── tianditu.md         # 天地图
+│   │   └── echarts-map.md      # ECharts 地图
+│   ├── HTML/                    # HTML 基础
+│   ├── CSS/                     # CSS 基础
+│   ├── JavaScript/              # JavaScript 相关
+│   ├── React/                   # React 框架
+│   ├── Node/                    # Node.js 后端
+│   ├── MySQL/                   # MySQL 数据库
+│   ├── Python/                  # Python 编程
+│   ├── Echarts/                 # ECharts 图表
+│   ├── Git/                     # Git 版本控制
+│   ├── Projects/                # 项目实战
 │   ├── Navigation/              # 程序员导航
-│   │   ├── index.md            # 导航首页
-│   │   └── data.ts             # 导航数据
 │   └── log/                     # 更新日志
-│       └── changelog.md        # 变更记录
 └── en/                          # 英文文档
     └── ...
 ```
@@ -101,8 +116,8 @@ yarn docs:build
 > [!IMPORTANT]
 > 如果你是第一次访问，建议按以下顺序阅读：
 
-1. [序言](./preface.md) - 了解博客定位和目的
-2. [目录](./directory.md) - 查看完整内容结构
+1. [序言](../guide/preface.md) - 了解博客定位和目的
+2. [目录](../guide/directory.md) - 查看完整内容结构
 3. [Git 配置](../Git/gitSetting.md) - 开发必备工具
 4. [程序员导航](../Navigation/index.md) - 发现实用工具
 
