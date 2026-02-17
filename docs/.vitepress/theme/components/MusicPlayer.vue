@@ -420,30 +420,57 @@ const fetchHotSongs = async () => {
   loadingHot.value = true
   try {
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 5000)
+    const timeoutId = setTimeout(() => controller.abort(), 8000)
 
-    const response = await fetch('https://cloud-music-api-f494k233t-azhe403.vercel.app/personalized/newsong?limit=8', {
-      signal: controller.signal
-    })
+    // 使用多个备用 API
+    const apiUrls = [
+      'https://api.wrdan.com/163/search?key=热门&limit=10',
+      'https://api.music.imsyy.top/search?keywords=热门&limit=10',
+      'https://api-music.linweiqin.com/search?keywords=热门&limit=10'
+    ]
+    
+    let data = null
+    for (const url of apiUrls) {
+      try {
+        const response = await fetch(url, {
+          signal: controller.signal,
+          headers: {
+            'Accept': 'application/json'
+          }
+        })
+        if (response.ok) {
+          data = await response.json()
+          if (data?.result?.songs || data?.data?.songs) {
+            break
+          }
+        }
+      } catch (e) {
+        console.log(`API ${url} 失败，尝试下一个`)
+        continue
+      }
+    }
+    
     clearTimeout(timeoutId)
 
-    const data = await response.json()
-
-    if (data.result) {
-      hotSongs.value = data.result.map((item: any) => {
-        const coverUrl = item.picUrl || item.album?.picUrl
-        return {
-          id: item.id.toString(),
-          name: item.name,
-          artist: item.artists?.map((a: any) => a.name).join('/') || '未知歌手',
-          cover: coverUrl && coverUrl.startsWith('http') ? coverUrl : defaultCover
-        }
-      })
-      // 缓存到 sessionStorage
-      sessionStorage.setItem('music_hot_songs', JSON.stringify(hotSongs.value))
+    if (data) {
+      const songs = data.result?.songs || data.data?.songs || []
+      if (songs.length > 0) {
+        hotSongs.value = songs.slice(0, 8).map((item: any) => {
+          const coverUrl = item.picUrl || item.album?.picUrl || item.art?.picUrl
+          return {
+            id: item.id.toString(),
+            name: item.name,
+            artist: item.artists?.map((a: any) => a.name).join('/') || 
+                    item.ar?.map((a: any) => a.name).join('/') || '未知歌手',
+            cover: coverUrl && coverUrl.startsWith('http') ? coverUrl : defaultCover
+          }
+        })
+        // 缓存到 sessionStorage
+        sessionStorage.setItem('music_hot_songs', JSON.stringify(hotSongs.value))
+      }
     }
   } catch (error) {
-    console.log('API获取失败，使用默认数据')
+    console.log('API获取失败，使用默认数据', error)
   } finally {
     loadingHot.value = false
   }
@@ -792,25 +819,51 @@ const formatTime = (time: number) => {
 // 搜索
 const searchMusic = async () => {
   if (!searchKeyword.value.trim()) return
-
+  
   try {
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 5000)
-
-    const response = await fetch(`https://cloud-music-api-f494k233t-azhe403.vercel.app/search?keywords=${encodeURIComponent(searchKeyword.value)}&limit=8`, {
-      signal: controller.signal
-    })
+    const timeoutId = setTimeout(() => controller.abort(), 8000)
+    
+    // 使用多个备用 API
+    const keyword = encodeURIComponent(searchKeyword.value)
+    const apiUrls = [
+      `https://api.wrdan.com/163/search?key=${keyword}&limit=10`,
+      `https://api.music.imsyy.top/search?keywords=${keyword}&limit=10`,
+      `https://api-music.linweiqin.com/search?keywords=${keyword}&limit=10`
+    ]
+    
+    let data = null
+    for (const url of apiUrls) {
+      try {
+        const response = await fetch(url, {
+          signal: controller.signal,
+          headers: {
+            'Accept': 'application/json'
+          }
+        })
+        if (response.ok) {
+          data = await response.json()
+          if (data?.result?.songs || data?.data?.songs) {
+            break
+          }
+        }
+      } catch (e) {
+        console.log(`搜索API ${url} 失败，尝试下一个`)
+        continue
+      }
+    }
+    
     clearTimeout(timeoutId)
-
-    const data = await response.json()
-
-    if (data.result?.songs) {
-      searchResults.value = data.result.songs.map((song: any) => {
-        const coverUrl = song.album?.picUrl
+    
+    if (data) {
+      const songs = data.result?.songs || data.data?.songs || []
+      searchResults.value = songs.slice(0, 8).map((song: any) => {
+        const coverUrl = song.picUrl || song.album?.picUrl || song.art?.picUrl
         return {
           id: song.id.toString(),
           name: song.name,
-          artist: song.artists?.map((a: any) => a.name).join('/') || '未知歌手',
+          artist: song.artists?.map((a: any) => a.name).join('/') || 
+                  song.ar?.map((a: any) => a.name).join('/') || '未知歌手',
           cover: coverUrl && coverUrl.startsWith('http') ? coverUrl : defaultCover
         }
       })
@@ -818,7 +871,7 @@ const searchMusic = async () => {
       searchResults.value = []
     }
   } catch (error) {
-    console.log('搜索失败')
+    console.log('搜索失败', error)
     searchResults.value = []
   }
 }
