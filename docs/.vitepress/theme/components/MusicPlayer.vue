@@ -160,19 +160,44 @@ const dragOffset = ref({ x: 0, y: 0 })
 const audioPlayer = ref<HTMLAudioElement>()
 const progressBar = ref<HTMLElement>()
 
-// 初始化位置
+// 初始化位置 - 右下角，但留出边距
 onMounted(() => {
   position.value = { 
-    x: window.innerWidth - 90, 
-    y: window.innerHeight - 90 
+    x: window.innerWidth - 80, 
+    y: window.innerHeight - 80 
+  }
+})
+
+// 监听展开状态，调整位置避免超出屏幕
+watch(isExpanded, (expanded) => {
+  if (expanded) {
+    // 展开时，确保播放器不会超出屏幕右边界和下边界
+    const expandedWidth = 320
+    const expandedHeight = 400
+    position.value = {
+      x: Math.max(20, Math.min(window.innerWidth - expandedWidth - 20, position.value.x)),
+      y: Math.max(20, Math.min(window.innerHeight - expandedHeight - 20, position.value.y))
+    }
   }
 })
 
 // 计算属性
-const positionStyle = computed(() => ({
-  left: `${position.value.x}px`,
-  top: `${position.value.y}px`
-}))
+const positionStyle = computed(() => {
+  // 展开时，以圆形按钮中心为锚点，向左上方展开
+  if (isExpanded.value) {
+    return {
+      left: `${position.value.x}px`,
+      top: `${position.value.y}px`,
+      transform: 'translate(0, 0)'
+    }
+  }
+  // 收缩时，圆形按钮的位置
+  return {
+    left: `${position.value.x}px`,
+    top: `${position.value.y}px`,
+    transform: 'translate(-50%, -50%)'
+  }
+})
 
 const audioUrl = computed(() => {
   if (!currentSong.value) return ''
@@ -195,7 +220,16 @@ const playModeText = computed(() => {
 })
 
 // 展开/收起
-const expand = () => isExpanded.value = true
+const expand = () => {
+  // 展开前调整位置，确保不会超出屏幕
+  const expandedWidth = 320
+  const expandedHeight = 400
+  position.value = {
+    x: Math.min(position.value.x, window.innerWidth - expandedWidth - 20),
+    y: Math.min(position.value.y, window.innerHeight - expandedHeight - 20)
+  }
+  isExpanded.value = true
+}
 const collapse = () => { isExpanded.value = false; showPlaylist.value = false }
 
 // 拖拽
