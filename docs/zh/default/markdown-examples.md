@@ -311,7 +311,7 @@ VitePress 也支持 GitHub 风格的提示语法：
 
 ```md
 <WatermelonPlayer 
-  url="/video/a.mp4" 
+  url="https://www.w3schools.com/html/mov_bbb.mp4" 
   poster="/logo/003.png" 
 />
 ```
@@ -319,7 +319,7 @@ VitePress 也支持 GitHub 风格的提示语法：
 **效果：**
 
 <WatermelonPlayer 
-  url="/video/a.mp4" 
+  url="https://www.w3schools.com/html/mov_bbb.mp4" 
   poster="/logo/003.png" 
 />
 
