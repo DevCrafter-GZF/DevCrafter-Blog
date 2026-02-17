@@ -359,13 +359,21 @@ VitePress 也支持 GitHub 风格的提示语法：
 
 ### 图片缩放
 
-VitePress 自动为图片添加点击缩放功能：
+VitePress 自动为图片添加点击缩放功能（点击图片查看效果）：
+
+**输入：**
 
 ```md
-![本地图片](../../public/logo/003.png)
+![本地图片](/logo/003.png)
 
-![网络图片](https://vuepress.yiov.top/beautification/02.png)
+![网络图片](https://picsum.photos/400/200?random=1)
 ```
+
+**效果：**
+
+![本地图片](/logo/003.png)
+
+![网络图片](https://picsum.photos/400/200?random=1)
 
 ### 文字标记
 
