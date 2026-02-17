@@ -1,8 +1,4 @@
-/*
- * @Author: GZF
- * @Date: 2025-01-17 21:45:57
- * @Description: 代码组：修正倒角、阴影、边距,仿真macOS风格
- */
+/* .vitepress/theme/style/vp-code-group.css */
 
 /* 代码组：tab间距 */
 .vp-code-group .tabs {
@@ -44,14 +40,14 @@
 
 
 /* 代码组：修正倒角、阴影、边距 */
-.vp-code-group div[class*="language-"].vp-adaptive-theme.line-numbers-mode {
+.vp-code-group div[class*="language-"] {
   border-radius: 8px;
   box-shadow: none;
   padding-top: 0px;
 }
 
 /* 代码组：隐藏小圆点 */
-.vp-code-group div[class*="language-"].vp-adaptive-theme.line-numbers-mode::before {
+.vp-code-group div[class*="language-"]::before {
   display: none;
 }
 
@@ -65,7 +61,6 @@
   top: 24px;
   height: calc(100% - 45px);
 }
-
 
 
 /* 代码组（无行号）：修正倒角、阴影、边距 */
