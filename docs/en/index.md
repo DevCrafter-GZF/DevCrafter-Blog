@@ -27,15 +27,15 @@ light: /logo/剪纸龙舞.svg
 dark: /logo/剪影魅凤.svg
 alt: DevCrafter Blog Logo
 actions:
-- theme: brand
-text: 🏠 home
-link: /en/
-- theme: alt
-text: 🤔 DevCrafter Blog
-link: /en/guide/start.md
-- theme: alt
-text: GitHub
-link: https://github.com/DevCrafter-GZF/DevCrafter-Blog
+  - theme: brand
+    text: 🏠 home
+    link: /en/
+  - theme: alt
+    text: 🤔 DevCrafter Blog
+    link: /en/guide/start.md
+  - theme: alt
+    text: GitHub
+    link: https://github.com/DevCrafter-GZF/DevCrafter-Blog
 
 features:
 

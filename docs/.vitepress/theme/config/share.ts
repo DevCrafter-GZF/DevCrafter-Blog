@@ -3,8 +3,9 @@ import {defineConfig} from 'vitepress'
 import {groupIconMdPlugin, groupIconVitePlugin} from 'vitepress-plugin-group-icons'
 import timeline from "vitepress-markdown-timeline";
 import vitepressProtectPlugin from "vitepress-protect-plugin"
+import { withMermaid } from "vitepress-plugin-mermaid";
 
-export const sharedConfig = defineConfig({
+export const sharedConfig = withMermaid({
   rewrites: { // 很重要，
     'zh/:rest*': ':rest*'
   },
