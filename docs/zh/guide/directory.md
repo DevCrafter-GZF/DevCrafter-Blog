@@ -38,7 +38,7 @@ graph LR
 | [关于作者](/guide/about)   | 作者介绍和联系方式           |
 | [更新日志](/guide/updates) | 博客更新记录和版本历史         |
 
-## 🌐 前端
+## 🌐 前端基础
 
 ### HTML
 
@@ -87,6 +87,24 @@ graph LR
 |------|------|------|
 | [React 基础](../React/index.md) | JSX、Hooks、Redux、Router | ⭐⭐⭐ 进阶 |
 
+### TypeScript
+
+| 文档 | 说明 | 难度 |
+|------|------|------|
+| [TypeScript 完全指南](../frameworks/typescript.md) | 类型系统、泛型、TSX、实战 | ⭐⭐-⭐⭐⭐ |
+
+**核心内容：** 基础类型、接口与类型别名、泛型、高级类型、TSX 与 React
+
+## 🗺️ WebGIS 开发
+
+| 文档 | 说明 | 难度 |
+|------|------|------|
+| [WebGIS 概述](../WebGIS/index.md) | 地图开发入门指南 | ⭐⭐ |
+| [百度地图](../WebGIS/baidu.md) | 百度地图 JavaScript API | ⭐⭐ |
+| [高德地图](../WebGIS/gaode.md) | 高德地图 JS API | ⭐⭐ |
+| [天地图](../WebGIS/tianditu.md) | 国家地理信息公共服务平台 | ⭐⭐ |
+| [ECharts 地图](../WebGIS/echarts-map.md) | 数据可视化地图 | ⭐⭐ |
+
 ## 🖥️ 后端开发
 
 ### Node.js
@@ -111,6 +129,14 @@ graph LR
 |------|------|------|
 | [Python 基础](../Python/index.md) | 语法基础、数据结构、文件操作 | ⭐ 入门 |
 
+## 📈 数据可视化
+
+### ECharts
+
+| 文档 | 说明 | 难度 |
+|------|------|------|
+| [ECharts 配置](../Echarts/index.md) | 图表配置、数据可视化 | ⭐⭐ 基础 |
+
 ## 🔧 开发工具
 
 ### Git
@@ -119,17 +145,13 @@ graph LR
 |------|------|------|
 | [Git 配置指南](../Git/gitSetting.md) | 安装配置、常用命令、分支管理 | ⭐⭐ 基础 |
 
-### ECharts
-
-| 文档 | 说明 | 难度 |
-|------|------|------|
-| [ECharts 配置](../Echarts/index.md) | 图表配置、数据可视化 | ⭐⭐ 基础 |
-
 ## 🚀 项目实战
 
 | 文档 | 说明 | 技术栈 |
 |------|------|--------|
 | [项目案例](../Projects/index.md) | 网易云音乐、电商后台等实战 | Vue + Node.js |
+| [音乐 App](../Projects/music-app.md) | 网易云音乐项目详解 | Vue + Node.js |
+| [后台系统](../Projects/admin-system.md) | 电商后台管理系统 | Vue + Element UI |
 
 ## 🧭 程序员导航
 
@@ -144,6 +166,7 @@ graph LR
 | 文档 | 说明 |
 |------|------|
 | [变更记录](../log/changelog.md) | 详细的功能更新和变更历史 |
+| [更新日志](../guide/updates.md) | 博客更新记录和版本历史 |
 
 ## 🌍 多语言支持
 

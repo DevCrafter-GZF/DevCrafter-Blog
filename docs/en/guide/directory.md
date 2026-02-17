@@ -38,7 +38,7 @@ graph LR
 | [About Author](/guide/about) | Author introduction and contact information |
 | [Updates](/guide/updates) | Blog update records and version history |
 
-## 🌐 Frontend
+## 🌐 Frontend Basics
 
 ### HTML
 
@@ -79,6 +79,24 @@ graph LR
 |----------|-------------|-------|
 | [React Basics](../React/index.md) | JSX, Hooks, Redux, Router | ⭐⭐⭐ Advanced |
 
+### TypeScript
+
+| Document | Description | Level |
+|----------|-------------|-------|
+| [TypeScript Complete Guide](../frameworks/typescript.md) | Type system, generics, TSX, practice | ⭐⭐-⭐⭐⭐ |
+
+**Core Content:** Basic types, interfaces & type aliases, generics, advanced types, TSX with React
+
+## 🗺️ WebGIS Development
+
+| Document | Description | Level |
+|----------|-------------|-------|
+| [WebGIS Overview](../WebGIS/index.md) | Map development introduction | ⭐⭐ |
+| [Baidu Map](../WebGIS/baidu.md) | Baidu Map JavaScript API | ⭐⭐ |
+| [AMap](../WebGIS/gaode.md) | AMap JS API | ⭐⭐ |
+| [Tianditu](../WebGIS/tianditu.md) | National Geographic Information Platform | ⭐⭐ |
+| [ECharts Map](../WebGIS/echarts-map.md) | Data visualization maps | ⭐⭐ |
+
 ## 🖥️ Backend Development
 
 ### Node.js
@@ -101,6 +119,14 @@ graph LR
 |----------|-------------|-------|
 | [Python Basics](../Python/index.md) | Basic syntax, data structures, file operations | ⭐ Beginner |
 
+## 📈 Data Visualization
+
+### ECharts
+
+| Document | Description | Level |
+|----------|-------------|-------|
+| [ECharts Configuration](../Echarts/index.md) | Chart configuration, data visualization | ⭐⭐ Basic |
+
 ## 🔧 Development Tools
 
 ### Git
@@ -109,17 +135,13 @@ graph LR
 |----------|-------------|-------|
 | [Git Configuration](../Git/gitSetting.md) | Installation, configuration, branch management | ⭐⭐ Basic |
 
-### ECharts
-
-| Document | Description | Level |
-|----------|-------------|-------|
-| [ECharts Configuration](../Echarts/index.md) | Chart configuration, data visualization | ⭐⭐ Basic |
-
 ## 🚀 Project Cases
 
 | Document | Description | Tech Stack |
 |----------|-------------|------------|
 | [Project Cases](../Projects/index.md) | NetEase Cloud Music, e-commerce admin, etc. | Vue + Node.js |
+| [Music App](../Projects/music-app.md) | NetEase Cloud Music project details | Vue + Node.js |
+| [Admin System](../Projects/admin-system.md) | E-commerce admin management system | Vue + Element UI |
 
 ## 🧭 Developer Navigation
 
@@ -132,6 +154,7 @@ graph LR
 | Document | Description |
 |----------|-------------|
 | [Change Records](../log/changelog.md) | Detailed feature updates and change history |
+| [Updates](../guide/updates.md) | Blog update records and version history |
 
 ## 🌍 Multilingual Support
 
