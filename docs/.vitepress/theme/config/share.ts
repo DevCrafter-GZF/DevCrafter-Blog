@@ -165,7 +165,7 @@ export const sharedConfig = defineConfig({
 export const giscusConfig = {
   repo: 'DevCrafter-GZF/BlogComments',
   repoId: '', // 需要从 GitHub 获取
-  category: 'Announcements',
+  category: 'General',
   categoryId: '', // 需要从 GitHub 获取
   mapping: 'pathname',
   strict: '0',
