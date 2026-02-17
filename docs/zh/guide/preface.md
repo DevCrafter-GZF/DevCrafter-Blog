@@ -88,6 +88,6 @@
 > [!IMPORTANT]
 > **开始探索**
 >
-> 建议从 [快速开始](./start.md) 了解博客结构，或直接浏览 [导航](../Navigation/index.md) 查找你需要的资源。
+> 建议从 [快速开始](/guide/start) 了解博客结构，或直接浏览 [导航](/Navigation) 查找你需要的资源。
 
 **Happy Coding!** 🎉

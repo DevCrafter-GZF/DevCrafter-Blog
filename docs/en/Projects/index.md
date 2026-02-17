@@ -7,8 +7,8 @@
 
 | Project Name | Tech Stack | Difficulty | Highlights |
 |--------------|------------|------------|------------|
-| [NetEase Cloud Music](./music-app.md) | Vue 2 + Vant + Axios | ⭐⭐⭐ | Music playback, search, recommended playlists |
-| [Admin System](./admin-system.md) | Vue 3 + Element Plus + TS | ⭐⭐⭐ | Permission management, data visualization |
+| [NetEase Cloud Music](/Projects/music-app) | Vue 2 + Vant + Axios | ⭐⭐⭐ | Music playback, search, recommended playlists |
+| [Admin System](/Projects/admin-system) | Vue 3 + Element Plus + TS | ⭐⭐⭐ | Permission management, data visualization |
 | [React Mall](#react-mall-case) | React + Redux + Ant Design | ⭐⭐⭐ | Shopping cart, order management |
 | [Node.js API](#nodejs-api-service) | Express + MySQL + JWT | ⭐⭐⭐ | RESTful API, authentication |
 
@@ -32,7 +32,7 @@ Through learning project cases, you will be able to:
 
 ## NetEase Cloud Music Case
 
-Detailed tutorial: [NetEase Cloud Music Project](./music-app.md)
+Detailed tutorial: [NetEase Cloud Music Project](/Projects/music-app)
 
 ### Project Overview
 
@@ -46,7 +46,7 @@ Mobile music playback app developed based on Vue 2 + Vant, including:
 
 ## Admin System Case
 
-Detailed tutorial: [Admin System Project](./admin-system.md)
+Detailed tutorial: [Admin System Project](/Projects/admin-system)
 
 ### Project Overview
 

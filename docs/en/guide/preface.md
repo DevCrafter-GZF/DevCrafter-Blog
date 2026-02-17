@@ -88,6 +88,6 @@ Welcome to participate in the following ways:
 > [!IMPORTANT]
 > **Start Exploring**
 > 
-> It is recommended to start with [Quick Start](./start.md) to understand the blog structure, or browse [Navigation](../Navigation/index.md) directly to find the resources you need.
+> It is recommended to start with [Quick Start](/guide/start) to understand the blog structure, or browse [Navigation](/Navigation) directly to find the resources you need.
 
 **Happy Coding!** 🎉

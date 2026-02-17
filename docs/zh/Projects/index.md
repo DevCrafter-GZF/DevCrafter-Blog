@@ -7,8 +7,8 @@
 
 | 项目名称 | 技术栈 | 难度 | 功能亮点 |
 |----------|--------|------|----------|
-| [网易云音乐](./music-app.md) | Vue 2 + Vant + Axios | ⭐⭐⭐ | 音乐播放、搜索、推荐歌单 |
-| [后台管理系统](./admin-system.md) | Vue 3 + Element Plus + TS | ⭐⭐⭐ | 权限管理、数据可视化 |
+| [网易云音乐](/Projects/music-app) | Vue 2 + Vant + Axios | ⭐⭐⭐ | 音乐播放、搜索、推荐歌单 |
+| [后台管理系统](/Projects/admin-system) | Vue 3 + Element Plus + TS | ⭐⭐⭐ | 权限管理、数据可视化 |
 | [React 商城](#react-商城案例) | React + Redux + Ant Design | ⭐⭐⭐ | 购物车、订单管理 |
 | [Node.js API](#nodejs-api-服务) | Express + MySQL + JWT | ⭐⭐⭐ | RESTful API、认证授权 |
 
@@ -32,7 +32,7 @@
 
 ## 网易云音乐案例
 
-详细教程请查看：[网易云音乐项目](./music-app.md)
+详细教程请查看：[网易云音乐项目](/Projects/music-app)
 
 ### 项目概述
 
@@ -46,7 +46,7 @@
 
 ## 后台管理系统案例
 
-详细教程请查看：[后台管理系统项目](./admin-system.md)
+详细教程请查看：[后台管理系统项目](/Projects/admin-system)
 
 ### 项目概述
 

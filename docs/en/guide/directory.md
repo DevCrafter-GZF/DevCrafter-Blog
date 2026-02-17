@@ -32,11 +32,11 @@ graph LR
 
 | Document | Description |
 |----------|-------------|
-| [Preface](./preface.md) | Understand blog positioning, purpose, and content overview |
-| [Quick Start](./start.md) | New user guide, including usage and local development |
-| [Directory](./directory.md) | This document, complete content index |
-| [About Author](./about.md) | Author introduction and contact information |
-| [Updates](./updates.md) | Blog update records and version history |
+| [Preface](/guide/preface) | Understand blog positioning, purpose, and content overview |
+| [Quick Start](/guide/start) | New user guide, including usage and local development |
+| [Directory](/guide/directory) | This document, complete content index |
+| [About Author](/guide/about) | Author introduction and contact information |
+| [Updates](/guide/updates) | Blog update records and version history |
 
 ## 🌐 Frontend
 
