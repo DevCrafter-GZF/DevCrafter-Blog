@@ -60,9 +60,13 @@ Select topics of interest through the left sidebar:
 
 | Category | Content | Use Case |
 |----------|---------|----------|
-| **Git** | Configuration guide, common commands | Version control learning |
-| **ECharts** | Configuration details, examples | Data visualization development |
-| **Navigation** | Tool navigation, resource organization | Finding development tools |
+| **Frontend** | HTML, CSS, JavaScript, RegExp, DOM, ECharts | Frontend basics learning |
+| **WebGIS** | Baidu Map, AMap, Tianditu, ECharts Map | Map development |
+| **Frameworks** | Vue, React, TypeScript | Modern frontend frameworks |
+| **Backend** | Node.js, MySQL, Python | Full-stack development |
+| **Tools** | Git version control | Development productivity |
+| **Projects** | Real-world project cases | Project experience |
+| **Navigation** | Developer tools navigation | Discover useful tools |
 
 ### 3. Switch Language
 
