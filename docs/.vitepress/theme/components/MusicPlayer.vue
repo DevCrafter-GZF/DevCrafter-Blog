@@ -332,18 +332,44 @@ const progressBar = ref<HTMLElement>()
 
 // 初始化
 onMounted(() => {
-  // 初始位置：右下角
-  position.value = {
-    x: window.innerWidth - circleSize / 2 - 20,
-    y: window.innerHeight - circleSize / 2 - 20
-  }
+  // 初始位置：右下角（圆形中心点）
+  const initialX = window.innerWidth - circleSize / 2 - 20
+  const initialY = window.innerHeight - circleSize / 2 - 20
+  position.value = { x: initialX, y: initialY }
   // 加载热门歌曲
   loadHotSongs()
+  
+  // 监听窗口大小变化
+  window.addEventListener('resize', handleResize)
 })
 
 onUnmounted(() => {
   clearAllTimers()
+  window.removeEventListener('resize', handleResize)
 })
+
+// 窗口大小变化时调整位置
+const handleResize = () => {
+  if (isExpanded.value) {
+    // 展开状态：确保不超出视口
+    const maxX = window.innerWidth - playerWidth - 20
+    const maxY = window.innerHeight - playerHeight - 20
+    position.value = {
+      x: Math.min(position.value.x, maxX),
+      y: Math.min(position.value.y, maxY)
+    }
+  } else {
+    // 圆形状态：确保不超出视口
+    const maxX = window.innerWidth - circleSize / 2 - 20
+    const maxY = window.innerHeight - circleSize / 2 - 20
+    position.value = {
+      x: Math.min(position.value.x, maxX),
+      y: Math.min(position.value.y, maxY)
+    }
+  }
+}
+
+
 
 // 加载热门歌曲 - 使用缓存
 const loadHotSongs = async () => {
@@ -431,12 +457,10 @@ const clearAllTimers = () => {
 
 // 计算属性
 const positionStyle = computed(() => {
-  // 确保不超出视口
-  const maxX = window.innerWidth - (isExpanded.value ? playerWidth : circleSize) - 20
-  const maxY = window.innerHeight - (isExpanded.value ? playerHeight : circleSize) - 20
-
-  const x = Math.max(20, Math.min(maxX, position.value.x))
-  const y = Math.max(20, Math.min(maxY, position.value.y))
+  // 圆形状态：position 是中心点，需要偏移
+  // 展开状态：position 是左上角，不需要偏移
+  const x = position.value.x
+  const y = position.value.y
 
   return {
     left: `${x}px`,
@@ -516,13 +540,31 @@ const handleCircleClick = () => {
 // 展开/收起
 const expand = () => {
   // 计算展开位置，确保不超出视口
+  // 如果当前位置太靠右，展开时向左调整
+  const currentX = position.value.x
+  const currentY = position.value.y
+  
+  // 计算展开后的最大允许位置
   const maxX = window.innerWidth - playerWidth - 20
   const maxY = window.innerHeight - playerHeight - 20
-
-  position.value = {
-    x: Math.max(20, Math.min(maxX, position.value.x)),
-    y: Math.max(20, Math.min(maxY, position.value.y))
+  
+  // 调整位置：如果太靠右，向左移动；如果太靠下，向上移动
+  let newX = currentX
+  let newY = currentY
+  
+  // 圆形状态时 position 是中心点，展开后需要调整
+  if (currentX > maxX) {
+    newX = maxX
   }
+  if (currentY > maxY) {
+    newY = maxY
+  }
+  
+  // 确保不小于最小边距
+  newX = Math.max(20, newX)
+  newY = Math.max(20, newY)
+
+  position.value = { x: newX, y: newY }
 
   isExpanded.value = true
   showDropdown.value = true
@@ -578,14 +620,26 @@ const startDrag = (e: MouseEvent) => {
 const onDrag = (e: MouseEvent) => {
   if (!isDragging.value) return
 
-  const size = isExpanded.value ? 0 : circleSize / 2
-  const maxX = window.innerWidth - (isExpanded.value ? playerWidth : circleSize) - 20
-  const maxY = window.innerHeight - (isExpanded.value ? playerHeight : circleSize) - 20
-
-  position.value = {
-    x: Math.max(20 + size, Math.min(maxX + size, e.clientX - dragOffset.value.x)),
-    y: Math.max(20 + size, Math.min(maxY + size, e.clientY - dragOffset.value.y))
+  // 计算新位置
+  let newX = e.clientX - dragOffset.value.x
+  let newY = e.clientY - dragOffset.value.y
+  
+  // 根据状态限制边界
+  if (isExpanded.value) {
+    // 展开状态：position 是左上角
+    const maxX = window.innerWidth - playerWidth - 20
+    const maxY = window.innerHeight - playerHeight - 20
+    newX = Math.max(20, Math.min(maxX, newX))
+    newY = Math.max(20, Math.min(maxY, newY))
+  } else {
+    // 圆形状态：position 是中心点
+    const maxX = window.innerWidth - circleSize / 2 - 20
+    const maxY = window.innerHeight - circleSize / 2 - 20
+    newX = Math.max(circleSize / 2 + 20, Math.min(maxX, newX))
+    newY = Math.max(circleSize / 2 + 20, Math.min(maxY, newY))
   }
+
+  position.value = { x: newX, y: newY }
 }
 
 const stopDrag = () => {
