@@ -20,7 +20,7 @@ export const sharedConfig = defineConfig({
   markdown: {
     lineNumbers: true, // 显示行号
     theme: {
-      light: 'catppuccin-latte',
+      light: 'catppuccin-frappe',
       dark: 'catppuccin-mocha'
     },
     image: {
