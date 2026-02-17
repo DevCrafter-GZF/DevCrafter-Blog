@@ -1,0 +1,22 @@
+/* 表格全宽样式 */
+.vp-doc table {
+    width: 100%;
+    display: table;
+}
+
+/* 确保表格单元格内容正常显示 */
+.vp-doc th,
+.vp-doc td {
+    text-align: left;
+}
+
+/* 表格头部样式优化 */
+.vp-doc th {
+    font-weight: 600;
+    background-color: var(--vp-c-bg-soft);
+}
+
+/* 表格行悬停效果 */
+.vp-doc tr:hover {
+    background-color: var(--vp-c-bg-soft);
+}

@@ -1,0 +1,1 @@
+import{_ as e,o as t,c as n}from"./chunks/framework.8QHTAZsS.js";const l=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"en/WebApi/index.md","filePath":"en/WebApi/index.md","lastUpdated":null}'),a={name:"en/WebApi/index.md"};function r(i,o,s,d,c,p){return t(),n("div")}const m=e(a,[["render",r]]);export{l as __pageData,m as default};

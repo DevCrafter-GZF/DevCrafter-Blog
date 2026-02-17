@@ -1,0 +1,105 @@
+/*
+ * @Author: GZF
+ * @Date: 2025-01-17 20:22:24
+ * @Description: H1标题颜色渐变
+ */
+
+h1 {
+  background: -webkit-linear-gradient(10deg, #bd34fe 5%, #e43498 15%);
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+/* 版本设置图片 */
+.copyright{
+  display: inline-flex;
+}
+
+.medium-zoom-overlay {
+  z-index: 30;
+}
+
+.medium-zoom-image {
+  z-index: 9999 !important;/* 给的值是21，但是实测盖不住，直接999 */
+}
+
+
+:root {
+  --vp-badge-info-border: transparent;
+  --vp-badge-info-text: var(--vp-c-text-2);
+  --vp-badge-info-bg: var(--vp-c-default-soft);
+
+  --vp-badge-tip-border: transparent;
+  --vp-badge-tip-text: var(--vp-c-tip-1);
+  --vp-badge-tip-bg: var(--vp-c-tip-soft);
+
+  --vp-badge-warning-border: transparent;
+  --vp-badge-warning-text: var(--vp-c-warning-1);
+  --vp-badge-warning-bg: var(--vp-c-warning-soft);
+
+  --vp-badge-danger-border: transparent;
+  --vp-badge-danger-text: var(--vp-c-danger-1);
+  --vp-badge-danger-bg: var(--vp-c-danger-soft);
+
+  --vp-badge-default-border: transparent;
+  --vp-badge-default-text: var(--vp-c-default-1);
+  --vp-badge-default-bg: var(--vp-c-default-soft);
+
+  --vp-badge-important-border: transparent;
+  --vp-badge-important-text: var(--vp-c-important-1);
+  --vp-badge-important-bg: var(--vp-c-important-soft);
+
+  --vp-badge-success-border: transparent;
+  --vp-badge-success-text: var(--vp-c-success-1);
+  --vp-badge-success-bg: var(--vp-c-success-soft);
+
+  --vp-badge-brand-border: transparent;
+  --vp-badge-brand-text: var(--vp-c-brand-1);
+  --vp-badge-brand-bg: var(--vp-c-brand-soft);
+
+  --vp-badge-note-border: transparent;
+  --vp-badge-note-text: var(--vp-c-note-1);
+  --vp-badge-note-bg: var(--vp-c-note-soft);
+
+  --vp-badge-caution-border: transparent;
+  --vp-badge-caution-text: var(--vp-c-caution-1);
+  --vp-badge-caution-bg: var(--vp-c-caution-soft);
+}
+
+/* 自定义 Badge 样式 */
+
+.VPBadge.brand {
+  border-color: var(--vp-badge-brand-border);
+  color: var(--vp-badge-brand-text);
+  background-color: var(--vp-badge-brand-bg);
+}
+
+
+.VPBadge.important {
+  border-color: var(--vp-badge-important-border);
+  color: var(--vp-badge-important-text);
+  background-color: var(--vp-badge-important-bg);
+}
+
+.VPBadge.success {
+  border-color: var(--vp-badge-success-border);
+  color: var(--vp-badge-success-text);
+  background-color: var(--vp-badge-success-bg);
+}
+
+.VPBadge.note {
+  border-color: var(--vp-badge-note-border);
+  color: var(--vp-badge-note-text);
+  background-color: var(--vp-badge-note-bg);
+}
+
+.VPBadge.default {
+  border-color: var(--vp-badge-default-border);
+  color: var(--vp-badge-tip-text);
+  background-color: var(--vp-badge-default-bg);
+}
+
+.VPBadge.caution {
+  border-color: var(--vp-badge-caution-border);
+  color: var(--vp-badge-caution-text);
+  background-color: var(--vp-badge-caution-bg);
+}

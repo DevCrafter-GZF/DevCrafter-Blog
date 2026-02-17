@@ -1,0 +1,70 @@
+/*
+ * @Author: GZF
+ * @Date: 2025-01-17 21:23:24
+ * @Description: link链接前面添加图标
+ */
+
+/* YouTube */
+.vp-doc a[href^="https://www.youtube.com/"]:before {
+  content: '';
+  background-image: url(../../../../public/svg/youtube.svg);
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  background-size: cover;
+  margin-right: 4px;
+}
+
+/* 哔哩哔哩 */
+.vp-doc a[href^="https://www.bilibili.com/"]:before {
+  content: '';
+  background-image: url(../../../../public/svg/bilibili.svg);
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  background-size: cover;
+  top: -2px;
+  margin-right: 4px;
+}
+
+.vp-doc a[href^="https://www.baidu.com/"]:before {
+  content: '';
+  background-image: url(../../../../public/svg/baidu.svg);
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  background-size: cover;
+  top: -2px;
+  margin-right: 4px;
+}
+.vp-doc a[href^="https://www.github.com/"]:before {
+  content: '';
+  background-image: url(../../../../public/svg/GitHub.svg);
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  background-size: cover;
+  top: -2px;
+  margin-right: 4px;
+}
+
+.vp-doc a[href^="https://www.google.com/"]:before {
+  content: '';
+  background-image: url(../../../../public/svg/google.svg);
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  background-size: cover;
+  top: -2px;
+  margin-right: 4px;
+}
