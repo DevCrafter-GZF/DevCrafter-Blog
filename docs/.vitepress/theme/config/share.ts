@@ -160,3 +160,19 @@ export const sharedConfig = defineConfig({
       ]
   ],
 })
+
+// Giscus 评论组件配置
+export const giscusConfig = {
+  repo: 'DevCrafter-GZF/BlogComments',
+  repoId: '', // 需要从 GitHub 获取
+  category: 'Announcements',
+  categoryId: '', // 需要从 GitHub 获取
+  mapping: 'pathname',
+  strict: '0',
+  reactionsEnabled: '1',
+  emitMetadata: '0',
+  inputPosition: 'bottom',
+  theme: 'preferred_color_scheme',
+  lang: 'zh-CN',
+  loading: 'lazy'
+}

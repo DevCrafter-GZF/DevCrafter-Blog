@@ -56,6 +56,9 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }: MouseEvent) => {
     <template #doc-footer-before>
       <BackToTop />
     </template>
+    <template #doc-after>
+      <GiscusComment />
+    </template>
     <template #layout-top>
       <MouseFollower />
       <MouseClick />

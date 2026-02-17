@@ -14,6 +14,7 @@ import update from "./components/update.vue" // 更新
 import mediumZoom from 'medium-zoom'; // 图片缩放
 import MNavLinks from './components/MNavLinks.vue' // 导航
 import ArticleMetadata from './components/ArticleMetadata.vue' // 文章信息
+import GiscusComment from './components/GiscusComment.vue' // Giscus评论
 import './styles/index.css'
 import 'virtual:group-icons.css' //代码组样式
 
@@ -54,6 +55,7 @@ export default {
     app.component('update', update)
     app.component('MNavLinks', MNavLinks)
     app.component('ArticleMetadata', ArticleMetadata)
+    app.component('GiscusComment', GiscusComment)
     
     if (inBrowser) {
       NProgress.configure({showSpinner: false})
