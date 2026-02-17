@@ -323,8 +323,8 @@ let overlayTimer: ReturnType<typeof setTimeout> | null = null
 const position = ref({x: 0, y: 0})
 const dragOffset = ref({x: 0, y: 0})
 const playerWidth = 340
-const playerHeight = 480  // 基础高度
-const playerHeightWithPlaylist = 680  // 显示播放列表时的高度
+const playerHeight = 420  // 基础高度（减小以适应屏幕）
+const playerHeightWithPlaylist = 580  // 显示播放列表时的高度
 const circleSize = 64
 
 // 音频元素
@@ -1048,7 +1048,7 @@ const searchMusic = async () => {
 
 /* 搜索下拉框 */
 .search-dropdown {
-  max-height: 240px;
+  max-height: 180px;
   overflow-y: auto;
   background: var(--vp-c-bg-soft);
   border-bottom: 1px solid var(--vp-c-divider);
