@@ -10,32 +10,26 @@ editLink: true
 lastUpdated: true
 
 hero:
-
-# name: "开发工匠博客"
-
-name: "DevCrafter Blog"
-
-# text: 热爱生活，热爱世界
-
-text: "Love life, love the world"
-
-# tagline: 世界以痛吻我，我要报之以歌
-
-tagline: The world kisses me with pain, but I respond with a song
-image:
-light: /logo/剪纸龙舞.svg
-dark: /logo/剪影魅凤.svg
-alt: DevCrafter Blog Logo
-actions:
-  - theme: brand
-    text: 🏠 home
-    link: /en/
-  - theme: alt
-    text: 🤔 DevCrafter Blog
-    link: /en/guide/start.md
-  - theme: alt
-    text: GitHub
-    link: https://github.com/DevCrafter-GZF/DevCrafter-Blog
+  # name: "开发工匠博客"
+  name: "DevCrafter Blog"
+  # text: 热爱生活，热爱世界
+  text: "Love life, love the world"
+  # tagline: 世界以痛吻我，我要报之以歌
+  tagline: The world kisses me with pain, but I respond with a song
+  image:
+    light: /logo/剪纸龙舞.svg
+    dark: /logo/剪影魅凤.svg
+    alt: DevCrafter Blog Logo
+  actions:
+    - theme: brand
+      text: 🏠 home
+      link: /en/
+    - theme: alt
+      text: 🤔 DevCrafter Blog
+      link: /en/guide/start.md
+    - theme: alt
+      text: GitHub
+      link: https://github.com/DevCrafter-GZF/DevCrafter-Blog
 
 features:
   - icon: 🌐
