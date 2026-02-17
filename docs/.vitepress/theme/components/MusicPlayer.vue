@@ -6,64 +6,64 @@
 <template>
   <Teleport to="body">
     <div
-      class="music-player-float"
-      :class="{
+        :class="{
         'expanded': isExpanded,
         'playing': isPlaying,
         'dragging': isDragging
       }"
-      :style="positionStyle"
-      @mouseenter="onMouseEnter"
-      @mouseleave="onMouseLeave"
+        :style="positionStyle"
+        class="music-player-float"
+        @mouseenter="onMouseEnter"
+        @mouseleave="onMouseLeave"
     >
       <!-- 圆形状态 -->
-      <div 
-        v-if="!isExpanded" 
-        class="player-circle" 
-        @click.stop="handleCircleClick"
-        @mousedown="startDrag"
+      <div
+          v-if="!isExpanded"
+          class="player-circle"
+          @mousedown="startDrag"
+          @click.stop="handleCircleClick"
       >
-        <div class="album-rotate" :class="{ 'rotating': isPlaying }">
+        <div :class="{ 'rotating': isPlaying }" class="album-rotate">
           <img :src="currentSong?.cover || defaultCover" alt="album">
         </div>
-        
-        <div class="play-overlay" :class="{ 'show': showPlayOverlay }">
-          <svg v-if="isPlaying" viewBox="0 0 24 24" fill="currentColor" class="overlay-icon">
-            <rect x="6" y="4" width="4" height="16"/>
-            <rect x="14" y="4" width="4" height="16"/>
+
+        <div :class="{ 'show': showPlayOverlay }" class="play-overlay">
+          <svg v-if="isPlaying" class="overlay-icon" fill="currentColor" viewBox="0 0 24 24">
+            <rect height="16" width="4" x="6" y="4"/>
+            <rect height="16" width="4" x="14" y="4"/>
           </svg>
-          <svg v-else viewBox="0 0 24 24" fill="currentColor" class="overlay-icon">
+          <svg v-else class="overlay-icon" fill="currentColor" viewBox="0 0 24 24">
             <path d="M8 5v14l11-7z"/>
           </svg>
         </div>
-        
-        <div class="hover-hint" v-if="isHovered">
+
+        <div v-if="isHovered" class="hover-hint">
           <span>{{ isPlaying ? '点击暂停' : '点击播放' }}</span>
         </div>
-        
-        <div class="sound-waves" v-if="isPlaying">
+
+        <div v-if="isPlaying" class="sound-waves">
           <span></span><span></span><span></span>
         </div>
       </div>
 
       <!-- 展开状态 -->
-      <div 
-        v-else 
-        class="player-expanded" 
-        @click.stop
-        @mouseenter="clearCollapseTimer" 
-        @mouseleave="startCollapseTimer"
+      <div
+          v-else
+          class="player-expanded"
+          @mouseenter="clearCollapseTimer"
+          @mouseleave="startCollapseTimer"
+          @click.stop
       >
         <!-- 头部 -->
         <div class="player-header" @mousedown="startDrag">
           <div class="header-title">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="title-icon">
+            <svg class="title-icon" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
             </svg>
             <span>音乐</span>
           </div>
-          <button class="header-btn" @click="collapse" title="收起">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <button class="header-btn" title="收起" @click="collapse">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path d="M19 9l-7 7-7-7"/>
             </svg>
           </button>
@@ -72,21 +72,21 @@
         <!-- 搜索区域 -->
         <div class="search-section">
           <div class="search-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon-svg">
+            <svg class="search-icon-svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <circle cx="11" cy="11" r="8"/>
               <path d="M21 21l-4.35-4.35"/>
             </svg>
             <input
-              v-model="searchKeyword"
-              @focus="onSearchFocus"
-              @blur="onSearchBlur"
-              @input="onSearchInput"
-              @keyup.enter="searchMusic"
-              placeholder="搜索歌曲..."
-              type="text"
+                v-model="searchKeyword"
+                placeholder="搜索歌曲..."
+                type="text"
+                @blur="onSearchBlur"
+                @focus="onSearchFocus"
+                @input="onSearchInput"
+                @keyup.enter="searchMusic"
             >
             <button v-if="searchKeyword" class="clear-search" @click="clearSearch">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M18 6L6 18M6 6l12 12"/>
               </svg>
             </button>
@@ -103,11 +103,11 @@
             </div>
             <div class="dropdown-list">
               <div
-                v-for="song in searchResults"
-                :key="song.id"
-                class="dropdown-item"
-                :class="{ 'active': currentSong?.id === song.id }"
-                @click="playSong(song)"
+                  v-for="song in searchResults"
+                  :key="song.id"
+                  :class="{ 'active': currentSong?.id === song.id }"
+                  class="dropdown-item"
+                  @click="playSong(song)"
               >
                 <img :src="song.cover" class="item-cover">
                 <div class="item-info">
@@ -115,10 +115,13 @@
                   <div class="item-artist">{{ song.artist }}</div>
                 </div>
                 <div class="play-status">
-                  <svg v-if="currentSong?.id === song.id && isPlaying" viewBox="0 0 24 24" fill="currentColor" class="playing-icon">
-                    <rect x="4" y="4" width="4" height="16"/><rect x="10" y="4" width="4" height="16"/><rect x="16" y="4" width="4" height="16"/>
+                  <svg v-if="currentSong?.id === song.id && isPlaying" class="playing-icon" fill="currentColor"
+                       viewBox="0 0 24 24">
+                    <rect height="16" width="4" x="4" y="4"/>
+                    <rect height="16" width="4" x="10" y="4"/>
+                    <rect height="16" width="4" x="16" y="4"/>
                   </svg>
-                  <svg v-else viewBox="0 0 24 24" fill="currentColor">
+                  <svg v-else fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z"/>
                   </svg>
                 </div>
@@ -130,8 +133,9 @@
           <div v-else class="dropdown-section">
             <div class="dropdown-title">
               <span>热门推荐</span>
-              <button class="refresh-btn" @click="refreshHotSongs" :disabled="loadingHot">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" :class="{ 'spinning': loadingHot }">
+              <button :disabled="loadingHot" class="refresh-btn" @click="refreshHotSongs">
+                <svg :class="{ 'spinning': loadingHot }" fill="none" stroke="currentColor" stroke-width="2"
+                     viewBox="0 0 24 24">
                   <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
                 </svg>
               </button>
@@ -142,11 +146,11 @@
               </div>
               <template v-else>
                 <div
-                  v-for="song in hotSongs"
-                  :key="song.id"
-                  class="dropdown-item"
-                  :class="{ 'active': currentSong?.id === song.id }"
-                  @click="playSong(song)"
+                    v-for="song in hotSongs"
+                    :key="song.id"
+                    :class="{ 'active': currentSong?.id === song.id }"
+                    class="dropdown-item"
+                    @click="playSong(song)"
                 >
                   <img :src="song.cover" class="item-cover">
                   <div class="item-info">
@@ -154,10 +158,13 @@
                     <div class="item-artist">{{ song.artist }}</div>
                   </div>
                   <div class="play-status">
-                    <svg v-if="currentSong?.id === song.id && isPlaying" viewBox="0 0 24 24" fill="currentColor" class="playing-icon">
-                      <rect x="4" y="4" width="4" height="16"/><rect x="10" y="4" width="4" height="16"/><rect x="16" y="4" width="4" height="16"/>
+                    <svg v-if="currentSong?.id === song.id && isPlaying" class="playing-icon" fill="currentColor"
+                         viewBox="0 0 24 24">
+                      <rect height="16" width="4" x="4" y="4"/>
+                      <rect height="16" width="4" x="10" y="4"/>
+                      <rect height="16" width="4" x="16" y="4"/>
                     </svg>
-                    <svg v-else viewBox="0 0 24 24" fill="currentColor">
+                    <svg v-else fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z"/>
                     </svg>
                   </div>
@@ -168,9 +175,9 @@
         </div>
 
         <!-- 当前播放 -->
-        <div class="now-playing" v-if="currentSong">
+        <div v-if="currentSong" class="now-playing">
           <div class="album-section">
-            <img :src="currentSong.cover" class="current-cover" :class="{ 'rotating': isPlaying }">
+            <img :class="{ 'rotating': isPlaying }" :src="currentSong.cover" class="current-cover" @error="handleImageError">
           </div>
           <div class="song-info">
             <div class="song-name">{{ currentSong.name }}</div>
@@ -179,54 +186,56 @@
         </div>
 
         <!-- 进度条 -->
-        <div class="progress-section" v-if="currentSong">
+        <div v-if="currentSong" class="progress-section">
           <span class="time">{{ formatTime(currentTime) }}</span>
-          <div class="progress-bar" @click="seekProgress" ref="progressBar">
-            <div class="progress-fill" :style="{ width: progressPercent + '%' }"></div>
+          <div ref="progressBar" class="progress-bar" @click="seekProgress">
+            <div :style="{ width: progressPercent + '%' }" class="progress-fill"></div>
           </div>
           <span class="time">{{ formatTime(duration) }}</span>
         </div>
 
         <!-- 控制按钮 -->
         <div class="controls">
-          <button class="ctrl-btn" @click="toggleMode" :title="playModeText">
-            <svg v-if="playMode === 'sequence'" viewBox="0 0 24 24" fill="currentColor">
+          <button :title="playModeText" class="ctrl-btn" @click="toggleMode">
+            <svg v-if="playMode === 'sequence'" fill="currentColor" viewBox="0 0 24 24">
               <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
             </svg>
-            <svg v-else-if="playMode === 'random'" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
+            <svg v-else-if="playMode === 'random'" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                  d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
             </svg>
-            <svg v-else viewBox="0 0 24 24" fill="currentColor">
+            <svg v-else fill="currentColor" viewBox="0 0 24 24">
               <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-2-6v2h2v-2h-2z"/>
             </svg>
           </button>
-          
-          <button class="ctrl-btn" @click="prevSong" title="上一首">
-            <svg viewBox="0 0 24 24" fill="currentColor">
+
+          <button class="ctrl-btn" title="上一首" @click="prevSong">
+            <svg fill="currentColor" viewBox="0 0 24 24">
               <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
             </svg>
           </button>
-          
-          <button class="ctrl-btn play-btn" @click="togglePlay" :title="isPlaying ? '暂停' : '播放'">
-            <svg v-if="isPlaying" viewBox="0 0 24 24" fill="currentColor">
+
+          <button :title="isPlaying ? '暂停' : '播放'" class="ctrl-btn play-btn" @click="togglePlay">
+            <svg v-if="isPlaying" fill="currentColor" viewBox="0 0 24 24">
               <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
             </svg>
-            <svg v-else viewBox="0 0 24 24" fill="currentColor">
+            <svg v-else fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z"/>
             </svg>
           </button>
-          
-          <button class="ctrl-btn" @click="nextSong" title="下一首">
-            <svg viewBox="0 0 24 24" fill="currentColor">
+
+          <button class="ctrl-btn" title="下一首" @click="nextSong">
+            <svg fill="currentColor" viewBox="0 0 24 24">
               <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
             </svg>
           </button>
-          
-          <button class="ctrl-btn" @click="showPlaylist = !showPlaylist" :class="{ 'active': showPlaylist }" title="播放列表">
-            <svg viewBox="0 0 24 24" fill="currentColor">
+
+          <button :class="{ 'active': showPlaylist }" class="ctrl-btn" title="播放列表"
+                  @click="showPlaylist = !showPlaylist">
+            <svg fill="currentColor" viewBox="0 0 24 24">
               <path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/>
             </svg>
-            <span class="list-badge" v-if="playlist.length > 0">{{ playlist.length }}</span>
+            <span v-if="playlist.length > 0" class="list-badge">{{ playlist.length }}</span>
           </button>
         </div>
 
@@ -235,18 +244,18 @@
           <div class="playlist-header">
             <span>播放列表 ({{ playlist.length }})</span>
             <button class="close-btn" @click="showPlaylist = false">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M18 6L6 18M6 6l12 12"/>
               </svg>
             </button>
           </div>
           <div class="playlist-content">
             <div
-              v-for="(song, index) in playlist"
-              :key="song.id"
-              class="playlist-item"
-              :class="{ 'active': currentSong?.id === song.id }"
-              @click="playSong(song)"
+                v-for="(song, index) in playlist"
+                :key="song.id"
+                :class="{ 'active': currentSong?.id === song.id }"
+                class="playlist-item"
+                @click="playSong(song)"
             >
               <span class="item-number">{{ index + 1 }}</span>
               <div class="item-detail">
@@ -264,23 +273,28 @@
 
     <!-- 音频元素 -->
     <audio
-      ref="audioPlayer"
-      :src="audioUrl"
-      @timeupdate="onTimeUpdate"
-      @loadedmetadata="onLoadedMetadata"
-      @ended="onEnded"
-      @play="isPlaying = true"
-      @pause="isPlaying = false"
-      @error="onError"
+        ref="audioPlayer"
+        :src="audioUrl"
+        @ended="onEnded"
+        @error="onError"
+        @loadedmetadata="onLoadedMetadata"
+        @pause="isPlaying = false"
+        @play="isPlaying = true"
+        @timeupdate="onTimeUpdate"
     ></audio>
   </Teleport>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+<script lang="ts" setup>
+import {ref, computed, onMounted, onUnmounted} from 'vue'
+// 默认封面 - 使用可靠的默认图片
+const defaultCover = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect fill="%23667eea" width="100" height="100"/%3E%3Ccircle fill="%23764ba2" cx="50" cy="50" r="30"/%3E%3Ccircle fill="%23fff" cx="50" cy="50" r="10"/%3E%3C/svg%3E'
 
-// 默认封面
-const defaultCover = 'https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg'
+// 处理图片加载失败
+const handleImageError = (e: Event) => {
+  const img = e.target as HTMLImageElement
+  img.src = defaultCover
+}
 
 // 状态
 const isExpanded = ref(false)
@@ -306,8 +320,8 @@ let collapseTimer: ReturnType<typeof setTimeout> | null = null
 let overlayTimer: ReturnType<typeof setTimeout> | null = null
 
 // 位置
-const position = ref({ x: 0, y: 0 })
-const dragOffset = ref({ x: 0, y: 0 })
+const position = ref({x: 0, y: 0})
+const dragOffset = ref({x: 0, y: 0})
 const playerWidth = 340
 const playerHeight = 500
 const circleSize = 64
@@ -337,31 +351,33 @@ const loadHotSongs = async () => {
   const cached = sessionStorage.getItem('music_hot_songs')
   if (cached) {
     try {
-      hotSongs.value = JSON.parse(cached)
+      const parsed = JSON.parse(cached)
+      hotSongs.value = parsed.map((s: any) => ({...s, cover: s.cover || defaultCover}))
       if (!currentSong.value && hotSongs.value.length > 0) {
         currentSong.value = hotSongs.value[0]
         playlist.value = [...hotSongs.value]
       }
-      return
     } catch (e) {
       console.log('缓存解析失败')
     }
   }
-  
-  // 使用默认数据立即显示
-  hotSongs.value = [
-    { id: '25706282', name: '起风了', artist: '买辣椒也用券', cover: 'https://p1.music.126.net/diGAyEmpymX8G7JcnElncQ==/109951163699673355.jpg' },
-    { id: '1293886117', name: '体面', artist: '于文文', cover: 'https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg' },
-    { id: '863046037', name: '告白气球', artist: '周杰伦', cover: 'https://p1.music.126.net/W5LJG0CjPF9e5z7nSvbBbg==/18874216602702134.jpg' },
-    { id: '1293951677', name: '追光者', artist: '岑宁儿', cover: 'https://p1.music.126.net/8N1fsMRm2L5HyZccc6I3ew==/109951163020571782.jpg' },
-    { id: '27808044', name: '平凡之路', artist: '朴树', cover: 'https://p1.music.126.net/Wp4L-I7qwn_sX0SOe33Qrw==/109951163221161145.jpg' },
-    { id: '186016', name: '晴天', artist: '周杰伦', cover: 'https://p1.music.126.net/W5LJG0CjPF9e5z7nSvbBbg==/18874216602702134.jpg' }
-  ]
-  if (!currentSong.value) {
-    currentSong.value = hotSongs.value[0]
-    playlist.value = [...hotSongs.value]
+
+  // 如果缓存为空，使用默认数据
+  if (hotSongs.value.length === 0) {
+    hotSongs.value = [
+      {id: '25706282', name: '起风了', artist: '买辣椒也用券', cover: defaultCover},
+      {id: '1293886117', name: '体面', artist: '于文文', cover: defaultCover},
+      {id: '863046037', name: '告白气球', artist: '周杰伦', cover: defaultCover},
+      {id: '1293951677', name: '追光者', artist: '岑宁儿', cover: defaultCover},
+      {id: '27808044', name: '平凡之路', artist: '朴树', cover: defaultCover},
+      {id: '186016', name: '晴天', artist: '周杰伦', cover: defaultCover}
+    ]
+    if (!currentSong.value) {
+      currentSong.value = hotSongs.value[0]
+      playlist.value = [...hotSongs.value]
+    }
   }
-  
+
   // 后台异步更新
   fetchHotSongs()
 }
@@ -372,21 +388,24 @@ const fetchHotSongs = async () => {
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 5000)
-    
+
     const response = await fetch('https://cloud-music-api-f494k233t-azhe403.vercel.app/personalized/newsong?limit=8', {
       signal: controller.signal
     })
     clearTimeout(timeoutId)
-    
+
     const data = await response.json()
-    
+
     if (data.result) {
-      hotSongs.value = data.result.map((item: any) => ({
-        id: item.id.toString(),
-        name: item.name,
-        artist: item.artists?.map((a: any) => a.name).join('/') || '未知歌手',
-        cover: item.picUrl || item.album?.picUrl || defaultCover
-      }))
+      hotSongs.value = data.result.map((item: any) => {
+        const coverUrl = item.picUrl || item.album?.picUrl
+        return {
+          id: item.id.toString(),
+          name: item.name,
+          artist: item.artists?.map((a: any) => a.name).join('/') || '未知歌手',
+          cover: coverUrl && coverUrl.startsWith('http') ? coverUrl : defaultCover
+        }
+      })
       // 缓存到 sessionStorage
       sessionStorage.setItem('music_hot_songs', JSON.stringify(hotSongs.value))
     }
@@ -415,10 +434,10 @@ const positionStyle = computed(() => {
   // 确保不超出视口
   const maxX = window.innerWidth - (isExpanded.value ? playerWidth : circleSize) - 20
   const maxY = window.innerHeight - (isExpanded.value ? playerHeight : circleSize) - 20
-  
+
   const x = Math.max(20, Math.min(maxX, position.value.x))
   const y = Math.max(20, Math.min(maxY, position.value.y))
-  
+
   return {
     left: `${x}px`,
     top: `${y}px`,
@@ -437,7 +456,7 @@ const progressPercent = computed(() => {
 })
 
 const playModeText = computed(() => {
-  const texts = { sequence: '顺序播放', random: '随机播放', single: '单曲循环' }
+  const texts = {sequence: '顺序播放', random: '随机播放', single: '单曲循环'}
   return texts[playMode.value]
 })
 
@@ -499,12 +518,12 @@ const expand = () => {
   // 计算展开位置，确保不超出视口
   const maxX = window.innerWidth - playerWidth - 20
   const maxY = window.innerHeight - playerHeight - 20
-  
+
   position.value = {
     x: Math.max(20, Math.min(maxX, position.value.x)),
     y: Math.max(20, Math.min(maxY, position.value.y))
   }
-  
+
   isExpanded.value = true
   showDropdown.value = true
 }
@@ -551,18 +570,18 @@ const startDrag = (e: MouseEvent) => {
     x: e.clientX - position.value.x,
     y: e.clientY - position.value.y
   }
-  
+
   document.addEventListener('mousemove', onDrag)
   document.addEventListener('mouseup', stopDrag)
 }
 
 const onDrag = (e: MouseEvent) => {
   if (!isDragging.value) return
-  
+
   const size = isExpanded.value ? 0 : circleSize / 2
   const maxX = window.innerWidth - (isExpanded.value ? playerWidth : circleSize) - 20
   const maxY = window.innerHeight - (isExpanded.value ? playerHeight : circleSize) - 20
-  
+
   position.value = {
     x: Math.max(20 + size, Math.min(maxX + size, e.clientX - dragOffset.value.x)),
     y: Math.max(20 + size, Math.min(maxY + size, e.clientY - dragOffset.value.y))
@@ -667,25 +686,28 @@ const formatTime = (time: number) => {
 // 搜索
 const searchMusic = async () => {
   if (!searchKeyword.value.trim()) return
-  
+
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 5000)
-    
+
     const response = await fetch(`https://cloud-music-api-f494k233t-azhe403.vercel.app/search?keywords=${encodeURIComponent(searchKeyword.value)}&limit=8`, {
       signal: controller.signal
     })
     clearTimeout(timeoutId)
-    
+
     const data = await response.json()
-    
+
     if (data.result?.songs) {
-      searchResults.value = data.result.songs.map((song: any) => ({
-        id: song.id.toString(),
-        name: song.name,
-        artist: song.artists?.map((a: any) => a.name).join('/') || '未知歌手',
-        cover: song.album?.picUrl || defaultCover
-      }))
+      searchResults.value = data.result.songs.map((song: any) => {
+        const coverUrl = song.album?.picUrl
+        return {
+          id: song.id.toString(),
+          name: song.name,
+          artist: song.artists?.map((a: any) => a.name).join('/') || '未知歌手',
+          cover: coverUrl && coverUrl.startsWith('http') ? coverUrl : defaultCover
+        }
+      })
     } else {
       searchResults.value = []
     }
@@ -753,8 +775,12 @@ const searchMusic = async () => {
 }
 
 @keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* 播放覆盖层 */
@@ -816,13 +842,28 @@ const searchMusic = async () => {
   animation: wave 0.6s ease-in-out infinite;
 }
 
-.sound-waves span:nth-child(1) { height: 8px; animation-delay: 0s; }
-.sound-waves span:nth-child(2) { height: 12px; animation-delay: 0.15s; }
-.sound-waves span:nth-child(3) { height: 10px; animation-delay: 0.3s; }
+.sound-waves span:nth-child(1) {
+  height: 8px;
+  animation-delay: 0s;
+}
+
+.sound-waves span:nth-child(2) {
+  height: 12px;
+  animation-delay: 0.15s;
+}
+
+.sound-waves span:nth-child(3) {
+  height: 10px;
+  animation-delay: 0.3s;
+}
 
 @keyframes wave {
-  0%, 100% { transform: scaleY(1); }
-  50% { transform: scaleY(0.5); }
+  0%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.5);
+  }
 }
 
 /* 展开状态 */
@@ -1017,8 +1058,12 @@ const searchMusic = async () => {
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .dropdown-list {
@@ -1113,8 +1158,12 @@ const searchMusic = async () => {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* 当前播放 */
@@ -1382,13 +1431,28 @@ const searchMusic = async () => {
   animation: soundBar 0.5s ease-in-out infinite;
 }
 
-.playing-indicator span:nth-child(1) { height: 6px; animation-delay: 0s; }
-.playing-indicator span:nth-child(2) { height: 12px; animation-delay: 0.1s; }
-.playing-indicator span:nth-child(3) { height: 8px; animation-delay: 0.2s; }
+.playing-indicator span:nth-child(1) {
+  height: 6px;
+  animation-delay: 0s;
+}
+
+.playing-indicator span:nth-child(2) {
+  height: 12px;
+  animation-delay: 0.1s;
+}
+
+.playing-indicator span:nth-child(3) {
+  height: 8px;
+  animation-delay: 0.2s;
+}
 
 @keyframes soundBar {
-  0%, 100% { transform: scaleY(1); }
-  50% { transform: scaleY(0.5); }
+  0%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.5);
+  }
 }
 
 /* 深色模式 */
