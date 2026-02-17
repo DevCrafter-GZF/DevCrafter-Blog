@@ -550,7 +550,7 @@ const expand = () => {
   const currentX = position.value.x
   const currentY = position.value.y
   
-  // 计算展开后的最大允许位置（使用基础高度）
+  // 计算展开后的最大允许位置（考虑下拉框高度）
   const maxX = window.innerWidth - playerWidth - 20
   const maxY = window.innerHeight - playerHeight - 20
   
@@ -566,6 +566,9 @@ const expand = () => {
 
   isExpanded.value = true
   showDropdown.value = true
+  
+  // 展开后再次调整位置（考虑下拉框）
+  setTimeout(adjustPositionForDropdown, 50)
 }
 
 const collapse = () => {
@@ -580,6 +583,24 @@ const collapse = () => {
 const onSearchFocus = () => {
   showDropdown.value = true
   clearCollapseTimer()
+  // 显示下拉框时，确保不超出底部
+  adjustPositionForDropdown()
+}
+
+// 调整位置以适应下拉框
+const adjustPositionForDropdown = () => {
+  if (!isExpanded.value) return
+  
+  // 计算当前需要的总高度
+  const dropdownHeight = 180  // max-height of search-dropdown
+  const baseHeight = 280  // 播放器基础部分高度（头部+搜索+当前播放+控制按钮）
+  const totalHeight = baseHeight + dropdownHeight
+  
+  // 检查是否超出底部
+  const maxY = window.innerHeight - totalHeight - 20
+  if (position.value.y > maxY) {
+    position.value.y = Math.max(20, maxY)
+  }
 }
 
 const onSearchBlur = () => {
@@ -593,6 +614,8 @@ const onSearchBlur = () => {
 const onSearchInput = () => {
   if (searchKeyword.value.trim()) {
     searchMusic()
+    // 搜索后调整位置
+    setTimeout(adjustPositionForDropdown, 100)
   } else {
     searchResults.value = []
   }
