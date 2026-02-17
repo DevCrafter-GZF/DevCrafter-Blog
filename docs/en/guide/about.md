@@ -19,23 +19,24 @@ A developer passionate about technology, committed to:
 ::: code-group
 
 ```markdown [Frontend]
-- Vue 3 / React
-- TypeScript
-- Vite / Webpack
-- Tailwind CSS
+- Vue 3 / React 18
+- TypeScript 5.0
+- VitePress / Vite
+- ECharts Data Visualization
 ```
 
 ```markdown [Backend]
-- Node.js
-- Python
-- Go
+- Node.js / Express
+- Python 3.x
+- MySQL Database
+- RESTful API Design
 ```
 
 ```markdown [Tools]
-- Git
-- Docker
-- VS Code
-- Linux
+- Git Version Control
+- VS Code Editor
+- WebGIS Map Development
+- VitePress Documentation
 ```
 
 :::
@@ -51,17 +52,27 @@ The original intention of creating DevCrafter Blog:
 
 | Feature | Description |
 |---------|-------------|
-| **Bilingual Support** | Chinese and English对照, convenient for different readers |
-| **Practical Orientation** | Focus on practical combat, solve real problems |
-| **Continuous Updates** | Follow technological development, keep content fresh |
+| **Bilingual Support** | Chinese and English, convenient for different readers |
+| **Practical Orientation** | Focus on real-world practice, solve real problems |
+| **Continuous Updates** | Follow technology development, keep content fresh |
 | **Open Source** | Welcome feedback, jointly improve |
+
+**Content Coverage:**
+
+- 🌐 **Frontend Basics** - HTML, CSS, JavaScript core technologies
+- ⚡ **Frontend Frameworks** - Vue 2/3, React, TypeScript complete guide
+- 🗺️ **WebGIS Development** - Baidu Map, AMap, Tianditu, ECharts Map
+- 🖥️ **Backend Development** - Node.js, Python, MySQL database
+- 📈 **Data Visualization** - ECharts chart configuration and practice
+- 🚀 **Project Cases** - NetEase Cloud Music, e-commerce admin, etc.
+- 🧭 **Developer Navigation** - Categorized development resources and AI tools
 
 
 ## 📮 Contact
 
-- 🌐 **Blog**: [https://blog.devcrafter.cn](https://blog.devcrafter.cn)
-- 💻 **GitHub**: [https://github.com](https://github.com)
-- 📧 **Email**: Welcome to contact through GitHub Issues
+- 🌐 **Blog**: [https://devcrafter-gzf.github.io/DevCrafter-Blog/](https://devcrafter-gzf.github.io/DevCrafter-Blog/)
+- 💻 **GitHub**: [https://github.com/DevCrafter-GZF/DevCrafter-Blog](https://github.com/DevCrafter-GZF/DevCrafter-Blog)
+- 📧 **Feedback**: Welcome to submit suggestions or issues via [GitHub Issues](https://github.com/DevCrafter-GZF/DevCrafter-Blog/issues)
 
 
 ## 🤝 Welcome to Exchange
