@@ -11,7 +11,7 @@ hero:
   # name: "开发工匠博客"
   name: "DevCrafter Blog"
   # text: 热爱生活，热爱世界
-  text: "Love life and love the world"
+  text: "Love life, love the world"
   # tagline: 世界以痛吻我，我要报之以歌
   tagline: The world kisses me with pain, but I respond with a song
   image:
