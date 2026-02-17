@@ -7,14 +7,15 @@
 /* 代码组：tab间距 */
 .vp-code-group .tabs {
   padding-top: 20px;
-  display: flex;
-  flex-wrap: nowrap;
+  display: flex !important;
+  flex-wrap: nowrap !important;
   overflow-x: auto;
 }
 
 /* 代码组：tab按钮样式 */
 .vp-code-group .tabs label {
-  white-space: nowrap;
+  white-space: nowrap !important;
+  flex-shrink: 0;
 }
 
 /* 代码组：添加样式及阴影 */
