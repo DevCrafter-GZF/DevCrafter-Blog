@@ -26,11 +26,11 @@ export const zhSidebar: DefaultTheme.Sidebar = {
       text: '🗺️ WebGIS',
       collapsed: false,
       items: [
-        { text: '概述', link: '/WebGIS/index.md' },
-        { text: '百度地图', link: '/WebGIS/baidu.md' },
-        { text: '高德地图', link: '/WebGIS/gaode.md' },
-        { text: '天地图', link: '/WebGIS/tianditu.md' },
-        { text: 'ECharts 地图', link: '/WebGIS/echarts-map.md' },
+        { text: '概述', link: '/webgis/index.md' },
+        { text: '百度地图', link: '/webgis/baidu.md' },
+        { text: '高德地图', link: '/webgis/gaode.md' },
+        { text: '天地图', link: '/webgis/tianditu.md' },
+        { text: 'ECharts 地图', link: '/webgis/echarts-map.md' },
       ]
     },
     {

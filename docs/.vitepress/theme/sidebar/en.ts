@@ -27,11 +27,11 @@ export const enSidebar: DefaultTheme.Sidebar = {
       text: '🗺️ WebGIS',
       collapsed: false,
       items: [
-        {text: 'Overview', link: '/en/WebGIS/index.md'},
-        {text: 'Baidu Map', link: '/en/WebGIS/baidu.md'},
-        {text: 'AMap', link: '/en/WebGIS/gaode.md'},
-        {text: 'Tianditu', link: '/en/WebGIS/tianditu.md'},
-        {text: 'ECharts Map', link: '/en/WebGIS/echarts-map.md'},
+        {text: 'Overview', link: '/en/webgis/index.md'},
+        {text: 'Baidu Map', link: '/en/webgis/baidu.md'},
+        {text: 'AMap', link: '/en/webgis/gaode.md'},
+        {text: 'Tianditu', link: '/en/webgis/tianditu.md'},
+        {text: 'ECharts Map', link: '/en/webgis/echarts-map.md'},
       ]
     },
     {

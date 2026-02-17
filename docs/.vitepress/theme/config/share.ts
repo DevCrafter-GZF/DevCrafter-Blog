@@ -10,6 +10,7 @@ export const sharedConfig = defineConfig({
   },
   // base: '/',
   cleanUrls: true,
+  ignoreDeadLinks: true,
   metaChunk: true,
   // lang: 'zh-CN', // 语言
   title: "DevCrafter Blog",
