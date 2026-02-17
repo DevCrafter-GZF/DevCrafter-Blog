@@ -1,103 +1,109 @@
 {
-  "hash": "00429033",
+  "hash": "bab7bdb5",
   "configHash": "2ad919c4",
-  "lockfileHash": "97c0970b",
-  "browserHash": "09ee477c",
+  "lockfileHash": "6d36989d",
+  "browserHash": "8aa84858",
   "optimized": {
     "vue": {
       "src": "../../../../node_modules/vue/dist/vue.runtime.esm-bundler.js",
       "file": "vue.js",
-      "fileHash": "62e6469b",
+      "fileHash": "1c956f74",
       "needsInterop": false
     },
     "vitepress > @vue/devtools-api": {
       "src": "../../../../node_modules/@vue/devtools-api/dist/index.js",
       "file": "vitepress___@vue_devtools-api.js",
-      "fileHash": "90f5f7a3",
+      "fileHash": "65e9de67",
       "needsInterop": false
     },
     "vitepress > @vueuse/core": {
       "src": "../../../../node_modules/@vueuse/core/index.mjs",
       "file": "vitepress___@vueuse_core.js",
-      "fileHash": "9f94bf64",
+      "fileHash": "abe31faf",
       "needsInterop": false
     },
     "@braintree/sanitize-url": {
       "src": "../../../../node_modules/@braintree/sanitize-url/dist/index.js",
       "file": "@braintree_sanitize-url.js",
-      "fileHash": "bb7bcfd7",
+      "fileHash": "58258418",
       "needsInterop": true
     },
     "dayjs": {
       "src": "../../../../node_modules/dayjs/dayjs.min.js",
       "file": "dayjs.js",
-      "fileHash": "d851c619",
+      "fileHash": "77ac40b6",
       "needsInterop": true
     },
     "cytoscape-cose-bilkent": {
       "src": "../../../../node_modules/cytoscape-cose-bilkent/cytoscape-cose-bilkent.js",
       "file": "cytoscape-cose-bilkent.js",
-      "fileHash": "da87efd3",
+      "fileHash": "a03f768c",
       "needsInterop": true
     },
     "cytoscape": {
       "src": "../../../../node_modules/cytoscape/dist/cytoscape.esm.mjs",
       "file": "cytoscape.js",
-      "fileHash": "10c68e28",
+      "fileHash": "b11b995e",
       "needsInterop": false
     },
     "vitepress > @vueuse/integrations/useFocusTrap": {
       "src": "../../../../node_modules/@vueuse/integrations/useFocusTrap.mjs",
       "file": "vitepress___@vueuse_integrations_useFocusTrap.js",
-      "fileHash": "7edf7159",
+      "fileHash": "2e6e83a1",
       "needsInterop": false
     },
     "vitepress > mark.js/src/vanilla.js": {
       "src": "../../../../node_modules/mark.js/src/vanilla.js",
       "file": "vitepress___mark__js_src_vanilla__js.js",
-      "fileHash": "5749b689",
+      "fileHash": "8d0be9eb",
       "needsInterop": false
     },
     "vitepress > minisearch": {
       "src": "../../../../node_modules/minisearch/dist/es/index.js",
       "file": "vitepress___minisearch.js",
-      "fileHash": "904b6903",
+      "fileHash": "b028caab",
       "needsInterop": false
     },
     "nprogress-v2/dist/index.js": {
       "src": "../../../../node_modules/nprogress-v2/dist/index.js",
       "file": "nprogress-v2_dist_index__js.js",
-      "fileHash": "21b3e86e",
+      "fileHash": "2a8fd420",
       "needsInterop": true
     },
     "medium-zoom": {
       "src": "../../../../node_modules/medium-zoom/dist/medium-zoom.esm.js",
       "file": "medium-zoom.js",
-      "fileHash": "041c257c",
+      "fileHash": "e3dc2c72",
       "needsInterop": false
     },
     "xgplayer": {
       "src": "../../../../node_modules/xgplayer/es/index.js",
       "file": "xgplayer.js",
-      "fileHash": "5ff35a93",
+      "fileHash": "df3c56ea",
       "needsInterop": false
     },
     "animejs": {
       "src": "../../../../node_modules/animejs/dist/modules/index.js",
       "file": "animejs.js",
-      "fileHash": "51abc064",
+      "fileHash": "9cd92f26",
       "needsInterop": false
     },
     "canvas-confetti": {
       "src": "../../../../node_modules/canvas-confetti/dist/confetti.module.mjs",
       "file": "canvas-confetti.js",
-      "fileHash": "4adc0d5d",
+      "fileHash": "86a234fc",
       "needsInterop": false
     },
     "@mdit-vue/shared": {
       "src": "../../../../node_modules/@mdit-vue/shared/dist/index.js",
       "file": "@mdit-vue_shared.js",
-      "fileHash": "3461a6d6",
+      "fileHash": "485b3adc",
+      "needsInterop": false
+    },
+    "vitepress-plugin-awesome-musicplayer": {
+      "src": "../../../../node_modules/vitepress-plugin-awesome-musicplayer/index.js",
+      "file": "vitepress-plugin-awesome-musicplayer.js",
+      "fileHash": "95d1604e",
       "needsInterop": false
     }
   },
