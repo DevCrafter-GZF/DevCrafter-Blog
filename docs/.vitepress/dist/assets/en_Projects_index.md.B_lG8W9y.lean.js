@@ -1,1 +1,0 @@
-import{_ as e,o as t,c as n}from"./chunks/framework.8QHTAZsS.js";const l=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"en/Projects/index.md","filePath":"en/Projects/index.md","lastUpdated":null}'),a={name:"en/Projects/index.md"};function r(o,s,c,d,i,p){return t(),n("div")}const m=e(a,[["render",r]]);export{l as __pageData,m as default};

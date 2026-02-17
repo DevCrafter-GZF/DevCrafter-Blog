@@ -1,1 +1,0 @@
-import{_ as e,o as t,c as a}from"./chunks/framework.8QHTAZsS.js";const l=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"en/React/index.md","filePath":"en/React/index.md","lastUpdated":null}'),n={name:"en/React/index.md"};function c(r,o,s,d,i,p){return t(),a("div")}const m=e(n,[["render",c]]);export{l as __pageData,m as default};
