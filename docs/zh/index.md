@@ -14,8 +14,8 @@ hero:
   tagline: 世界以痛吻我，我要报之以歌
   # tagline: The world kisses me with pain, but I respond with a song
   image:
-    light: ../logo/剪纸龙舞.svg
-    dark: ../logo/剪影魅凤.svg
+    light: /logo/剪纸龙舞.svg
+    dark: /logo/剪影魅凤.svg
     alt: DevCrafter Blog Logo
   actions:
     - theme: brand
