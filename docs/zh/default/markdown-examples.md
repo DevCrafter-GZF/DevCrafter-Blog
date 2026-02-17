@@ -307,12 +307,21 @@ VitePress 也支持 GitHub 风格的提示语法：
 
 使用 WatermelonPlayer 组件嵌入视频：
 
+**输入：**
+
 ```md
 <WatermelonPlayer 
-  url="../../public/video/a.mp4" 
-  poster="../../public/logo/003.png" 
+  url="/video/a.mp4" 
+  poster="/logo/003.png" 
 />
 ```
+
+**效果：**
+
+<WatermelonPlayer 
+  url="/video/a.mp4" 
+  poster="/logo/003.png" 
+/>
 
 ### 时间线
 
