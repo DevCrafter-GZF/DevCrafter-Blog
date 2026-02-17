@@ -323,7 +323,8 @@ let overlayTimer: ReturnType<typeof setTimeout> | null = null
 const position = ref({x: 0, y: 0})
 const dragOffset = ref({x: 0, y: 0})
 const playerWidth = 340
-const playerHeight = 500
+const playerHeight = 480  // 基础高度
+const playerHeightWithPlaylist = 680  // 显示播放列表时的高度
 const circleSize = 64
 
 // 音频元素
@@ -348,12 +349,18 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
 
+// 获取当前展开高度
+const getExpandedHeight = () => {
+  return showPlaylist.value ? playerHeightWithPlaylist : playerHeight
+}
+
 // 窗口大小变化时调整位置
 const handleResize = () => {
   if (isExpanded.value) {
     // 展开状态：确保不超出视口
+    const currentHeight = getExpandedHeight()
     const maxX = window.innerWidth - playerWidth - 20
-    const maxY = window.innerHeight - playerHeight - 20
+    const maxY = window.innerHeight - currentHeight - 20
     position.value = {
       x: Math.min(position.value.x, maxX),
       y: Math.min(position.value.y, maxY)
@@ -540,25 +547,16 @@ const handleCircleClick = () => {
 // 展开/收起
 const expand = () => {
   // 计算展开位置，确保不超出视口
-  // 如果当前位置太靠右，展开时向左调整
   const currentX = position.value.x
   const currentY = position.value.y
   
-  // 计算展开后的最大允许位置
+  // 计算展开后的最大允许位置（使用基础高度）
   const maxX = window.innerWidth - playerWidth - 20
   const maxY = window.innerHeight - playerHeight - 20
   
   // 调整位置：如果太靠右，向左移动；如果太靠下，向上移动
-  let newX = currentX
-  let newY = currentY
-  
-  // 圆形状态时 position 是中心点，展开后需要调整
-  if (currentX > maxX) {
-    newX = maxX
-  }
-  if (currentY > maxY) {
-    newY = maxY
-  }
+  let newX = Math.min(currentX, maxX)
+  let newY = Math.min(currentY, maxY)
   
   // 确保不小于最小边距
   newX = Math.max(20, newX)
@@ -627,8 +625,9 @@ const onDrag = (e: MouseEvent) => {
   // 根据状态限制边界
   if (isExpanded.value) {
     // 展开状态：position 是左上角
+    const currentHeight = getExpandedHeight()
     const maxX = window.innerWidth - playerWidth - 20
-    const maxY = window.innerHeight - playerHeight - 20
+    const maxY = window.innerHeight - currentHeight - 20
     newX = Math.max(20, Math.min(maxX, newX))
     newY = Math.max(20, Math.min(maxY, newY))
   } else {
