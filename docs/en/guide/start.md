@@ -9,22 +9,37 @@ DevCrafter Blog is organized in a modular way, with main content distributed as 
 
 ```
 docs/
-├── zh/                          # Chinese Documentation
-│   ├── preface/                 # Preface & Introduction
-│   │   ├── preface.md          # Preface
+├── en/                          # English Documentation
+│   ├── guide/                   # Guide
 │   │   ├── start.md            # Quick Start
-│   │   ├── directory.md        # Directory
-│   │   └── about.md            # About Author
-│   ├── Git/                     # Git Tutorials
-│   │   └── gitSetting.md       # Git Configuration Guide
-│   ├── Echarts/                 # ECharts Tutorials
-│   │   └── index.md            # ECharts Configuration Guide
+│   │   ├── directory.md        # Learning Path
+│   │   ├── about.md            # About Author
+│   │   ├── updates.md          # Updates
+│   │   └── preface.md          # Preface
+│   ├── fundamentals/            # Frontend Basics
+│   │   └── javascript.md       # JavaScript Guide
+│   ├── frameworks/              # Frontend Frameworks
+│   │   ├── vue.md              # Vue Guide
+│   │   └── typescript.md       # TypeScript Guide
+│   ├── WebGIS/                  # WebGIS Development
+│   │   ├── index.md            # Overview
+│   │   ├── baidu.md            # Baidu Map
+│   │   ├── gaode.md            # AMap
+│   │   ├── tianditu.md         # Tianditu
+│   │   └── echarts-map.md      # ECharts Map
+│   ├── HTML/                    # HTML Basics
+│   ├── CSS/                     # CSS Basics
+│   ├── JavaScript/              # JavaScript Related
+│   ├── React/                   # React Framework
+│   ├── Node/                    # Node.js Backend
+│   ├── MySQL/                   # MySQL Database
+│   ├── Python/                  # Python Programming
+│   ├── Echarts/                 # ECharts Charts
+│   ├── Git/                     # Git Version Control
+│   ├── Projects/                # Project Cases
 │   ├── Navigation/              # Developer Navigation
-│   │   ├── index.md            # Navigation Home
-│   │   └── data.ts             # Navigation Data
 │   └── log/                     # Changelog
-│       └── changelog.md        # Change Records
-└── en/                          # English Documentation
+└── zh/                          # Chinese Documentation
     └── ...
 ```
 
@@ -101,8 +116,8 @@ yarn docs:build
 > [!IMPORTANT]
 > If this is your first visit, it is recommended to read in the following order:
 
-1. [Preface](./preface.md) - Understand blog positioning and purpose
-2. [Directory](./directory.md) - View complete content structure
+1. [Preface](../guide/preface.md) - Understand blog positioning and purpose
+2. [Learning Path](../guide/directory.md) - View complete content structure
 3. [Git Configuration](../Git/gitSetting.md) - Essential development tool
 4. [Developer Navigation](../Navigation/index.md) - Discover useful tools
 

@@ -117,7 +117,7 @@ yarn docs:build
 > 如果你是第一次访问，建议按以下顺序阅读：
 
 1. [序言](../guide/preface.md) - 了解博客定位和目的
-2. [目录](../guide/directory.md) - 查看完整内容结构
+2. [学习路线](../guide/directory.md) - 查看完整内容结构
 3. [Git 配置](../Git/gitSetting.md) - 开发必备工具
 4. [程序员导航](../Navigation/index.md) - 发现实用工具
 
