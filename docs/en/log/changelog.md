@@ -18,6 +18,8 @@
   - React Framework (695 lines)
   - Project Practice Cases (587 lines)
 
+- **Giscus Comment System**: Integrated comment functionality with dark/light theme adaptation
+
 ### 🔄 Updates & Improvements
 
 - **Navigation Structure Optimization**:
@@ -30,12 +32,16 @@
   - Fixed path issues, supporting base path configuration
   - Fixed homepage image paths
 
+- **Code Theme Optimization**: Updated code block theme to catppuccin-frappe
+
 ### 🐛 Bug Fixes
 
 - Fixed incorrect links in quick start documentation
 - Fixed directory structure description (preface → guide)
 - Unified Chinese and English navigation naming conventions
 - Fixed all empty document issues
+- Fixed WebGIS document links, adapted to cleanUrls mode
+- Fixed relative path links in documents
 
 ## 2025-02-13
 
