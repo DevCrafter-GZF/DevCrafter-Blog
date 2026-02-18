@@ -23,7 +23,15 @@
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* 代码块样式 - 确保 escook 的三个圆点在一行显示 */
+/* 代码块样式 - 覆盖 escook 的彩虹渐变背景 */
+
+/* 移除 escook 代码块的彩虹渐变背景 */
+.vp-doc div[class*=language-],
+.vp-doc .vp-adaptive-theme,
+.vp-doc div[class*=language-].vp-adaptive-theme {
+  background: var(--vp-code-block-bg) !important;
+  background-image: none !important;
+}
 
 /* 移除 VitePress 默认的代码块 before 伪元素 */
 .vp-doc div[class*=language-]::before,
@@ -31,19 +39,30 @@
   display: none !important;
 }
 
-/* 使用 escook 的 after 伪元素显示三个圆点在一行 */
+/* 移除 escook 的 after 伪元素（彩虹渐变来源） */
 .vp-doc .vp-adaptive-theme:after,
-.vp-doc div[class*=language-].vp-adaptive-theme:after {
-  content: " " !important;
+.vp-doc div[class*=language-].vp-adaptive-theme:after,
+.vp-doc div[class*=language-]::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  background-image: none !important;
+}
+
+/* 使用 macCode.css 中的 macOS 风格圆点 */
+.vp-doc div[class*=language-]::before {
+  content: "" !important;
   display: block !important;
+  position: absolute !important;
+  top: 12px !important;
+  left: 12px !important;
   width: 12px !important;
   height: 12px !important;
-  border-radius: 7px !important;
   background-color: #ff5f56 !important;
-  position: absolute !important;
-  left: 12px !important;
-  top: 12px !important;
-  box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #27c93f, 0 0 5px rgba(0,0,0,0.2) !important;
+  border-radius: 50% !important;
+  box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #27c93f !important;
+  z-index: 1 !important;
+  border: none !important;
 }
 
 /* 移除 code 内部的 before 和 after 伪元素 */

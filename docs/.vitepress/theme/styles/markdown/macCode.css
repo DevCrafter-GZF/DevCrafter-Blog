@@ -13,25 +13,9 @@
 }
 
 /* 
- * 代码块：添加macOS风格的小圆点 - 使用 !important 确保优先级
- * 注释掉：使用 escook 主题的默认样式
+ * 代码块：添加macOS风格的小圆点 - 样式已移至 escook-override.css
+ * 这里保留注释说明
  */
-/*
-.vp-doc div[class*=language-]::before {
-  content: "" !important;
-  display: block !important;
-  position: absolute !important;
-  top: 12px !important;
-  left: 12px !important;
-  width: 12px !important;
-  height: 12px !important;
-  background-color: #ff5f56 !important;
-  border-radius: 50% !important;
-  box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #27c93f !important;
-  z-index: 1 !important;
-  border: none !important;
-}
-*/
 
 /* 复制按钮：确保显示在正确的位置 */
 .vp-doc .vp-code-copy {
@@ -81,16 +65,7 @@
     margin-right: 0;
   }
 
-  /* 代码块：减小小圆点尺寸 - 注释掉：使用 escook 主题默认样式 */
-  /*
-  .vp-doc div[class*=language-]::before {
-    top: 8px !important;
-    left: 8px !important;
-    width: 10px !important;
-    height: 10px !important;
-    box-shadow: 16px 0 0 #ffbd2e, 32px 0 0 #27c93f !important;
-  }
-  */
+  /* 代码块：减小小圆点尺寸 - 样式已移至 escook-override.css */
 
   /* 代码块：调整行号位置 */
   .vp-doc .line-numbers-wrapper {
@@ -124,14 +99,7 @@
     border-radius: 4px;
   }
 
-  /* 小屏幕圆点样式 - 注释掉：使用 escook 主题默认样式 */
-  /*
-  .vp-doc div[class*=language-]::before {
-    width: 8px !important;
-    height: 8px !important;
-    box-shadow: 14px 0 0 #ffbd2e, 28px 0 0 #27c93f !important;
-  }
-  */
+  /* 小屏幕圆点样式 - 样式已移至 escook-override.css */
 
   .vp-doc div[class*=language-] pre {
     padding: 10px;
