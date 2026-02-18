@@ -3,7 +3,7 @@
  */
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import type { Song, PlayMode } from './types'
-import { searchSongs, getHotSongs } from './api'
+import { searchSongs, getHotSongs, getSongUrl } from './api'
 
 const STORAGE_KEY = 'music-player-playlist'
 
@@ -188,12 +188,28 @@ export function useMusicPlayer() {
     
     await nextTick()
     
-    // 确保音频元素存在并设置源
-    if (audioRef.value && currentSong.value) {
-      audioRef.value.src = currentSong.value.url
-      audioRef.value.load()
+    // 确保音频元素存在
+    if (!audioRef.value || !currentSong.value) return
+    
+    // 获取歌曲 URL（如果还没有）
+    let songUrl = currentSong.value.url
+    if (!songUrl) {
+      isLoading.value = true
+      songUrl = await getSongUrl(currentSong.value.id)
+      // 更新播放列表中的 URL
+      playlist.value[index].url = songUrl
+      isLoading.value = false
     }
     
+    if (!songUrl) {
+      errorMessage.value = '无法获取歌曲播放地址'
+      setTimeout(() => errorMessage.value = '', 3000)
+      return
+    }
+    
+    // 设置音频源并播放
+    audioRef.value.src = songUrl
+    audioRef.value.load()
     play()
   }
 
@@ -240,8 +256,24 @@ export function useMusicPlayer() {
       return
     }
     
+    // 获取歌曲 URL（如果还没有）
+    let songUrl = song.url
+    if (!songUrl) {
+      isLoading.value = true
+      songUrl = await getSongUrl(song.id)
+      // 更新播放列表中的 URL
+      playlist.value[index].url = songUrl
+      isLoading.value = false
+    }
+    
+    if (!songUrl) {
+      errorMessage.value = '无法获取歌曲播放地址'
+      setTimeout(() => errorMessage.value = '', 3000)
+      return
+    }
+    
     // 设置音频源
-    audioRef.value.src = song.url
+    audioRef.value.src = songUrl
     audioRef.value.load()
     
     // 尝试播放
