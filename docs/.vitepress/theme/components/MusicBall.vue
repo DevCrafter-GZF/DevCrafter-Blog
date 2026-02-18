@@ -673,10 +673,11 @@ const expand = () => {
       y: (window.innerHeight - mobilePanelHeight) / 2
     }
   } else {
-    const maxX = window.innerWidth - panelWidth - 20
+    // PC端展开面板：距离右边 20px，垂直位置保持当前或贴底
+    const targetX = window.innerWidth - panelWidth - 20
     const maxY = window.innerHeight - panelHeight - 20
     position.value = {
-      x: Math.min(position.value.x, maxX),
+      x: targetX,
       y: Math.min(position.value.y, maxY)
     }
   }
