@@ -15,7 +15,7 @@
         @mouseleave="onMouseLeave"
     >
       <!-- 播放列表 - 在圆形上方展开 -->
-      <div v-if="isPlaylistVisible" class="escook-music-list" style="bottom: 55px; top: auto; max-height: 250px;">
+      <div v-if="isPlaylistVisible" class="escook-music-list" style="bottom: 55px; top: auto; max-height: 250px;" @mouseenter="onListMouseEnter" @mouseleave="onListMouseLeave">
         <!-- 搜索框 -->
         <div style="padding: 10px; border-bottom: 1px solid var(--music-list-sep-color);">
           <div style="display: flex; gap: 8px; background: var(--vp-c-bg); border-radius: 20px; padding: 5px; border: 1px solid var(--vp-c-divider);">
@@ -193,6 +193,17 @@ const togglePlaylist = () => {
 
 // 鼠标离开播放器时隐藏列表
 const onMouseLeave = () => {
+  isPlaylistVisible.value = false
+  showSearchResults.value = false
+}
+
+// 鼠标进入/离开列表区域
+const onListMouseEnter = () => {
+  // 鼠标在列表上时，不隐藏
+}
+
+const onListMouseLeave = () => {
+  // 鼠标离开列表时隐藏
   isPlaylistVisible.value = false
   showSearchResults.value = false
 }
