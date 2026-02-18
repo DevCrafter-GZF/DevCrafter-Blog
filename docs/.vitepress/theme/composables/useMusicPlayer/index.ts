@@ -1,9 +1,9 @@
 /**
  * 音乐播放器组合式函数
  */
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
-import type { Song, PlayMode } from './types'
-import { searchSongs, getHotSongs, getSongUrl } from './api'
+import {ref, computed, watch, onMounted, onUnmounted, nextTick} from 'vue'
+import type {Song, PlayMode} from './types'
+import {searchSongs, getHotSongs, getSongUrl} from './api'
 
 const STORAGE_KEY = 'music-player-playlist'
 
@@ -31,12 +31,12 @@ export function useMusicPlayer() {
   const searchDebounceTimer = ref<number | null>(null)
   const hidePlaylistTimer = ref<number | null>(null)
   const isMouseOverPlaylist = ref(false)
-
+  
   // ========== 计算属性 ==========
   const currentSong = computed<Song | null>(() => {
     return playlist.value[currentIndex.value] || null
   })
-
+  
   const progressValue = computed({
     get() {
       return duration.value ? (currentTime.value / duration.value) * 100 : 0
@@ -47,9 +47,11 @@ export function useMusicPlayer() {
       }
     }
   })
-
+  
   const volumeValue = computed({
-    get() { return volume.value },
+    get() {
+      return volume.value
+    },
     set(val: number) {
       volume.value = val
       if (audioRef.value) {
@@ -57,7 +59,7 @@ export function useMusicPlayer() {
       }
     }
   })
-
+  
   // ========== 播放控制 ==========
   const play = async () => {
     if (!audioRef.value) return
@@ -75,11 +77,11 @@ export function useMusicPlayer() {
       isLoading.value = false
     }
   }
-
+  
   const pause = () => {
     audioRef.value?.pause()
   }
-
+  
   const togglePlay = () => {
     if (isPlaying.value) {
       pause()
@@ -87,23 +89,23 @@ export function useMusicPlayer() {
       play()
     }
   }
-
+  
   const toggleMute = () => {
     if (!audioRef.value) return
     isMuted.value = !isMuted.value
     audioRef.value.muted = isMuted.value
   }
-
+  
   // ========== 播放模式 ==========
   const togglePlayMode = () => {
     const modes: PlayMode[] = ['sequence', 'random', 'loop']
     const currentIndex = modes.indexOf(playMode.value)
     playMode.value = modes[(currentIndex + 1) % modes.length]
   }
-
+  
   const playNext = () => {
     if (playlist.value.length === 0) return
-
+    
     if (playMode.value === 'loop') {
       // 单曲循环：重新播放当前歌曲
       audioRef.value?.load()
@@ -125,10 +127,10 @@ export function useMusicPlayer() {
       }
     }
   }
-
+  
   const playPrev = () => {
     if (playlist.value.length === 0) return
-
+    
     if (playMode.value === 'loop') {
       // 单曲循环：重新播放当前歌曲
       audioRef.value?.load()
@@ -150,12 +152,12 @@ export function useMusicPlayer() {
       }
     }
   }
-
+  
   // ========== 播放列表操作 ==========
   const togglePlaylist = () => {
     isPlaylistVisible.value = !isPlaylistVisible.value
   }
-
+  
   const hidePlaylist = () => {
     // 延迟隐藏，给鼠标移动到列表区域留出时间
     if (hidePlaylistTimer.value) {
@@ -167,21 +169,21 @@ export function useMusicPlayer() {
       }
     }, 150)
   }
-
+  
   const cancelHidePlaylist = () => {
     if (hidePlaylistTimer.value) {
       clearTimeout(hidePlaylistTimer.value)
       hidePlaylistTimer.value = null
     }
   }
-
+  
   const setMouseOverPlaylist = (value: boolean) => {
     isMouseOverPlaylist.value = value
     if (value) {
       cancelHidePlaylist()
     }
   }
-
+  
   const playByIndex = async (index: number) => {
     if (index < 0 || index >= playlist.value.length) return
     currentIndex.value = index
@@ -197,7 +199,6 @@ export function useMusicPlayer() {
       isLoading.value = true
       try {
         songUrl = await getSongUrl(currentSong.value.id)
-        // 更新播放列表中的 URL
         if (songUrl) {
           playlist.value[index].url = songUrl
         }
@@ -211,36 +212,36 @@ export function useMusicPlayer() {
     if (!songUrl) {
       errorMessage.value = '该歌曲暂无播放资源，请尝试其他歌曲'
       setTimeout(() => errorMessage.value = '', 3000)
-      // 自动播放下一首
       setTimeout(() => playNext(), 1500)
       return
     }
     
-    // 设置音频源并播放
-    audioRef.value.src = songUrl
-    
-    // 等待音频加载完成后再播放
+    // 设置音频源
     const audio = audioRef.value
-    const playWhenReady = () => {
-      audio?.play().then(() => {
-        isPlaying.value = true
-      }).catch((err) => {
-        console.error('播放失败:', err)
-        errorMessage.value = '歌曲播放失败，请尝试其他歌曲'
-        setTimeout(() => errorMessage.value = '', 3000)
-      })
-      audio?.removeEventListener('canplaythrough', playWhenReady)
+    audio.src = songUrl
+    
+    // 先尝试直接播放，如果失败则等待 canplay 事件
+    try {
+      await audio.play()
+      isPlaying.value = true
+    } catch (err) {
+      // 等待 canplay 事件后再播放
+      const playWhenReady = async () => {
+        try {
+          await audio.play()
+          isPlaying.value = true
+        } catch (e) {
+          console.error('播放失败:', e)
+          errorMessage.value = '歌曲播放失败，请尝试其他歌曲'
+          setTimeout(() => errorMessage.value = '', 3000)
+        }
+        audio.removeEventListener('canplay', playWhenReady)
+      }
+      audio.addEventListener('canplay', playWhenReady)
+      audio.load()
     }
-    
-    audio.addEventListener('canplaythrough', playWhenReady)
-    audio.load()
-    
-    // 3秒后如果还没播放，清理监听器
-    setTimeout(() => {
-      audio?.removeEventListener('canplaythrough', playWhenReady)
-    }, 3000)
   }
-
+  
   const addToPlaylist = (song: Song) => {
     const exists = playlist.value.findIndex(s => s.id === song.id)
     if (exists >= 0) {
@@ -250,7 +251,7 @@ export function useMusicPlayer() {
     savePlaylist()
     return playlist.value.length - 1
   }
-
+  
   const removeFromPlaylist = (index: number) => {
     if (index < 0 || index >= playlist.value.length) return
     
@@ -269,7 +270,7 @@ export function useMusicPlayer() {
     
     savePlaylist()
   }
-
+  
   const playSongImmediately = async (song: Song) => {
     // 先添加到播放列表并设置当前索引
     const index = addToPlaylist(song)
@@ -323,7 +324,8 @@ export function useMusicPlayer() {
       const playWhenReady = () => {
         audio?.play().then(() => {
           isPlaying.value = true
-        }).catch(() => {})
+        }).catch(() => {
+        })
         audio?.removeEventListener('canplay', playWhenReady)
       }
       audio.addEventListener('canplay', playWhenReady)
@@ -343,7 +345,7 @@ export function useMusicPlayer() {
     searchKeyword.value = ''
     hasSearched.value = false
   }
-
+  
   // ========== 搜索功能 ==========
   const search = async (keyword: string) => {
     if (!keyword.trim()) {
@@ -351,10 +353,10 @@ export function useMusicPlayer() {
       hasSearched.value = false
       return
     }
-
+    
     isSearching.value = true
     hasSearched.value = true
-
+    
     try {
       searchResults.value = await searchSongs(keyword)
     } catch (error) {
@@ -364,7 +366,7 @@ export function useMusicPlayer() {
       isSearching.value = false
     }
   }
-
+  
   const debouncedSearch = (keyword: string, delay: number = 300) => {
     if (searchDebounceTimer.value) {
       clearTimeout(searchDebounceTimer.value)
@@ -373,13 +375,13 @@ export function useMusicPlayer() {
       search(keyword)
     }, delay)
   }
-
+  
   const clearSearch = () => {
     searchKeyword.value = ''
     searchResults.value = []
     hasSearched.value = false
   }
-
+  
   // ========== 本地存储 ==========
   const savePlaylist = () => {
     try {
@@ -392,7 +394,7 @@ export function useMusicPlayer() {
       console.error('保存播放列表失败:', error)
     }
   }
-
+  
   const loadPlaylist = () => {
     try {
       const data = localStorage.getItem(STORAGE_KEY)
@@ -408,46 +410,46 @@ export function useMusicPlayer() {
       console.error('加载播放列表失败:', error)
     }
   }
-
+  
   // ========== 音频事件处理 ==========
   const onAudioEnded = () => {
     playNext()
   }
-
+  
   const onAudioLoadedMetadata = () => {
     if (audioRef.value) {
       duration.value = audioRef.value.duration || 0
     }
   }
-
+  
   const onAudioTimeUpdate = () => {
     if (audioRef.value) {
       currentTime.value = audioRef.value.currentTime || 0
     }
   }
-
+  
   const onAudioPlay = () => {
     isPlaying.value = true
   }
-
+  
   const onAudioPause = () => {
     isPlaying.value = false
   }
-
+  
   // ========== 键盘快捷键 ==========
   const handleKeydown = (e: KeyboardEvent) => {
     // 忽略输入框中的快捷键 - 更严格的检测
     const target = e.target as HTMLElement
     if (
-      target.tagName === 'INPUT' || 
-      target.tagName === 'TEXTAREA' || 
-      target.isContentEditable ||
-      target.closest('input') ||
-      target.closest('.search-box')
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable ||
+        target.closest('input') ||
+        target.closest('.search-box')
     ) {
       return
     }
-
+    
     switch (e.code) {
       case 'Space':
         e.preventDefault()
@@ -475,7 +477,7 @@ export function useMusicPlayer() {
         break
     }
   }
-
+  
   // ========== 初始化 ==========
   const init = async () => {
     // 加载本地存储的播放列表
@@ -489,20 +491,20 @@ export function useMusicPlayer() {
         savePlaylist()
       }
     }
-
+    
     // 添加键盘事件监听
     document.addEventListener('keydown', handleKeydown)
   }
-
+  
   // 监听播放列表变化
-  watch(playlist, savePlaylist, { deep: true })
+  watch(playlist, savePlaylist, {deep: true})
   watch(currentIndex, savePlaylist)
   watch(volume, savePlaylist)
-
+  
   onMounted(() => {
     init()
   })
-
+  
   onUnmounted(() => {
     if (searchDebounceTimer.value) {
       clearTimeout(searchDebounceTimer.value)
@@ -512,7 +514,7 @@ export function useMusicPlayer() {
     }
     document.removeEventListener('keydown', handleKeydown)
   })
-
+  
   // ========== 格式化工具 ==========
   const formatTime = (time: number): string => {
     if (!time || isNaN(time)) return '0:00'
@@ -520,7 +522,7 @@ export function useMusicPlayer() {
     const seconds = Math.floor(time % 60)
     return `${minutes}:${seconds.toString().padStart(2, '0')}`
   }
-
+  
   return {
     // 状态
     isPlaying,
