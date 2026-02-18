@@ -174,12 +174,8 @@
 <script lang="ts" setup>
 import {ref, computed, onMounted, onUnmounted, watch} from 'vue'
 
-// 本地默认音乐（备用）
-const defaultSongs = [
-  {id: '25706282', name: '起风了', artist: '买辣椒也用券', cover: '', url: ''},
-  {id: '1293886117', name: '体面', artist: '于文文', cover: '', url: ''},
-  {id: '863046037', name: '告白气球', artist: '周杰伦', cover: '', url: ''},
-]
+// 本地默认音乐（备用，为空数组）
+const defaultSongs: any[] = []
 
 // 网易云音乐热歌榜ID
 const HOT_SONGS_CHART_ID = 3778678  // 云音乐热歌榜
