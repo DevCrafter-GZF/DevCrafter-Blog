@@ -123,7 +123,7 @@
 </template>
 
 <script lang="ts" setup>
-import {ref, computed, onMounted, onUnmounted} from 'vue'
+import {ref, computed, onMounted, onUnmounted, nextTick} from 'vue'
 import { ElSlider } from 'element-plus'
 
 // 网易云音乐热歌榜ID
@@ -297,7 +297,7 @@ const searchMusic = async () => {
 }
 
 // 立即播放搜索到的歌曲
-const playSongImmediately = (song: any) => {
+const playSongImmediately = async (song: any) => {
   // 检查是否已在播放列表中
   const existingIndex = playlist.value.findIndex(s => s.id === song.id)
   if (existingIndex >= 0) {
@@ -307,14 +307,30 @@ const playSongImmediately = (song: any) => {
     playlist.value.push(song)
     currentIndex.value = playlist.value.length - 1
   }
-  // 先播放，再清理搜索状态
-  setTimeout(() => {
-    play()
-  }, 50)
+  
   // 清空搜索并隐藏列表
   showSearchResults.value = false
   searchKeyword.value = ''
   isPlaylistVisible.value = false
+  
+  // 等待 Vue 更新 DOM 和音频源
+  await nextTick()
+  
+  // 等待音频元素加载
+  if (audioRef.value) {
+    audioRef.value.load()
+    // 等待 canplay 事件后再播放
+    const playWhenReady = () => {
+      audioRef.value?.play()
+      audioRef.value?.removeEventListener('canplay', playWhenReady)
+    }
+    audioRef.value.addEventListener('canplay', playWhenReady)
+    // 超时处理
+    setTimeout(() => {
+      audioRef.value?.removeEventListener('canplay', playWhenReady)
+      audioRef.value?.play().catch(() => {})
+    }, 500)
+  }
 }
 
 // 播放/暂停
