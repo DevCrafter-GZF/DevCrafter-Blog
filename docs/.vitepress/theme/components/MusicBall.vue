@@ -781,7 +781,6 @@ const collapse = () => {
 }
 
 // 移动端触摸处理
-let longPressTimer: any = null
 let touchStartTime = 0
 let touchMoved = false
 
@@ -789,29 +788,20 @@ const handleTouchStart = (e: TouchEvent) => {
   touchStartTime = Date.now()
   touchMoved = false
 
-  // 启动长按定时器
-  longPressTimer = setTimeout(() => {
-    if (!touchMoved) {
-      expand()
-    }
-  }, 500)
-
-  // 同时启动拖拽
+  // 启动拖拽
   startDragTouch(e)
 }
 
 const handleTouchEnd = () => {
   const touchDuration = Date.now() - touchStartTime
 
-  // 清除长按定时器
-  if (longPressTimer) {
-    clearTimeout(longPressTimer)
-    longPressTimer = null
-  }
-
-  // 如果是短按且没有移动，则切换播放/暂停
-  if (touchDuration < 500 && !touchMoved && !isExpanded.value) {
-    togglePlay()
+  // 如果是短按且没有移动，则展开/缩小面板
+  if (touchDuration < 500 && !touchMoved) {
+    if (isExpanded.value) {
+      collapse()
+    } else {
+      expand()
+    }
   }
 }
 
@@ -819,16 +809,15 @@ const handleBallClick = (e: MouseEvent) => {
   // 如果正在拖拽，不触发点击
   if (isDragging.value) return
 
-  if (expandTimer) {
-    clearTimeout(expandTimer)
-    expandTimer = null
-  }
-
   // 阻止事件冒泡
   e.stopPropagation()
 
-  // 切换播放/暂停
-  togglePlay()
+  // 点击展开/缩小面板
+  if (isExpanded.value) {
+    collapse()
+  } else {
+    expand()
+  }
 }
 
 const handleResize = () => {
