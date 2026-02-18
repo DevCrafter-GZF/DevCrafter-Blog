@@ -200,7 +200,7 @@ const progress = ref(0)
 // 位置
 const position = ref({x: 0, y: 0})
 const dragOffset = ref({x: 0, y: 0})
-const ballSize = 60
+const ballSize = 48  // 与回到顶部按钮一致 48px
 const panelWidth = 320
 const panelHeight = 500
 
@@ -222,7 +222,7 @@ const positionStyle = computed(() => {
     return {
       left: 'auto',
       top: 'auto',
-      right: '80px',
+      right: '20px',
       bottom: '20px',
       transform: 'translate(0, 0)'
     }
@@ -249,9 +249,9 @@ const positionStyle = computed(() => {
 })
 
 // 回到顶部按钮的尺寸和间距（用于计算位置）
-const backToTopSize = 48
-const backToTopGap = 16
-const backToTopOffset = backToTopSize + backToTopGap * 2
+const backToTopSize = 48  // 与播放器一致
+const backToTopGap = 10   // 间距 10px
+const backToTopOffset = backToTopSize + backToTopGap  // 总间距 = 48 + 10 = 58px
 
 // 初始化
 onMounted(() => {
@@ -266,20 +266,17 @@ onMounted(() => {
   playlist.value = [...defaultSongs]
 })
 
-// 设置默认位置
+// 设置默认位置 - 播放器在回到顶部右侧，两者都在右下角
 const setDefaultPosition = () => {
-  if (isMobile.value) {
-    // 移动端：在回到顶部按钮上方（右侧对齐）
-    position.value = {
-      x: window.innerWidth - ballSize / 2 - 20,
-      y: window.innerHeight - ballSize / 2 - 20 - backToTopOffset
-    }
-  } else {
-    // PC端：在回到顶部按钮左侧（底部对齐）
-    position.value = {
-      x: window.innerWidth - ballSize / 2 - 20 - backToTopOffset,
-      y: window.innerHeight - ballSize / 2 - 20
-    }
+  // 播放器在回到顶部按钮的右侧，间距 10px
+  // 回到顶部在左 (right: 20px + 48px + 10px = 78px)
+  // 播放器在右 (right: 20px)
+  const rightOffset = 20  // 播放器距离右边 20px
+  const backToTopTotalWidth = backToTopSize + backToTopGap  // 48 + 10 = 58px
+  
+  position.value = {
+    x: window.innerWidth - ballSize / 2 - rightOffset,
+    y: window.innerHeight - ballSize / 2 - 20
   }
 }
 
@@ -554,10 +551,11 @@ const onDrag = (e: MouseEvent) => {
   let x = e.clientX - dragOffset.value.x
   let y = e.clientY - dragOffset.value.y
 
-  // PC端拖拽时考虑回到顶部按钮的偏移
-  const minX = ballSize / 2 + 20 + (isMobile.value ? 0 : backToTopOffset)
+  // 拖拽边界限制 - 播放器在回到顶部右侧，两者都在右下角
+  // 左侧需要给回到顶部留出空间: 20px(边距) + 48px(按钮) + 10px(间距) = 78px
+  const minX = ballSize / 2 + 20 + backToTopOffset
   const maxX = window.innerWidth - (isExpanded.value ? panelWidth : ballSize / 2) - 20
-  const maxY = window.innerHeight - (isExpanded.value ? panelHeight : ballSize / 2) - 20 - (isMobile.value ? backToTopOffset : 0)
+  const maxY = window.innerHeight - (isExpanded.value ? panelHeight : ballSize / 2) - 20
 
   x = Math.max(minX, Math.min(maxX, x))
   y = Math.max(20, Math.min(maxY, y))
@@ -600,11 +598,12 @@ const onDragTouch = (e: TouchEvent) => {
   let x = touch.clientX - dragOffset.value.x
   let y = touch.clientY - dragOffset.value.y
 
-  // 移动端拖拽时考虑回到顶部按钮的偏移（在上方留出空间）
+  // 移动端拖拽边界 - 与PC端一致，播放器在回到顶部右侧
+  const minX = ballSize / 2 + 20 + backToTopOffset
   const maxX = window.innerWidth - ballSize / 2 - 20
-  const maxY = window.innerHeight - ballSize / 2 - 20 - backToTopOffset
+  const maxY = window.innerHeight - ballSize / 2 - 20
 
-  x = Math.max(20, Math.min(maxX, x))
+  x = Math.max(minX, Math.min(maxX, x))
   y = Math.max(20, Math.min(maxY, y))
 
   position.value = {x, y}
@@ -758,10 +757,10 @@ const handleResize = () => {
   user-select: none;
 }
 
-/* 悬浮球 */
+/* 悬浮球 - 48px 与回到顶部按钮一致 */
 .ball {
-  width: 60px;
-  height: 60px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
@@ -779,8 +778,8 @@ const handleResize = () => {
 }
 
 .ball-inner {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -803,8 +802,8 @@ const handleResize = () => {
 }
 
 .music-icon {
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   fill: white;
 }
 
@@ -1260,13 +1259,13 @@ const handleResize = () => {
   }
 
   .music-ball.mobile .ball {
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
   }
 
   .music-ball.mobile .ball-inner {
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
   }
 
   .music-ball.mobile .music-icon {
