@@ -112,20 +112,10 @@
 
       <!-- 控制面板 -->
       <div class="escook-music-ball__inner">
-        <!-- 上一首 -->
-        <div class="control-btn prev-btn" title="上一首 (←)" @click.stop="playPrev">
-          <span class="iconfont">⏮</span>
-        </div>
-
         <div class="escook-play-pause" :class="{ 'loading': isLoading }" title="播放/暂停 (空格)" @click.stop="togglePlay">
           <span v-if="isLoading" class="loading-spinner"></span>
           <span v-else-if="!isPlaying" class="play-icon">▶</span>
           <span v-else class="pause-icon">⏸</span>
-        </div>
-
-        <!-- 下一首 -->
-        <div class="control-btn next-btn" title="下一首 (→)" @click.stop="playNext">
-          <span class="iconfont">⏭</span>
         </div>
 
         <div class="escook-time">{{ formatTime(currentTime) }} / {{ formatTime(duration) }}</div>
@@ -178,7 +168,7 @@ const {
   isPlaylistVisible, searchKeyword, searchResults, isSearching, hasSearched,
   errorMessage, isLoading, audioRef, togglePlay, toggleMute, togglePlayMode,
   togglePlaylist, hidePlaylist, cancelHidePlaylist, setMouseOverPlaylist,
-  playByIndex, playPrev, playNext, removeFromPlaylist, playSongImmediately,
+  playByIndex, playNext, removeFromPlaylist, playSongImmediately,
   search, clearSearch, formatTime, onAudioEnded, onAudioLoadedMetadata,
   onAudioPause, onAudioPlay, onAudioTimeUpdate
 } = useMusicPlayer()
@@ -535,26 +525,6 @@ watch(searchKeyword, (newVal) => {
 .pause-icon {
   font-size: 16px;
   line-height: 1;
-}
-
-/* 控制按钮 */
-.control-btn {
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border-radius: 50%;
-  transition: background 0.2s;
-}
-
-.control-btn:hover {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.control-btn .iconfont {
-  font-size: 14px;
 }
 
 /* 深色模式适配 */
