@@ -227,7 +227,7 @@ const positionStyle = computed(() => {
       transform: 'translate(0, 0)'
     }
   }
-  
+
   if (isExpanded.value) {
     return {
       left: `${position.value.x}px`,
@@ -266,22 +266,28 @@ onMounted(() => {
   playlist.value = [...defaultSongs]
 })
 
-// 设置默认位置 - 播放器在回到顶部右侧，两者都在右下角
+// 设置默认位置
 const setDefaultPosition = () => {
-  // 布局：回到顶部在左，播放器在右，间距 10px
-  // 回到顶部: right = 20px + 48px(播放器) + 10px(间距) = 78px
-  // 播放器: right = 20px
-  // 所以播放器应该在回到顶部的右侧，播放器 right 值更小（更靠右）
-  // 但实际上播放器应该在回到顶部的左边，这样才不会遮挡
-  // 修正：播放器在左，回到顶部在右
-  
-  // 播放器在左: right = 20px + 48px(回到顶部) + 10px(间距) = 78px
-  // 回到顶部在右: right = 20px
-  const playerRightOffset = 20 + backToTopSize + backToTopGap  // 78px
-  
-  position.value = {
-    x: window.innerWidth - ballSize / 2 - playerRightOffset,
-    y: window.innerHeight - ballSize / 2 - 20
+  if (isMobile.value) {
+    // 移动端：播放器在回到顶部上方，垂直排列，距离 10px
+    // 播放器: bottom = 20px + 48px(回到顶部) + 10px(间距) = 78px
+    // 回到顶部: bottom = 20px
+    const playerBottomOffset = 20 + backToTopSize + backToTopGap  // 78px
+
+    position.value = {
+      x: window.innerWidth - ballSize / 2 - 20,  // 靠右 20px
+      y: window.innerHeight - ballSize / 2 - playerBottomOffset  // 在回到顶部上方
+    }
+  } else {
+    // PC端：播放器在回到顶部左侧，水平排列，间距 10px
+    // 播放器: right = 20px + 48px(回到顶部) + 10px(间距) = 78px
+    // 回到顶部: right = 20px
+    const playerRightOffset = 20 + backToTopSize + backToTopGap  // 78px
+
+    position.value = {
+      x: window.innerWidth - ballSize / 2 - playerRightOffset,
+      y: window.innerHeight - ballSize / 2 - 20
+    }
   }
 }
 
