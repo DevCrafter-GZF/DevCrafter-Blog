@@ -218,8 +218,27 @@ export function useMusicPlayer() {
     
     // 设置音频源并播放
     audioRef.value.src = songUrl
-    audioRef.value.load()
-    play()
+    
+    // 等待音频加载完成后再播放
+    const audio = audioRef.value
+    const playWhenReady = () => {
+      audio?.play().then(() => {
+        isPlaying.value = true
+      }).catch((err) => {
+        console.error('播放失败:', err)
+        errorMessage.value = '歌曲播放失败，请尝试其他歌曲'
+        setTimeout(() => errorMessage.value = '', 3000)
+      })
+      audio?.removeEventListener('canplaythrough', playWhenReady)
+    }
+    
+    audio.addEventListener('canplaythrough', playWhenReady)
+    audio.load()
+    
+    // 3秒后如果还没播放，清理监听器
+    setTimeout(() => {
+      audio?.removeEventListener('canplaythrough', playWhenReady)
+    }, 3000)
   }
 
   const addToPlaylist = (song: Song) => {
