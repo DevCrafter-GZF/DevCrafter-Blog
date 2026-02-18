@@ -642,13 +642,6 @@ const onEnded = () => {
   nextSong()
 }
 
-const seek = (e: MouseEvent) => {
-  if (!progressRef.value || !audioRef.value || !duration.value) return
-  const rect = progressRef.value.getBoundingClientRect()
-  const percent = (e.clientX - rect.left) / rect.width
-  audioRef.value.currentTime = percent * duration.value
-}
-
 const formatTime = (time: number) => {
   if (!time || isNaN(time)) return '0:00'
   const m = Math.floor(time / 60)
