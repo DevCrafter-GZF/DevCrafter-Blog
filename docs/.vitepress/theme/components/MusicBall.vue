@@ -1279,14 +1279,29 @@ const handleResize = () => {
     height: 24px;
   }
 
-  .music-ball.mobile .panel {
+  /* 移动端展开面板 - 使用 viewport 居中，脱离父元素定位 */
+  .music-ball.mobile.expanded {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    transform: none !important;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none; /* 允许点击穿透到遮罩层 */
+  }
+
+  .music-ball.mobile.expanded .panel {
     width: calc(100vw - 32px);
     max-width: 360px;
     max-height: 70vh;
-    position: fixed;
-    left: 50% !important;
-    top: 50% !important;
-    transform: translate(-50%, -50%) !important;
+    position: relative;
+    pointer-events: auto; /* 恢复面板内点击 */
   }
 
   .music-ball.mobile .mobile-overlay {
