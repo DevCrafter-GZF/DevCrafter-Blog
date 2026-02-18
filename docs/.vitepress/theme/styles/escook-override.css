@@ -11,14 +11,16 @@
   background: none !important;
 }
 
-/* 移除 escook 音乐播放器的背景色 */
+/* 设置 escook 音乐播放器的背景色 - 不透明 */
 .escook-music-ball {
-  background-color: transparent !important;
+  background-color: #fff !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
 /* 深色模式下的音乐播放器背景 */
 .dark .escook-music-ball {
-  background-color: transparent !important;
+  background-color: #1e1e2e !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3) !important;
 }
 
 /* 代码块样式 - 确保 escook 的三个圆点在一行显示 */
@@ -118,4 +120,28 @@
   animation: none;
   mix-blend-mode: normal;
   display: block;
+}
+
+/* 隐藏侧边栏滚动条但保留滚动功能 */
+.VPSidebar .nav {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.VPSidebar .nav::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* 侧边栏容器也隐藏滚动条 */
+.VPSidebar {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.VPSidebar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
