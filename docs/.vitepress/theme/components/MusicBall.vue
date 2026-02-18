@@ -1279,7 +1279,7 @@ const handleResize = () => {
     height: 24px;
   }
 
-  /* 移动端展开面板 - 使用 viewport 居中，脱离父元素定位 */
+  /* 移动端展开面板 - 屏幕居中显示 */
   .music-ball.mobile.expanded {
     position: fixed !important;
     left: 0 !important;
@@ -1292,7 +1292,7 @@ const handleResize = () => {
     z-index: 10000;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: center; /* 水平居中 */
     pointer-events: none; /* 允许点击穿透到遮罩层 */
   }
 
