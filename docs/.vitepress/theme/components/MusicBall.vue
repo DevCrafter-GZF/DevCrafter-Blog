@@ -215,12 +215,32 @@ let collapseTimer: any = null
 // 当前歌曲
 const currentSong = computed(() => playlist.value[currentIndex.value] || null)
 
-// 位置样式
-const positionStyle = computed(() => ({
-  left: `${position.value.x}px`,
-  top: `${position.value.y}px`,
-  transform: isExpanded.value ? 'translate(0, 0)' : 'translate(-50%, -50%)'
-}))
+// 位置样式 - 使用bottom定位避免滚动时跟随
+const positionStyle = computed(() => {
+  if (isExpanded.value) {
+    return {
+      left: `${position.value.x}px`,
+      top: `${position.value.y}px`,
+      transform: 'translate(0, 0)'
+    }
+  } else {
+    // 悬浮球状态使用bottom/right定位
+    const bottom = window.innerHeight - position.value.y - ballSize / 2
+    const right = window.innerWidth - position.value.x - ballSize / 2
+    return {
+      left: 'auto',
+      top: 'auto',
+      right: `${right}px`,
+      bottom: `${bottom}px`,
+      transform: 'translate(0, 0)'
+    }
+  }
+})
+
+// 回到顶部按钮的尺寸和间距（用于计算位置）
+const backToTopSize = 48
+const backToTopGap = 16
+const backToTopOffset = backToTopSize + backToTopGap * 2
 
 // 初始化
 onMounted(() => {
@@ -228,14 +248,37 @@ onMounted(() => {
   checkMobile()
   window.addEventListener('resize', handleResize)
 
-  position.value = {
-    x: window.innerWidth - ballSize / 2 - 20,
-    y: window.innerHeight - ballSize / 2 - 20
-  }
+  // 设置初始位置（考虑回到顶部按钮）
+  setDefaultPosition()
 
   // 加载默认本地音乐
   playlist.value = [...defaultSongs]
 })
+
+// 设置默认位置
+const setDefaultPosition = () => {
+  if (isMobile.value) {
+    // 移动端：在回到顶部按钮上方（右侧对齐）
+    position.value = {
+      x: window.innerWidth - ballSize / 2 - 20,
+      y: window.innerHeight - ballSize / 2 - 20 - backToTopOffset
+    }
+  } else {
+    // PC端：在回到顶部按钮左侧（底部对齐）
+    position.value = {
+      x: window.innerWidth - ballSize / 2 - 20 - backToTopOffset,
+      y: window.innerHeight - ballSize / 2 - 20
+    }
+  }
+}
+
+// 更新拖拽后的位置（从bottom/right转换回x/y）
+const updatePositionFromBottomRight = (bottom: number, right: number) => {
+  position.value = {
+    x: window.innerWidth - right - ballSize / 2,
+    y: window.innerHeight - bottom - ballSize / 2
+  }
+}
 
 // 检测移动端
 const checkMobile = () => {
@@ -500,10 +543,12 @@ const onDrag = (e: MouseEvent) => {
   let x = e.clientX - dragOffset.value.x
   let y = e.clientY - dragOffset.value.y
 
+  // PC端拖拽时考虑回到顶部按钮的偏移
+  const minX = ballSize / 2 + 20 + (isMobile.value ? 0 : backToTopOffset)
   const maxX = window.innerWidth - (isExpanded.value ? panelWidth : ballSize / 2) - 20
-  const maxY = window.innerHeight - (isExpanded.value ? panelHeight : ballSize / 2) - 20
+  const maxY = window.innerHeight - (isExpanded.value ? panelHeight : ballSize / 2) - 20 - (isMobile.value ? backToTopOffset : 0)
 
-  x = Math.max(20, Math.min(maxX, x))
+  x = Math.max(minX, Math.min(maxX, x))
   y = Math.max(20, Math.min(maxY, y))
 
   position.value = {x, y}
@@ -544,8 +589,9 @@ const onDragTouch = (e: TouchEvent) => {
   let x = touch.clientX - dragOffset.value.x
   let y = touch.clientY - dragOffset.value.y
 
+  // 移动端拖拽时考虑回到顶部按钮的偏移（在上方留出空间）
   const maxX = window.innerWidth - ballSize / 2 - 20
-  const maxY = window.innerHeight - ballSize / 2 - 20
+  const maxY = window.innerHeight - ballSize / 2 - 20 - backToTopOffset
 
   x = Math.max(20, Math.min(maxX, x))
   y = Math.max(20, Math.min(maxY, y))
@@ -603,10 +649,12 @@ const clearAllTimers = () => {
 
 const expand = () => {
   if (isMobile.value) {
-    // 移动端居中显示
+    // 移动端展开面板居中显示
+    const mobilePanelWidth = Math.min(360, window.innerWidth - 32)
+    const mobilePanelHeight = Math.min(500, window.innerHeight * 0.7)
     position.value = {
-      x: 16,
-      y: window.innerHeight * 0.15
+      x: (window.innerWidth - mobilePanelWidth) / 2,
+      y: (window.innerHeight - mobilePanelHeight) / 2
     }
   } else {
     const maxX = window.innerWidth - panelWidth - 20
@@ -624,13 +672,8 @@ const collapse = () => {
   showSearchResults.value = false
   searchKeyword.value = ''
 
-  // 归位到最近的角落
-  const distToLeft = position.value.x
-  const distToRight = window.innerWidth - position.value.x
-  position.value = {
-    x: distToLeft < distToRight ? ballSize / 2 + 20 : window.innerWidth - ballSize / 2 - 20,
-    y: window.innerHeight - ballSize / 2 - 20
-  }
+  // 归位到默认位置（考虑回到顶部按钮）
+  setDefaultPosition()
 }
 
 // 移动端触摸处理
