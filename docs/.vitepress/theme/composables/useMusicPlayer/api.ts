@@ -68,13 +68,27 @@ export async function getHotSongs(chartId: number = HOT_SONGS_CHART_ID, limit: n
 
     if (!data.result?.tracks) return []
 
-    return data.result.tracks.slice(0, limit).map(song => ({
-      id: song.id.toString(),
-      name: song.name,
-      artist: song.ar?.map(a => a.name).join('/') || '未知歌手',
-      cover: song.al?.picUrl || '',
-      url: '' // URL 需要单独获取
-    }))
+    // 获取前20首，然后过滤掉无法播放的
+    const candidates = data.result.tracks.slice(0, limit * 2)
+    const songs: Song[] = []
+    
+    for (const song of candidates) {
+      if (songs.length >= limit) break
+      
+      // 检查歌曲是否有播放资源
+      const url = await getSongUrl(song.id.toString())
+      if (url) {
+        songs.push({
+          id: song.id.toString(),
+          name: song.name,
+          artist: song.ar?.map(a => a.name).join('/') || '未知歌手',
+          cover: song.al?.picUrl || '',
+          url: url
+        })
+      }
+    }
+    
+    return songs
   } catch (error) {
     console.error('获取热歌榜失败:', error)
     return []

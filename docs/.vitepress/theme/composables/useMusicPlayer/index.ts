@@ -195,15 +195,24 @@ export function useMusicPlayer() {
     let songUrl = currentSong.value.url
     if (!songUrl) {
       isLoading.value = true
-      songUrl = await getSongUrl(currentSong.value.id)
-      // 更新播放列表中的 URL
-      playlist.value[index].url = songUrl
-      isLoading.value = false
+      try {
+        songUrl = await getSongUrl(currentSong.value.id)
+        // 更新播放列表中的 URL
+        if (songUrl) {
+          playlist.value[index].url = songUrl
+        }
+      } catch (error) {
+        console.error('获取歌曲URL失败:', error)
+      } finally {
+        isLoading.value = false
+      }
     }
     
     if (!songUrl) {
-      errorMessage.value = '无法获取歌曲播放地址'
+      errorMessage.value = '该歌曲暂无播放资源，请尝试其他歌曲'
       setTimeout(() => errorMessage.value = '', 3000)
+      // 自动播放下一首
+      setTimeout(() => playNext(), 1500)
       return
     }
     
@@ -260,14 +269,21 @@ export function useMusicPlayer() {
     let songUrl = song.url
     if (!songUrl) {
       isLoading.value = true
-      songUrl = await getSongUrl(song.id)
-      // 更新播放列表中的 URL
-      playlist.value[index].url = songUrl
-      isLoading.value = false
+      try {
+        songUrl = await getSongUrl(song.id)
+        // 更新播放列表中的 URL
+        if (songUrl) {
+          playlist.value[index].url = songUrl
+        }
+      } catch (error) {
+        console.error('获取歌曲URL失败:', error)
+      } finally {
+        isLoading.value = false
+      }
     }
     
     if (!songUrl) {
-      errorMessage.value = '无法获取歌曲播放地址'
+      errorMessage.value = '该歌曲暂无播放资源，请尝试其他歌曲'
       setTimeout(() => errorMessage.value = '', 3000)
       return
     }
