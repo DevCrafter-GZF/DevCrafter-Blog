@@ -12,6 +12,7 @@
         'escook-music-ball': true
       }"
         :style="positionStyle"
+        @mouseleave="onMouseLeave"
     >
       <!-- 播放列表 - 在圆形上方展开 -->
       <div v-if="isPlaylistVisible" class="escook-music-list" style="bottom: 55px; top: auto; max-height: 250px;">
@@ -190,6 +191,12 @@ const togglePlaylist = () => {
   }
 }
 
+// 鼠标离开播放器时隐藏列表
+const onMouseLeave = () => {
+  isPlaylistVisible.value = false
+  showSearchResults.value = false
+}
+
 // 初始化
 onMounted(() => {
   // 加载网易云音乐热歌榜前10首
@@ -289,9 +296,14 @@ const playSongImmediately = (song: any) => {
     playlist.value.push(song)
     currentIndex.value = playlist.value.length - 1
   }
-  play()
+  // 先播放，再清理搜索状态
+  setTimeout(() => {
+    play()
+  }, 50)
+  // 清空搜索并隐藏列表
   showSearchResults.value = false
   searchKeyword.value = ''
+  isPlaylistVisible.value = false
 }
 
 // 播放/暂停
