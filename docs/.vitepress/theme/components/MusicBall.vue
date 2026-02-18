@@ -41,8 +41,6 @@
       <div
           v-else
           class="panel"
-          @mouseenter="clearCollapseTimer"
-          @mouseleave="startCollapseTimer"
           @click.stop
       >
         <!-- 移动端遮罩层 -->
@@ -206,10 +204,6 @@ const panelHeight = 500
 // Refs
 const audioRef = ref<HTMLAudioElement>()
 const progressRef = ref<HTMLElement>()
-
-// 定时器
-let expandTimer: any = null
-let collapseTimer: any = null
 
 // 当前歌曲
 const currentSong = computed(() => playlist.value[currentIndex.value] || null)
@@ -707,44 +701,15 @@ const stopDragTouch = () => {
 
 // 展开/收起
 const onMouseEnter = () => {
-  if (collapseTimer) {
-    clearTimeout(collapseTimer)
-    collapseTimer = null
-  }
-  if (!isExpanded.value) {
-    expandTimer = setTimeout(() => {
-      expand()
-    }, 800)
-  }
+  // 鼠标移入时不自动展开，保持点击展开的逻辑
 }
 
 const onMouseLeave = () => {
-  if (expandTimer) {
-    clearTimeout(expandTimer)
-    expandTimer = null
-  }
-  if (isExpanded.value) {
-    startCollapseTimer()
-  }
-}
-
-const startCollapseTimer = () => {
-  if (collapseTimer) clearTimeout(collapseTimer)
-  collapseTimer = setTimeout(() => {
-    collapse()
-  }, 1000)  // 5秒后自动收起
-}
-
-const clearCollapseTimer = () => {
-  if (collapseTimer) {
-    clearTimeout(collapseTimer)
-    collapseTimer = null
-  }
+  // 鼠标移出不自动关闭面板，只能通过点击 X 或悬浮球关闭
 }
 
 const clearAllTimers = () => {
-  if (expandTimer) clearTimeout(expandTimer)
-  if (collapseTimer) clearTimeout(collapseTimer)
+  // 清理定时器（不再使用自动展开/收起）
 }
 
 const expand = () => {
@@ -757,25 +722,57 @@ const expand = () => {
       y: (window.innerHeight - mobilePanelHeight) / 2
     }
   } else {
-    // PC端展开面板：根据播放器位置决定左下角或右下角
-    const screenCenterX = window.innerWidth / 2
-    const isLeftSide = position.value.x < screenCenterX  // 判断播放器在屏幕左侧还是右侧
+    // PC端展开面板：根据面板可视位置决定圆形播放器在左侧还是右侧
+    // 面板宽度 320px，圆形播放器 48px，间距 10px
+    // 计算面板的最佳位置，确保在可视范围内
     
-    // 垂直位置：贴底 20px
+    const panelTotalWidth = panelWidth + ballSize + 10  // 面板 + 播放器 + 间距 = 378px
+    const availableWidth = window.innerWidth - 40  // 左右各留 20px 边距
+    
+    // 判断面板应该显示在左侧还是右侧
+    // 如果屏幕宽度足够，优先显示在右侧（与播放器同侧）
+    // 如果屏幕右侧空间不足，显示在左侧
+    const playerX = position.value.x
+    const spaceOnRight = window.innerWidth - playerX - ballSize / 2 - 20  // 播放器右侧剩余空间
+    
+    let panelX: number
+    let newPlayerX: number
+    
+    if (spaceOnRight >= panelWidth + 10) {
+      // 右侧空间足够：面板在播放器右侧
+      // 播放器在左，面板在右
+      panelX = playerX + ballSize / 2 + 10
+      newPlayerX = playerX
+    } else if (playerX - ballSize / 2 - 10 >= panelWidth) {
+      // 右侧空间不足，但左侧空间足够：面板在播放器左侧
+      // 播放器在右，面板在左
+      panelX = playerX - ballSize / 2 - 10 - panelWidth
+      newPlayerX = playerX
+    } else {
+      // 两侧空间都不够：贴边显示，播放器在面板旁边
+      if (playerX < window.innerWidth / 2) {
+        // 播放器在屏幕左侧：面板在播放器右侧
+        panelX = 20
+        newPlayerX = panelX + panelWidth + 10 + ballSize / 2
+      } else {
+        // 播放器在屏幕右侧：面板在播放器左侧
+        panelX = window.innerWidth - panelWidth - 20
+        newPlayerX = panelX - 10 - ballSize / 2
+      }
+    }
+    
+    // 垂直位置：贴底 20px，确保不超出屏幕
     const targetY = window.innerHeight - panelHeight - 20
     
-    if (isLeftSide) {
-      // 偏左：显示在左下角，距离左边 20px
-      position.value = {
-        x: 20,
-        y: targetY
-      }
-    } else {
-      // 偏右：显示在右下角，距离右边 20px
-      position.value = {
-        x: window.innerWidth - panelWidth - 20,
-        y: targetY
-      }
+    // 更新面板位置
+    position.value = {
+      x: Math.max(20, Math.min(window.innerWidth - panelWidth - 20, panelX)),
+      y: targetY
+    }
+    
+    // 更新播放器位置（如果需要）
+    if (newPlayerX !== playerX) {
+      position.value.x = newPlayerX
     }
   }
   isExpanded.value = true
