@@ -217,6 +217,17 @@ const currentSong = computed(() => playlist.value[currentIndex.value] || null)
 
 // 位置样式 - 使用bottom定位避免滚动时跟随
 const positionStyle = computed(() => {
+  // SSR 兼容性检查
+  if (typeof window === 'undefined') {
+    return {
+      left: 'auto',
+      top: 'auto',
+      right: '80px',
+      bottom: '20px',
+      transform: 'translate(0, 0)'
+    }
+  }
+  
   if (isExpanded.value) {
     return {
       left: `${position.value.x}px`,
