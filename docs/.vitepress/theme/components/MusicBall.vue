@@ -134,8 +134,8 @@
           </div>
         </div>
 
-        <!-- 播放列表 - 使用 escook 样式 -->
-        <div class="escook-music-list">
+        <!-- 播放列表 - 使用 escook 样式，在圆形上方展开 -->
+        <div class="escook-music-list" style="bottom: 55px; top: auto; padding: 15px 5px 50px;">
           <div
               v-for="(song, index) in playlist"
               :key="song.id"
