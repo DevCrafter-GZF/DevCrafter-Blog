@@ -45,3 +45,32 @@
 .divider {
   display: none;
 }
+
+/* 全局滚动条隐藏但保持滚动功能 */
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: transparent;
+}
+
+/* Firefox 滚动条隐藏 */
+* {
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
+}
+
+/* IE 滚动条隐藏 */
+* {
+  -ms-overflow-style: none;
+}

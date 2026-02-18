@@ -85,8 +85,12 @@ onMounted(() => {
 
   // 渲染粒子
   function renderParticule (anim) {
-    for (let i = 0; i < anim.animatables.length; i++) {
-      anim.animatables[i].target.draw();
+    if (anim && anim.animatables && anim.animatables.length > 0) {
+      for (let i = 0; i < anim.animatables.length; i++) {
+        if (anim.animatables[i] && anim.animatables[i].target && typeof anim.animatables[i].target.draw === 'function') {
+          anim.animatables[i].target.draw();
+        }
+      }
     }
   }
 
@@ -156,31 +160,80 @@ onMounted(() => {
     });
   }
 
-  // 渲染动画
-  let render;
+  // 鼠标移动跟随效果
+  let animationLoop;
+  let mouseParticles = [];
+
+  // 鼠标移动时创建跟随粒子
+  function handleMouseMove (e) {
+    updateCoords(e);
+
+    // 每移动一定距离创建新粒子
+    if (Math.random() > 0.3) { // 增加粒子密度，更容易看到效果
+      createMouseParticle(pointerX, pointerY);
+    }
+  }
+
+  // 创建鼠标跟随粒子
+  function createMouseParticle (x, y) {
+    const particle = {
+      x: x,
+      y: y,
+      color: colors[random(0, colors.length - 1)],
+      radius: random(4, 8),
+      speedX: (Math.random() - 0.5) * 2,
+      speedY: (Math.random() - 0.5) * 2,
+      opacity: 1,
+      draw: function () {
+        ctx.globalAlpha = this.opacity;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, true);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    };
+    mouseParticles.push(particle);
+  }
+
+  // 渲染动画循环
   const startRender = () => {
-    render = animate({
-      keyframes: [
-        { duration: Infinity }
-      ],
-      onUpdate: function () {
-        ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
-      },
-    });
+    const animateLoop = () => {
+      ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+
+      // 更新和渲染鼠标跟随粒子
+      mouseParticles = mouseParticles.filter(particle => {
+        particle.x += particle.speedX;
+        particle.y += particle.speedY;
+        particle.opacity -= 0.02;
+        particle.radius -= 0.1;
+
+        if (particle.opacity > 0 && particle.radius > 0) {
+          particle.draw();
+          return true;
+        }
+        return false;
+      });
+
+      animationLoop = requestAnimationFrame(animateLoop);
+    };
+    animationLoop = requestAnimationFrame(animateLoop);
   };
 
+  // 点击时的粒子效果
   const handleTap = function (e) {
-    if (!render) startRender();
+    if (!animationLoop) startRender();
     updateCoords(e);
     animateParticules(pointerX, pointerY);
-    createRandomCircleAnimation(pointerX, pointerY); // 添加随机圆形动画
+    createRandomCircleAnimation(pointerX, pointerY);
   };
 
-  document.addEventListener(
-    tap,
-    handleTap,
-    false
-  );
+  // 监听鼠标移动和点击事件
+  document.addEventListener('mousemove', handleMouseMove, false);
+  document.addEventListener(tap, handleTap, false);
+
+  // 组件挂载时自动启动动画循环
+  startRender();
 
   setCanvasSize();
   globalThis.addEventListener("resize", setCanvasSize, false);
@@ -188,6 +241,10 @@ onMounted(() => {
 
 onUnmounted(() => {
   globalThis.removeEventListener("resize", setCanvasSize);
+  document.removeEventListener('mousemove', handleMouseMove);
   document.removeEventListener(tap, handleTap);
+  if (animationLoop) {
+    cancelAnimationFrame(animationLoop);
+  }
 });
 </script>

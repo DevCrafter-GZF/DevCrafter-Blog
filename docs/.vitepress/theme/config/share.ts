@@ -3,7 +3,7 @@ import {defineConfig} from 'vitepress'
 import {groupIconMdPlugin, groupIconVitePlugin} from 'vitepress-plugin-group-icons'
 import timeline from "vitepress-markdown-timeline";
 import vitepressProtectPlugin from "vitepress-protect-plugin"
-import { withMermaid } from "vitepress-plugin-mermaid";
+import {withMermaid} from "vitepress-plugin-mermaid";
 
 export const sharedConfig = withMermaid({
   rewrites: { // 很重要，
@@ -161,7 +161,7 @@ export const sharedConfig = withMermaid({
     }
   },
   head: [
-    ['link', {rel: 'icon', href: '/logo/龙凤呈祥.jpeg'}],
+    ['link', {rel: 'icon', href: '/logo/vitepress-logo-large.webp'}],
     [
       'script',
       {async: '', src: 'https://www.googletagmanager.com/gtag/js?id=TAG_ID'}

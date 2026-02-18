@@ -7,6 +7,7 @@ import '@escook/vitepress-theme/style.css'
 import {NProgress} from 'nprogress-v2/dist/index.js'
 import 'nprogress-v2/dist/index.css'
 import mediumZoom from 'medium-zoom'
+import busuanzi from 'busuanzi.pure.js'
 
 // 导入自定义组件
 import LinkCard from './components/linkCard.vue'
@@ -21,6 +22,7 @@ import BackToTop from './components/backToTop.vue'
 import MouseFollower from './components/MouseFollower.vue'
 import MouseClick from './components/MouseClick.vue'
 import MusicPlayer from './components/MusicPlayer.vue'
+import DataPanel from "./components/DataPanel.vue"
 
 // 导入自定义样式
 import './styles/index.css'
@@ -125,15 +127,20 @@ export default {
     app.component('MNavLinks', MNavLinks)
     app.component('ArticleMetadata', ArticleMetadata)
     app.component('GiscusComment', GiscusComment)
+    app.component('MusicPlayer', MusicPlayer)
+    app.component('MouseFollower', MouseFollower)
+    app.component('MouseClick', MouseClick)
+    app.component('DataPanel', DataPanel)
     
     // 进度条
     if (inBrowser) {
       NProgress.configure({showSpinner: false})
       router.onBeforeRouteChange = () => {
-        NProgress.start()
+        NProgress.start() // 开始进度条
       }
-      router.onAfterRouteChanged = () => {
-        NProgress.done()
+      router.onAfterRouteChange = () => {
+        busuanzi.fetch()
+        NProgress.done() // 停止进度条
       }
     }
     

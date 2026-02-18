@@ -12,8 +12,8 @@ import DefaultTheme from 'vitepress/theme'
 import {nextTick, provide, computed} from 'vue'
 
 import BackToTop from "./backToTop.vue"
-// import notice from "./notice.vue"
-// import bsz from "./bsz.vue"
+import notice from "./notice.vue"
+import bsz from "./bsz.vue"
 
 const {isDark} = useData()
 const route = useRoute()
@@ -51,6 +51,7 @@ provide('toggle-appearance', async ({clientX: x, clientY: y}: MouseEvent) => {
       {
         duration: 300,
         easing: 'ease-in',
+        fill: 'forwards',
         pseudoElement: `::view-transition-${isDark.value ? 'old' : 'new'}(root)`
       }
   )
@@ -61,6 +62,7 @@ provide('toggle-appearance', async ({clientX: x, clientY: y}: MouseEvent) => {
   <DefaultTheme.Layout>
     <template #doc-footer-before>
       <BackToTop/>
+      <bsz/>
     </template>
     <template #doc-after>
       <GiscusComment v-if="!isNavigationPage"/>
@@ -68,14 +70,8 @@ provide('toggle-appearance', async ({clientX: x, clientY: y}: MouseEvent) => {
     <template #layout-top>
       <MouseFollower/>
       <MouseClick/>
+      <notice/>
     </template>
-    <!-- layout-bottom 插槽由 escook 主题自动处理 -->
-    <!-- <template #layout-top>
-      <notice />
-    </template>
-    <template #layout-bottom>
-      <bsz />
-    </template> -->
   </DefaultTheme.Layout>
 </template>
 
@@ -96,12 +92,17 @@ provide('toggle-appearance', async ({clientX: x, clientY: y}: MouseEvent) => {
   z-index: 9999;
 }
 
+/* 恢复原始开关按钮 */
+/* .VPSwitchAppearance {
+  width: 22px !important;
+} */
+
 .VPSwitchAppearance .check {
   transform: none !important;
 }
 
-/* 修正因视图过渡导致的月牙图标偏移 */
-.check .icon {
+/* 修正因视图过渡导致的按钮图标偏移 */
+.VPSwitchAppearance .check .icon {
   top: -2px;
 }
 </style>

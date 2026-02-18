@@ -76,3 +76,4 @@ features:
 <HomeUnderline />
 <confetti />
 <MusicPlayer />
+<DataPanel />

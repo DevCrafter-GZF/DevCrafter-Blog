@@ -18,7 +18,7 @@ const loadGiscus = () => {
   if (giscusScript) {
     giscusScript.remove()
   }
-  
+
   // Remove existing giscus frame
   const existingFrame = document.querySelector('.giscus-frame')
   if (existingFrame) {
@@ -30,14 +30,14 @@ const loadGiscus = () => {
   giscusScript.src = 'https://giscus.app/client.js'
   giscusScript.setAttribute('data-repo', 'DevCrafter-GZF/BlogComments')
   giscusScript.setAttribute('data-repo-id', 'R_kgDONrPFWQ')
-  giscusScript.setAttribute('data-category', 'Announcements')
-  giscusScript.setAttribute('data-category-id', 'DIC_kwDONrPFWc4CmD5f')
+  giscusScript.setAttribute('data-category', 'General')
+  giscusScript.setAttribute('data-category-id', 'DIC_kwDONrPFWc4CmD5g')
   giscusScript.setAttribute('data-mapping', 'pathname')
   giscusScript.setAttribute('data-strict', '0')
   giscusScript.setAttribute('data-reactions-enabled', '1')
   giscusScript.setAttribute('data-emit-metadata', '0')
   giscusScript.setAttribute('data-input-position', 'bottom')
-  giscusScript.setAttribute('data-theme', isDark.value ? 'catppuccin_mocha' : 'catppuccin_frappe')
+  giscusScript.setAttribute('data-theme', isDark.value ? 'catppuccin_frappe' : 'catppuccin_latte')
   giscusScript.setAttribute('data-lang', 'zh-CN')
   giscusScript.setAttribute('data-loading', 'lazy')
   giscusScript.setAttribute('crossorigin', 'anonymous')
@@ -46,12 +46,12 @@ const loadGiscus = () => {
   document.querySelector('.giscus')?.appendChild(giscusScript)
 }
 
-// Watch for theme changes
+// Watch for theme changes (no longer needed with preferred_color_scheme)
 watch(isDark, (newVal) => {
   const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame')
   if (iframe) {
     iframe.contentWindow?.postMessage(
-      { giscus: { setConfig: { theme: newVal ? 'catppuccin_mocha' : 'catppuccin_frappe' } } },
+      { giscus: { setConfig: { theme: newVal ? 'catppuccin_frappe' : 'catppuccin_latte' } } },
       'https://giscus.app'
     )
   }

@@ -226,7 +226,7 @@ VitePress 也支持 GitHub 风格的提示语法：
 
 ## 徽章
 
-使用 Badge 组件展示版本号、状态等信息：
+使用 `Badge` 组件展示版本号、状态等信息：
 
 ```md
 - VitePress <Badge type="info" text="v1.0" />
@@ -276,7 +276,7 @@ VitePress 也支持 GitHub 风格的提示语法：
 
 ### 链接卡片
 
-使用 LinkCard 组件展示精美的链接卡片：
+使用 `LinkCard` 组件展示精美的链接卡片：
 
 ```md
 <LinkCard 
@@ -298,7 +298,7 @@ VitePress 也支持 GitHub 风格的提示语法：
 
 ### 视频播放器
 
-使用 WatermelonPlayer 组件嵌入视频：
+使用 `WatermelonPlayer` 组件嵌入视频：
 
 **输入：**
 
@@ -315,6 +315,48 @@ VitePress 也支持 GitHub 风格的提示语法：
   url="https://www.w3schools.com/html/mov_bbb.mp4" 
   poster="/logo/003.png" 
 />
+
+在线视频,可以用 `<iframe>` 标签实现
+
+**输入：**
+
+```MD
+<iframe 
+style="width:100%; aspect-ratio:16/9; margin-top: 2em;" 
+src="https://www.youtube.com/embed/bzyMLoSwYvk" 
+frameborder="0" 
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+allowfullscreen>
+</iframe>
+
+
+<iframe 
+style="width:100%; aspect-ratio:16/9; margin-top: 2em;" 
+src="//player.bilibili.com/player.html?bvid=BV1YptMeMEcV" 
+frameborder="0" 
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+allowfullscreen>
+</iframe>
+```
+
+**效果：**
+
+<iframe 
+style="width:100%; aspect-ratio:16/9; margin-top: 2em;" 
+src="https://www.youtube.com/embed/bzyMLoSwYvk" 
+frameborder="0" 
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+allowfullscreen>
+</iframe>
+
+
+<iframe 
+style="width:100%; aspect-ratio:16/9; margin-top: 2em;" 
+src="//player.bilibili.com/player.html?bvid=BV1YptMeMEcV" 
+frameborder="0" 
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+allowfullscreen>
+</iframe>
 
 ### 时间线
 
