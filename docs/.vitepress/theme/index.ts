@@ -1,10 +1,10 @@
 // 基于 @escook/vitepress-theme 进行二次开发
-import { h, onMounted, watch, nextTick, provide } from 'vue'
-import type { Theme } from 'vitepress'
-import { useData, inBrowser, useRoute } from 'vitepress'
+import {h, onMounted, watch, nextTick, provide} from 'vue'
+import type {Theme} from 'vitepress'
+import {useData, inBrowser, useRoute} from 'vitepress'
 import escookTheme from '@escook/vitepress-theme'
 import '@escook/vitepress-theme/style.css'
-import { NProgress } from 'nprogress-v2/dist/index.js'
+import {NProgress} from 'nprogress-v2/dist/index.js'
 import 'nprogress-v2/dist/index.css'
 import mediumZoom from 'medium-zoom'
 
@@ -30,8 +30,8 @@ let homePageStyle: HTMLStyleElement | undefined
 
 // 自定义亮暗色切换动画
 const enableTransitions = () =>
-  'startViewTransition' in document &&
-  window.matchMedia('(prefers-reduced-motion: no-preference)').matches
+    'startViewTransition' in document &&
+    window.matchMedia('(prefers-reduced-motion: no-preference)').matches
 
 export default {
   // 继承 escook 主题
@@ -39,42 +39,42 @@ export default {
   
   // 使用 setup 来提供 toggle-appearance（确保在组件层级正确注入）
   setup() {
-    const { isDark } = useData()
+    const {isDark} = useData()
     const route = useRoute()
     
     // 提供自定义的亮暗色切换动画（圆形扩散效果）
-    provide('toggle-appearance', async ({ clientX: x, clientY: y }: MouseEvent) => {
+    provide('toggle-appearance', async ({clientX: x, clientY: y}: MouseEvent) => {
       if (!enableTransitions()) {
         isDark.value = !isDark.value
         return
       }
-
+      
       const clipPath = [
         `circle(0px at ${x}px ${y}px)`,
         `circle(${Math.hypot(
-          Math.max(x, innerWidth - x),
-          Math.max(y, innerHeight - y)
+            Math.max(x, innerWidth - x),
+            Math.max(y, innerHeight - y)
         )}px at ${x}px ${y}px)`
       ]
-
+      
       await document.startViewTransition(async () => {
         isDark.value = !isDark.value
         await nextTick()
       }).ready
-
+      
       document.documentElement.animate(
-        { clipPath: isDark.value ? clipPath.reverse() : clipPath },
-        {
-          duration: 300,
-          easing: 'ease-in',
-          pseudoElement: `::view-transition-${isDark.value ? 'old' : 'new'}(root)`
-        }
+          {clipPath: isDark.value ? clipPath.reverse() : clipPath},
+          {
+            duration: 300,
+            easing: 'ease-in',
+            pseudoElement: `::view-transition-${isDark.value ? 'old' : 'new'}(root)`
+          }
       )
     })
     
     // 图片缩放
     const initZoom = () => {
-      mediumZoom('.VPContent img', { background: 'var(--vp-c-bg)' })
+      mediumZoom('.VPContent img', {background: 'var(--vp-c-bg)'})
     }
     
     onMounted(() => {
@@ -82,19 +82,19 @@ export default {
     })
     
     watch(
-      () => route.path,
-      () => nextTick(() => initZoom())
+        () => route.path,
+        () => nextTick(() => initZoom())
     )
   },
   
   // 自定义 Layout，使用 escook 的 Layout 并添加插槽
   Layout: () => {
-    const { frontmatter } = useData()
+    const {frontmatter} = useData()
     const route = useRoute()
     
     const props = frontmatter.value?.layoutClass
-      ? { class: frontmatter.value.layoutClass }
-      : {}
+        ? {class: frontmatter.value.layoutClass}
+        : {}
     
     // 判断是否在导航页面
     const isNavigationPage = route.path.includes('/navigation/') || route.path.includes('/Navigation/')
@@ -115,7 +115,7 @@ export default {
     })
   },
   
-  enhanceApp({ app, router }) {
+  enhanceApp({app, router}) {
     // 注册自定义组件
     app.component('LinkCard', LinkCard)
     app.component('HomeUnderline', HomeUnderline)
@@ -128,7 +128,7 @@ export default {
     
     // 进度条
     if (inBrowser) {
-      NProgress.configure({ showSpinner: false })
+      NProgress.configure({showSpinner: false})
       router.onBeforeRouteChange = () => {
         NProgress.start()
       }
@@ -140,9 +140,9 @@ export default {
     // 彩虹背景动画样式 - 首页
     if (typeof window !== 'undefined') {
       watch(
-        () => router.route.data.relativePath,
-        () => updateHomePageStyle(location.pathname === '/en/' || location.pathname === '/'),
-        { immediate: true }
+          () => router.route.data.relativePath,
+          () => updateHomePageStyle(location.pathname === '/en/' || location.pathname === '/'),
+          {immediate: true}
       )
     }
   }

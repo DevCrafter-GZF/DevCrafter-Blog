@@ -1,9 +1,9 @@
-import { defineConfigWithTheme } from 'vitepress'
-import escookConfig from '@escook/vitepress-theme/config'
+import {defineConfigWithTheme} from 'vitepress'
+import escookConfig from "@escook/vitepress-theme/config"
 
-import { sharedConfig } from '../.vitepress/theme/config/share'
-import { zhConfig } from '../.vitepress/theme/config/zh'
-import { enConfig } from '../.vitepress/theme/config/en'
+import {sharedConfig} from '../.vitepress/theme/config/share'
+import {zhConfig} from '../.vitepress/theme/config/zh'
+import {enConfig} from '../.vitepress/theme/config/en'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfigWithTheme({

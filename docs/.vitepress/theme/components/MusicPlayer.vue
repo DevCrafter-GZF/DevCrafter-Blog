@@ -14,7 +14,7 @@
           <span class="ball-icon">♪</span>
         </div>
         <!-- 播放状态指示器 -->
-        <div v-if="isPlaying" class="playing-indicator" @click="togglePanel">
+        <div v-if="isPlaying" class="playing-indicator" @click="togglePlay">
           <span></span>
           <span></span>
           <span></span>

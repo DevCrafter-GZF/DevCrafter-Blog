@@ -83,21 +83,21 @@
 }
 
 /* 首页标题渐变文字效果 - 如果不需要可以移除 */
-:root {
-  --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: transparent;
-  --vp-home-hero-image-background-image: none;
-  --vp-home-hero-image-filter: none;
-}
+/*:root {*/
+/*  --vp-home-hero-name-color: transparent;*/
+/*  --vp-home-hero-name-background: transparent;*/
+/*  --vp-home-hero-image-background-image: none;*/
+/*  --vp-home-hero-image-filter: none;*/
+/*}*/
 
 /* 恢复 VitePress 默认的标题样式 */
-.VPHomeHero .name {
-  background: none !important;
-  -webkit-background-clip: initial !important;
-  background-clip: initial !important;
-  -webkit-text-fill-color: initial !important;
-  color: var(--vp-c-text-1) !important;
-}
+/*.VPHomeHero .name {*/
+/*  background: none !important;*/
+/*  -webkit-background-clip: initial !important;*/
+/*  background-clip: initial !important;*/
+/*  -webkit-text-fill-color: initial !important;*/
+/*  color: var(--vp-c-text-1) !important;*/
+/*}*/
 
 /* 亮暗色切换动画样式 - 圆形扩散效果 */
 ::view-transition-old(root),
