@@ -20,7 +20,7 @@ import GiscusComment from './components/GiscusComment.vue'
 import BackToTop from './components/backToTop.vue'
 import MouseFollower from './components/MouseFollower.vue'
 import MouseClick from './components/MouseClick.vue'
-import MusicBall from './components/MusicBall.vue'
+import MusicPlayer from './components/MusicPlayer.vue'
 
 // 导入自定义样式
 import './styles/index.css'
@@ -110,7 +110,7 @@ export default {
       'layout-top': () => [
         h(MouseFollower),
         h(MouseClick),
-        h(MusicBall)
+        h(MusicPlayer)
       ]
     })
   },

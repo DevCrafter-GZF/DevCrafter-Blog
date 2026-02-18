@@ -154,7 +154,7 @@ export const sharedConfig = withMermaid({
       },
     },
     logo: {light: '/logo/剪纸龙舞.svg', dark: '/logo/剪影魅凤.svg', alt: 'DevCrafter Blog'}, // 导航栏logo
-    // Escook 风格音乐播放器配置 - 已禁用，使用自定义 MusicBall 组件
+    // Escook 风格音乐播放器配置 - 禁用，使用自定义播放器
     musicBall: {
       enable: false,
       visible: false

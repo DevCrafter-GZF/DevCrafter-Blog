@@ -160,7 +160,9 @@ onMounted(() => {
   let render;
   const startRender = () => {
     render = animate({
-      duration: Infinity,
+      keyframes: [
+        { duration: Infinity }
+      ],
       onUpdate: function () {
         ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
       },
