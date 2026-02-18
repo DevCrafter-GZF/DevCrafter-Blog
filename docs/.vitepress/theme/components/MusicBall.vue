@@ -346,9 +346,8 @@ const loadHotSongsChart = async () => {
 // 设置默认位置
 const setDefaultPosition = () => {
   if (isMobile.value) {
-    // 移动端：播放器在回到顶部上方，垂直排列，距离 10px
-    // 播放器: bottom = 20px + 48px(回到顶部) + 10px(间距) = 78px
-    // 回到顶部: bottom = 20px
+    // 移动端：固定在右下角，播放器在回到顶部上方，垂直排列，距离 10px
+    // 播放器: right = 20px, bottom = 20px + 48px(回到顶部) + 10px(间距) = 78px
     const playerBottomOffset = 20 + backToTopSize + backToTopGap  // 78px
 
     position.value = {
@@ -687,9 +686,11 @@ const onDragTouch = (e: TouchEvent) => {
   let x = touch.clientX - dragOffset.value.x
   let y = touch.clientY - dragOffset.value.y
 
-  // 移动端拖拽边界 - 与PC端一致，播放器在回到顶部左侧
-  const minX = ballSize / 2 + 20
-  const maxX = window.innerWidth - 20 - backToTopSize - backToTopGap - ballSize / 2
+  // 移动端拖拽边界 - 限制在屏幕右侧，不能切换到左侧
+  // 左侧边界：屏幕中心线（不能越过中线到左侧）
+  const screenCenterX = window.innerWidth / 2
+  const minX = screenCenterX  // 不能越过屏幕中线到左侧
+  const maxX = window.innerWidth - ballSize / 2 - 20  // 右侧留 20px 边距
   const maxY = window.innerHeight - ballSize / 2 - 20
 
   x = Math.max(minX, Math.min(maxX, x))
@@ -756,12 +757,25 @@ const expand = () => {
       y: (window.innerHeight - mobilePanelHeight) / 2
     }
   } else {
-    // PC端展开面板：距离右边 20px，垂直位置保持当前或贴底
-    const targetX = window.innerWidth - panelWidth - 20
-    const maxY = window.innerHeight - panelHeight - 20
-    position.value = {
-      x: targetX,
-      y: Math.min(position.value.y, maxY)
+    // PC端展开面板：根据播放器位置决定左下角或右下角
+    const screenCenterX = window.innerWidth / 2
+    const isLeftSide = position.value.x < screenCenterX  // 判断播放器在屏幕左侧还是右侧
+    
+    // 垂直位置：贴底 20px
+    const targetY = window.innerHeight - panelHeight - 20
+    
+    if (isLeftSide) {
+      // 偏左：显示在左下角，距离左边 20px
+      position.value = {
+        x: 20,
+        y: targetY
+      }
+    } else {
+      // 偏右：显示在右下角，距离右边 20px
+      position.value = {
+        x: window.innerWidth - panelWidth - 20,
+        y: targetY
+      }
     }
   }
   isExpanded.value = true
