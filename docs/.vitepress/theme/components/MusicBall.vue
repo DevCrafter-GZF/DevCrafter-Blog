@@ -22,7 +22,8 @@
           v-if="!isExpanded"
           class="ball"
           @mousedown="startDrag"
-          @touchstart.prevent="startDragTouch"
+          @touchstart.prevent="handleTouchStart"
+          @touchend="handleTouchEnd"
           @click.stop="handleBallClick"
       >
         <div :class="{ 'rotating': isPlaying }" class="ball-inner">
@@ -530,7 +531,16 @@ const startDragTouch = (e: TouchEvent) => {
 const onDragTouch = (e: TouchEvent) => {
   if (!isDragging.value) return
   e.preventDefault()
+  
   const touch = e.touches[0]
+  const moveX = Math.abs(touch.clientX - position.value.x)
+  const moveY = Math.abs(touch.clientY - position.value.y)
+  
+  // 如果移动距离超过阈值，标记为已移动
+  if (moveX > 5 || moveY > 5) {
+    touchMoved = true
+  }
+  
   let x = touch.clientX - dragOffset.value.x
   let y = touch.clientY - dragOffset.value.y
 
@@ -623,19 +633,38 @@ const collapse = () => {
   }
 }
 
-// 移动端长按展开
+// 移动端触摸处理
 let longPressTimer: any = null
-const startLongPress = () => {
-  if (!isMobile.value || isExpanded.value) return
+let touchStartTime = 0
+let touchMoved = false
+
+const handleTouchStart = (e: TouchEvent) => {
+  touchStartTime = Date.now()
+  touchMoved = false
+  
+  // 启动长按定时器
   longPressTimer = setTimeout(() => {
-    expand()
-  }, 600)
+    if (!touchMoved) {
+      expand()
+    }
+  }, 500)
+  
+  // 同时启动拖拽
+  startDragTouch(e)
 }
 
-const cancelLongPress = () => {
+const handleTouchEnd = () => {
+  const touchDuration = Date.now() - touchStartTime
+  
+  // 清除长按定时器
   if (longPressTimer) {
     clearTimeout(longPressTimer)
     longPressTimer = null
+  }
+  
+  // 如果是短按且没有移动，则切换播放/暂停
+  if (touchDuration < 500 && !touchMoved && !isExpanded.value) {
+    togglePlay()
   }
 }
 
