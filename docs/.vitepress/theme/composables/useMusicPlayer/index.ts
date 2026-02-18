@@ -221,27 +221,36 @@ export function useMusicPlayer() {
     const index = addToPlaylist(song)
     currentIndex.value = index
     
-    // 隐藏列表和搜索结果
-    isPlaylistVisible.value = false
-    searchResults.value = []
-    searchKeyword.value = ''
-    hasSearched.value = false
-    
     // 等待 DOM 更新后播放
     await nextTick()
     
     if (audioRef.value) {
       audioRef.value.load()
-      const playWhenReady = () => {
-        audioRef.value?.play()
-        audioRef.value?.removeEventListener('canplay', playWhenReady)
+      // 先尝试直接播放
+      try {
+        await audioRef.value.play()
+      } catch (error) {
+        console.error('直接播放失败，等待 canplay 事件:', error)
+        // 如果失败，等待 canplay 事件后再播放
+        const playWhenReady = () => {
+          audioRef.value?.play().catch(() => {})
+          audioRef.value?.removeEventListener('canplay', playWhenReady)
+        }
+        audioRef.value.addEventListener('canplay', playWhenReady)
+        // 500ms 后清理监听器
+        setTimeout(() => {
+          audioRef.value?.removeEventListener('canplay', playWhenReady)
+        }, 500)
       }
-      audioRef.value.addEventListener('canplay', playWhenReady)
-      setTimeout(() => {
-        audioRef.value?.removeEventListener('canplay', playWhenReady)
-        audioRef.value?.play().catch(() => {})
-      }, 500)
     }
+    
+    // 播放成功后再隐藏列表和清空搜索
+    setTimeout(() => {
+      isPlaylistVisible.value = false
+      searchResults.value = []
+      searchKeyword.value = ''
+      hasSearched.value = false
+    }, 100)
   }
 
   // ========== 搜索功能 ==========
@@ -337,7 +346,8 @@ export function useMusicPlayer() {
   // ========== 键盘快捷键 ==========
   const handleKeydown = (e: KeyboardEvent) => {
     // 忽略输入框中的快捷键
-    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+    const target = e.target as HTMLElement
+    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
       return
     }
 
