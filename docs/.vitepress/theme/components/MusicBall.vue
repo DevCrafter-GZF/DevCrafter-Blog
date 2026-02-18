@@ -174,12 +174,15 @@
 <script lang="ts" setup>
 import {ref, computed, onMounted, onUnmounted, watch} from 'vue'
 
-// 本地默认音乐（使用免费音乐URL）
+// 本地默认音乐（备用）
 const defaultSongs = [
   {id: '25706282', name: '起风了', artist: '买辣椒也用券', cover: '', url: ''},
   {id: '1293886117', name: '体面', artist: '于文文', cover: '', url: ''},
   {id: '863046037', name: '告白气球', artist: '周杰伦', cover: '', url: ''},
 ]
+
+// 网易云音乐热歌榜ID
+const HOT_SONGS_CHART_ID = 3778678  // 云音乐热歌榜
 
 // 状态
 const isExpanded = ref(false)
@@ -262,9 +265,87 @@ onMounted(() => {
   // 设置初始位置（考虑回到顶部按钮）
   setDefaultPosition()
 
-  // 加载默认本地音乐
-  playlist.value = [...defaultSongs]
+  // 加载网易云音乐热歌榜前10首
+  loadHotSongsChart()
 })
+
+// 加载网易云音乐热歌榜
+const loadHotSongsChart = async () => {
+  try {
+    // 尝试多个API获取热歌榜
+    const chartApis = [
+      // API 1: music-api.heheda.top
+      async () => {
+        const response = await fetch(`https://music-api.heheda.top/playlist/detail?id=${HOT_SONGS_CHART_ID}`)
+        const data = await response.json()
+        if (data.result?.tracks) {
+          return data.result.tracks.slice(0, 10).map((song: any) => ({
+            id: song.id.toString(),
+            name: song.name,
+            artist: song.ar?.map((a: any) => a.name).join('/') || song.artists?.map((a: any) => a.name).join('/') || '未知歌手',
+            cover: song.al?.picUrl?.replace('250y250', '100y100') || song.album?.picUrl?.replace('250y250', '100y100') || '',
+            url: `https://music.163.com/song/media/outer/url?id=${song.id}.mp3`
+          }))
+        }
+        return null
+      },
+      // API 2: meting-api
+      async () => {
+        const response = await fetch(`https://api-meting.linweiqin.com/playlist?id=${HOT_SONGS_CHART_ID}`)
+        const data = await response.json()
+        if (data.data || Array.isArray(data)) {
+          const songs = data.data || data
+          return songs.slice(0, 10).map((song: any) => ({
+            id: song.id.toString(),
+            name: song.name,
+            artist: song.artist || song.ar?.map((a: any) => a.name).join('/') || '未知歌手',
+            cover: song.cover?.replace('250y250', '100y100') || song.pic?.replace('250y250', '100y100') || '',
+            url: song.url || `https://music.163.com/song/media/outer/url?id=${song.id}.mp3`
+          }))
+        }
+        return null
+      },
+      // API 3: 使用搜索热门歌曲作为备选
+      async () => {
+        const response = await fetch(`https://music-api.heheda.top/search?keywords=热门歌曲&limit=10`)
+        const data = await response.json()
+        if (data.result?.songs) {
+          return data.result.songs.map((song: any) => ({
+            id: song.id.toString(),
+            name: song.name,
+            artist: song.artists?.map((a: any) => a.name).join('/') || '未知歌手',
+            cover: song.album?.picUrl?.replace('250y250', '100y100') || '',
+            url: `https://music.163.com/song/media/outer/url?id=${song.id}.mp3`
+          }))
+        }
+        return null
+      }
+    ]
+
+    for (const apiFn of chartApis) {
+      try {
+        const songs = await apiFn()
+        if (songs && songs.length > 0) {
+          playlist.value = songs
+          // 自动播放第一首
+          setTimeout(() => {
+            audioRef.value?.play()
+          }, 500)
+          return
+        }
+      } catch (e) {
+        console.log('当前API失败，尝试下一个...')
+      }
+    }
+
+    // 如果都失败了，使用默认歌曲
+    console.log('热歌榜加载失败，使用默认歌曲')
+    playlist.value = [...defaultSongs]
+  } catch (e) {
+    console.log('加载热歌榜失败:', e)
+    playlist.value = [...defaultSongs]
+  }
+}
 
 // 设置默认位置
 const setDefaultPosition = () => {
