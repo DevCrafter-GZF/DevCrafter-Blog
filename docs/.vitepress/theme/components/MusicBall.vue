@@ -222,7 +222,7 @@ const positionStyle = computed(() => {
     return {
       left: 'auto',
       top: 'auto',
-      right: '20px',
+      right: '78px',  // 20px + 48px + 10px = 78px，播放器在回到顶部左侧
       bottom: '20px',
       transform: 'translate(0, 0)'
     }
@@ -268,14 +268,19 @@ onMounted(() => {
 
 // 设置默认位置 - 播放器在回到顶部右侧，两者都在右下角
 const setDefaultPosition = () => {
-  // 播放器在回到顶部按钮的右侧，间距 10px
-  // 回到顶部在左 (right: 20px + 48px + 10px = 78px)
-  // 播放器在右 (right: 20px)
-  const rightOffset = 20  // 播放器距离右边 20px
-  const backToTopTotalWidth = backToTopSize + backToTopGap  // 48 + 10 = 58px
+  // 布局：回到顶部在左，播放器在右，间距 10px
+  // 回到顶部: right = 20px + 48px(播放器) + 10px(间距) = 78px
+  // 播放器: right = 20px
+  // 所以播放器应该在回到顶部的右侧，播放器 right 值更小（更靠右）
+  // 但实际上播放器应该在回到顶部的左边，这样才不会遮挡
+  // 修正：播放器在左，回到顶部在右
+  
+  // 播放器在左: right = 20px + 48px(回到顶部) + 10px(间距) = 78px
+  // 回到顶部在右: right = 20px
+  const playerRightOffset = 20 + backToTopSize + backToTopGap  // 78px
   
   position.value = {
-    x: window.innerWidth - ballSize / 2 - rightOffset,
+    x: window.innerWidth - ballSize / 2 - playerRightOffset,
     y: window.innerHeight - ballSize / 2 - 20
   }
 }
@@ -551,10 +556,11 @@ const onDrag = (e: MouseEvent) => {
   let x = e.clientX - dragOffset.value.x
   let y = e.clientY - dragOffset.value.y
 
-  // 拖拽边界限制 - 播放器在回到顶部右侧，两者都在右下角
-  // 左侧需要给回到顶部留出空间: 20px(边距) + 48px(按钮) + 10px(间距) = 78px
-  const minX = ballSize / 2 + 20 + backToTopOffset
-  const maxX = window.innerWidth - (isExpanded.value ? panelWidth : ballSize / 2) - 20
+  // 拖拽边界限制 - 播放器在回到顶部左侧
+  // 左侧最小: 20px(边距) + 24px(半径) = 44px
+  // 右侧最大: 屏幕宽 - 20px(边距) - 48px(回到顶部) - 10px(间距) - 24px(半径)
+  const minX = ballSize / 2 + 20
+  const maxX = window.innerWidth - 20 - backToTopSize - backToTopGap - ballSize / 2
   const maxY = window.innerHeight - (isExpanded.value ? panelHeight : ballSize / 2) - 20
 
   x = Math.max(minX, Math.min(maxX, x))
@@ -598,9 +604,9 @@ const onDragTouch = (e: TouchEvent) => {
   let x = touch.clientX - dragOffset.value.x
   let y = touch.clientY - dragOffset.value.y
 
-  // 移动端拖拽边界 - 与PC端一致，播放器在回到顶部右侧
-  const minX = ballSize / 2 + 20 + backToTopOffset
-  const maxX = window.innerWidth - ballSize / 2 - 20
+  // 移动端拖拽边界 - 与PC端一致，播放器在回到顶部左侧
+  const minX = ballSize / 2 + 20
+  const maxX = window.innerWidth - 20 - backToTopSize - backToTopGap - ballSize / 2
   const maxY = window.innerHeight - ballSize / 2 - 20
 
   x = Math.max(minX, Math.min(maxX, x))
