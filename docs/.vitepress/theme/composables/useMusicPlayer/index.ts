@@ -211,23 +211,13 @@ export function useMusicPlayer() {
       return
     }
     
-    // 等待 Vue 更新 DOM 和音频源
+    // 等待 Vue 更新 DOM
     await nextTick()
     
-    // 等待音频元素加载后播放
-    if (audioRef.value) {
-      audioRef.value.load()
-      const playWhenReady = () => {
-        audioRef.value?.play().catch(() => {})
-        audioRef.value?.removeEventListener('canplay', playWhenReady)
-      }
-      audioRef.value.addEventListener('canplay', playWhenReady)
-      // 超时处理
-      setTimeout(() => {
-        audioRef.value?.removeEventListener('canplay', playWhenReady)
-        audioRef.value?.play().catch(() => {})
-      }, 500)
-    }
+    // 延迟播放，让音频元素加载
+    setTimeout(() => {
+      play()
+    }, 100)
   }
   
   const addToPlaylist = (song: Song) => {
