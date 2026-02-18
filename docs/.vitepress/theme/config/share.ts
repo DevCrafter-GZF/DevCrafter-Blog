@@ -154,36 +154,10 @@ export const sharedConfig = withMermaid({
       },
     },
     logo: {light: '/logo/剪纸龙舞.svg', dark: '/logo/剪影魅凤.svg', alt: 'DevCrafter Blog'}, // 导航栏logo
-    // Escook 风格音乐播放器配置
+    // Escook 风格音乐播放器配置 - 已禁用，使用自定义 MusicBall 组件
     musicBall: {
-      // 示例：单首歌曲模式
-      // src: 'https://img3.tukuppt.com/newpreview_music/09/01/62/5c89fd22dea6948307.mp3',
-      
-      // 示例：播放列表模式
-      list: [
-        {
-          name: '起风了',
-          src: 'https://music.163.com/song/media/outer/url?id=1330348068.mp3',
-          artist: '买辣椒也用券',
-          cover: 'https://p2.music.126.net/diGAyEmpymX8G7JcnElncQ==/109951163699673355.jpg'
-        },
-        {
-          name: '晴天',
-          src: 'https://music.163.com/song/media/outer/url?id=186016.mp3',
-          artist: '周杰伦',
-          cover: 'https://p2.music.126.net/4T7IUs7my8dVv9Hx6e0Bdg==/109951168995443937.jpg'
-        },
-        {
-          name: '稻香',
-          src: 'https://music.163.com/song/media/outer/url?id=185709.mp3',
-          artist: '周杰伦',
-          cover: 'https://p2.music.126.net/4T7IUs7my8dVv9Hx6e0Bdg==/109951168995443937.jpg'
-        }
-      ],
-      loop: true,
-      autoplay: false,
-      enable: true,
-      visible: true
+      enable: false,
+      visible: false
     }
   },
   head: [

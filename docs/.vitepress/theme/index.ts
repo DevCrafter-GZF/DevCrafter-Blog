@@ -20,6 +20,7 @@ import GiscusComment from './components/GiscusComment.vue'
 import BackToTop from './components/backToTop.vue'
 import MouseFollower from './components/MouseFollower.vue'
 import MouseClick from './components/MouseClick.vue'
+import MusicBall from './components/MusicBall.vue'
 
 // 导入自定义样式
 import './styles/index.css'
@@ -105,10 +106,11 @@ export default {
       // 在文档后添加评论（非导航页）
       'doc-after': () => isNavigationPage ? null : h(GiscusComment),
       
-      // 在布局顶部添加鼠标效果
+      // 在布局顶部添加鼠标效果和音乐播放器
       'layout-top': () => [
         h(MouseFollower),
-        h(MouseClick)
+        h(MouseClick),
+        h(MusicBall)
       ]
     })
   },
