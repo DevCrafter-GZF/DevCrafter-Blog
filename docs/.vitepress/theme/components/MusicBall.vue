@@ -9,6 +9,7 @@
     <div
         :class="{ 'active': isPlaylistVisible, 'escook-music-ball': true }"
         :style="positionStyle"
+        @mouseenter="cancelHidePlaylist"
         @mouseleave="hidePlaylist"
     >
       <!-- 播放列表面板 -->
@@ -16,8 +17,8 @@
         <div
             v-show="isPlaylistVisible"
             class="music-playlist"
-            @mouseenter="isMouseOverList = true"
-            @mouseleave="isMouseOverList = false"
+            @mouseenter="setMouseOverPlaylist(true)"
+            @mouseleave="setMouseOverPlaylist(false); hidePlaylist()"
         >
           <!-- 搜索区域 -->
           <div class="search-section">
@@ -102,11 +103,29 @@
         </div>
       </Transition>
 
+      <!-- 错误提示 -->
+      <Transition name="fade">
+        <div v-if="errorMessage" class="error-toast">
+          {{ errorMessage }}
+        </div>
+      </Transition>
+
       <!-- 控制面板 -->
       <div class="escook-music-ball__inner">
-        <div class="escook-play-pause" @click.stop="togglePlay">
-          <span v-if="!isPlaying" class="iconfont icon-playfill"></span>
+        <!-- 上一首 -->
+        <div class="control-btn prev-btn" title="上一首 (←)" @click.stop="playPrev">
+          <span class="iconfont">⏮</span>
+        </div>
+
+        <div class="escook-play-pause" :class="{ 'loading': isLoading }" title="播放/暂停 (空格)" @click.stop="togglePlay">
+          <span v-if="isLoading" class="loading-spinner"></span>
+          <span v-else-if="!isPlaying" class="iconfont icon-playfill"></span>
           <span v-else class="iconfont icon-pause"></span>
+        </div>
+
+        <!-- 下一首 -->
+        <div class="control-btn next-btn" title="下一首 (→)" @click.stop="playNext">
+          <span class="iconfont">⏭</span>
         </div>
 
         <div class="escook-time">{{ formatTime(currentTime) }} / {{ formatTime(duration) }}</div>
@@ -157,14 +176,12 @@ const {
   isPlaying, isMuted, volumeValue, currentTime, duration,
   progressValue, playMode, playlist, currentIndex, currentSong,
   isPlaylistVisible, searchKeyword, searchResults, isSearching, hasSearched,
-  audioRef, togglePlay, toggleMute, togglePlayMode, togglePlaylist,
-  hidePlaylist, playByIndex, removeFromPlaylist, playSongImmediately,
+  errorMessage, isLoading, audioRef, togglePlay, toggleMute, togglePlayMode,
+  togglePlaylist, hidePlaylist, cancelHidePlaylist, setMouseOverPlaylist,
+  playByIndex, playPrev, playNext, removeFromPlaylist, playSongImmediately,
   search, clearSearch, formatTime, onAudioEnded, onAudioLoadedMetadata,
   onAudioPause, onAudioPlay, onAudioTimeUpdate
 } = useMusicPlayer()
-
-// 鼠标是否在列表上
-const isMouseOverList = ref(false)
 
 // 播放模式图标和文本
 const playModeIcon = computed(() => {
@@ -469,6 +486,68 @@ watch(searchKeyword, (newVal) => {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* 错误提示 */
+.error-toast {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ff4d4f;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 200;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 加载动画 */
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--vp-c-brand, #409eff);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.escook-play-pause.loading {
+  opacity: 0.8;
+}
+
+/* 淡入淡出动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 控制按钮 */
+.control-btn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.control-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.control-btn .iconfont {
+  font-size: 14px;
 }
 
 /* 深色模式适配 */

@@ -24,9 +24,13 @@ export function useMusicPlayer() {
   const searchResults = ref<Song[]>([])
   const isSearching = ref(false)
   const hasSearched = ref(false)
+  const errorMessage = ref('')
+  const isLoading = ref(false)
   
   const audioRef = ref<HTMLAudioElement>()
   const searchDebounceTimer = ref<number | null>(null)
+  const hidePlaylistTimer = ref<number | null>(null)
+  const isMouseOverPlaylist = ref(false)
 
   // ========== 计算属性 ==========
   const currentSong = computed<Song | null>(() => {
@@ -57,10 +61,18 @@ export function useMusicPlayer() {
   // ========== 播放控制 ==========
   const play = async () => {
     if (!audioRef.value) return
+    isLoading.value = true
+    errorMessage.value = ''
     try {
       await audioRef.value.play()
     } catch (error) {
       console.error('播放失败:', error)
+      errorMessage.value = '歌曲播放失败，请尝试其他歌曲'
+      setTimeout(() => {
+        errorMessage.value = ''
+      }, 3000)
+    } finally {
+      isLoading.value = false
     }
   }
 
@@ -106,6 +118,35 @@ export function useMusicPlayer() {
       if (currentIndex.value < playlist.value.length - 1) {
         currentIndex.value++
         play()
+      } else {
+        // 到最后一首，回到第一首
+        currentIndex.value = 0
+        play()
+      }
+    }
+  }
+
+  const playPrev = () => {
+    if (playlist.value.length === 0) return
+
+    if (playMode.value === 'loop') {
+      // 单曲循环：重新播放当前歌曲
+      audioRef.value?.load()
+      play()
+    } else if (playMode.value === 'random') {
+      // 随机播放
+      const randomIndex = Math.floor(Math.random() * playlist.value.length)
+      currentIndex.value = randomIndex
+      play()
+    } else {
+      // 顺序播放
+      if (currentIndex.value > 0) {
+        currentIndex.value--
+        play()
+      } else {
+        // 到第一首，回到最后一首
+        currentIndex.value = playlist.value.length - 1
+        play()
       }
     }
   }
@@ -116,7 +157,29 @@ export function useMusicPlayer() {
   }
 
   const hidePlaylist = () => {
-    isPlaylistVisible.value = false
+    // 延迟隐藏，给鼠标移动到列表区域留出时间
+    if (hidePlaylistTimer.value) {
+      clearTimeout(hidePlaylistTimer.value)
+    }
+    hidePlaylistTimer.value = window.setTimeout(() => {
+      if (!isMouseOverPlaylist.value) {
+        isPlaylistVisible.value = false
+      }
+    }, 150)
+  }
+
+  const cancelHidePlaylist = () => {
+    if (hidePlaylistTimer.value) {
+      clearTimeout(hidePlaylistTimer.value)
+      hidePlaylistTimer.value = null
+    }
+  }
+
+  const setMouseOverPlaylist = (value: boolean) => {
+    isMouseOverPlaylist.value = value
+    if (value) {
+      cancelHidePlaylist()
+    }
   }
 
   const playByIndex = (index: number) => {
@@ -271,6 +334,41 @@ export function useMusicPlayer() {
     isPlaying.value = false
   }
 
+  // ========== 键盘快捷键 ==========
+  const handleKeydown = (e: KeyboardEvent) => {
+    // 忽略输入框中的快捷键
+    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+      return
+    }
+
+    switch (e.code) {
+      case 'Space':
+        e.preventDefault()
+        togglePlay()
+        break
+      case 'ArrowLeft':
+        e.preventDefault()
+        playPrev()
+        break
+      case 'ArrowRight':
+        e.preventDefault()
+        playNext()
+        break
+      case 'ArrowUp':
+        e.preventDefault()
+        volume.value = Math.min(100, volume.value + 5)
+        break
+      case 'ArrowDown':
+        e.preventDefault()
+        volume.value = Math.max(0, volume.value - 5)
+        break
+      case 'KeyM':
+        e.preventDefault()
+        toggleMute()
+        break
+    }
+  }
+
   // ========== 初始化 ==========
   const init = async () => {
     // 加载本地存储的播放列表
@@ -284,6 +382,9 @@ export function useMusicPlayer() {
         savePlaylist()
       }
     }
+
+    // 添加键盘事件监听
+    document.addEventListener('keydown', handleKeydown)
   }
 
   // 监听播放列表变化
@@ -299,6 +400,10 @@ export function useMusicPlayer() {
     if (searchDebounceTimer.value) {
       clearTimeout(searchDebounceTimer.value)
     }
+    if (hidePlaylistTimer.value) {
+      clearTimeout(hidePlaylistTimer.value)
+    }
+    document.removeEventListener('keydown', handleKeydown)
   })
 
   // ========== 格式化工具 ==========
@@ -327,6 +432,8 @@ export function useMusicPlayer() {
     searchResults,
     isSearching,
     hasSearched,
+    errorMessage,
+    isLoading,
     audioRef,
     
     // 方法
@@ -336,8 +443,11 @@ export function useMusicPlayer() {
     toggleMute,
     togglePlayMode,
     playNext,
+    playPrev,
     togglePlaylist,
     hidePlaylist,
+    cancelHidePlaylist,
+    setMouseOverPlaylist,
     playByIndex,
     addToPlaylist,
     removeFromPlaylist,
