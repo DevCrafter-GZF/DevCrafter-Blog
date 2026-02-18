@@ -22,8 +22,8 @@
           v-if="!isExpanded"
           class="ball"
           @mousedown="startDrag"
-          @touchstart.prevent="handleTouchStart"
           @touchend="handleTouchEnd"
+          @touchstart.prevent="handleTouchStart"
           @click.stop="handleBallClick"
       >
         <div :class="{ 'rotating': isPlaying }" class="ball-inner">
@@ -131,20 +131,20 @@
         <!-- 控制按钮 -->
         <div class="controls">
           <button title="上一首" @click="prevSong">
-            <svg viewBox="0 0 24 24" fill="currentColor">
+            <svg fill="currentColor" viewBox="0 0 24 24">
               <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
             </svg>
           </button>
           <button :title="isPlaying ? '暂停' : '播放'" class="play-btn" @click="togglePlay">
-            <svg v-if="isPlaying" viewBox="0 0 24 24" fill="currentColor">
+            <svg v-if="isPlaying" fill="currentColor" viewBox="0 0 24 24">
               <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
             </svg>
-            <svg v-else viewBox="0 0 24 24" fill="currentColor">
+            <svg v-else fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z"/>
             </svg>
           </button>
           <button title="下一首" @click="nextSong">
-            <svg viewBox="0 0 24 24" fill="currentColor">
+            <svg fill="currentColor" viewBox="0 0 24 24">
               <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
             </svg>
           </button>
@@ -524,23 +524,23 @@ const startDragTouch = (e: TouchEvent) => {
     x: touch.clientX - position.value.x,
     y: touch.clientY - position.value.y
   }
-  document.addEventListener('touchmove', onDragTouch, { passive: false })
+  document.addEventListener('touchmove', onDragTouch, {passive: false})
   document.addEventListener('touchend', stopDragTouch)
 }
 
 const onDragTouch = (e: TouchEvent) => {
   if (!isDragging.value) return
   e.preventDefault()
-  
+
   const touch = e.touches[0]
   const moveX = Math.abs(touch.clientX - position.value.x)
   const moveY = Math.abs(touch.clientY - position.value.y)
-  
+
   // 如果移动距离超过阈值，标记为已移动
   if (moveX > 5 || moveY > 5) {
     touchMoved = true
   }
-  
+
   let x = touch.clientX - dragOffset.value.x
   let y = touch.clientY - dragOffset.value.y
 
@@ -641,27 +641,27 @@ let touchMoved = false
 const handleTouchStart = (e: TouchEvent) => {
   touchStartTime = Date.now()
   touchMoved = false
-  
+
   // 启动长按定时器
   longPressTimer = setTimeout(() => {
     if (!touchMoved) {
       expand()
     }
   }, 500)
-  
+
   // 同时启动拖拽
   startDragTouch(e)
 }
 
 const handleTouchEnd = () => {
   const touchDuration = Date.now() - touchStartTime
-  
+
   // 清除长按定时器
   if (longPressTimer) {
     clearTimeout(longPressTimer)
     longPressTimer = null
   }
-  
+
   // 如果是短按且没有移动，则切换播放/暂停
   if (touchDuration < 500 && !touchMoved && !isExpanded.value) {
     togglePlay()

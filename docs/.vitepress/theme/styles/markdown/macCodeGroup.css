@@ -61,3 +61,68 @@
 .vp-code-group div[class*="language-"].vp-adaptive-theme::before {
   display: none;
 }
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  /* 代码组：减小阴影 */
+  .vp-code-group {
+    box-shadow: 0 4px 12px 0 rgb(0 0 0 / 30%);
+    border-radius: 6px;
+  }
+
+  /* 代码组：调整tab间距 */
+  .vp-code-group .tabs {
+    padding-top: 16px;
+  }
+
+  /* 代码组：减小小圆点 */
+  .vp-code-group .tabs::before {
+    top: 8px;
+    left: 8px;
+    width: 10px;
+    height: 10px;
+    box-shadow: 16px 0 #fdbc40, 32px 0 #35cd4b;
+  }
+
+  /* 代码组：调整tab按钮 */
+  .vp-code-group .tabs label {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  /* 代码组：调整行号位置 */
+  .vp-code-group .line-numbers-mode .line-numbers-wrapper {
+    padding-top: 16px;
+  }
+
+  /* 代码组：调整行号竖线 */
+  .vp-code-group .line-numbers-mode .line-numbers-wrapper::after {
+    top: 20px;
+    height: calc(100% - 36px);
+  }
+
+  /* 代码组：确保横向滚动 */
+  .vp-code-group pre,
+  .vp-code-group pre code {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* 小屏幕手机额外优化 */
+@media (max-width: 375px) {
+  .vp-code-group {
+    border-radius: 4px;
+  }
+
+  .vp-code-group .tabs::before {
+    width: 8px;
+    height: 8px;
+    box-shadow: 14px 0 #fdbc40, 28px 0 #35cd4b;
+  }
+
+  .vp-code-group .tabs label {
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+}

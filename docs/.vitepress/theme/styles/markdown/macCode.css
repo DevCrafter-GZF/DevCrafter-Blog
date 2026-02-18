@@ -44,3 +44,65 @@
 .vp-doc div[class*='language-'].line-numbers-mode {
   margin-bottom: 20px;
 }
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  /* 代码块：减小阴影和边距 */
+  .vp-doc div[class*=language-] {
+    box-shadow: 0 4px 12px 0 rgb(0 0 0 / 30%);
+    padding-top: 16px;
+    border-radius: 6px;
+  }
+
+  /* 代码块：减小小圆点尺寸 */
+  .vp-doc div[class*=language-]::before {
+    top: 8px;
+    left: 8px;
+    width: 10px;
+    height: 10px;
+    box-shadow: 16px 0 0 #ffbd2e, 32px 0 0 #27c93f;
+  }
+
+  /* 代码块：调整行号位置 */
+  .vp-doc .line-numbers-wrapper {
+    padding-top: 32px;
+  }
+
+  /* 代码块：调整行号竖线 */
+  .vp-doc .line-numbers-wrapper::after {
+    top: 32px;
+    height: calc(100% - 48px);
+  }
+
+  /* 代码块内容：减小字体和padding */
+  .vp-doc div[class*=language-] pre {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  /* 代码块：确保横向滚动 */
+  .vp-doc div[class*=language-] .highlight-lines,
+  .vp-doc div[class*=language-] pre code {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* 小屏幕手机额外优化 */
+@media (max-width: 375px) {
+  .vp-doc div[class*=language-] {
+    padding-top: 14px;
+    border-radius: 4px;
+  }
+
+  .vp-doc div[class*=language-]::before {
+    width: 8px;
+    height: 8px;
+    box-shadow: 14px 0 0 #ffbd2e, 28px 0 0 #27c93f;
+  }
+
+  .vp-doc div[class*=language-] pre {
+    padding: 10px;
+    font-size: 12px;
+  }
+}
