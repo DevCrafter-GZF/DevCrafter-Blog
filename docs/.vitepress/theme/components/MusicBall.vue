@@ -234,35 +234,28 @@ const volumeValue = computed({
   }
 })
 
-// 位置样式 - 使用bottom定位避免滚动时跟随
+// 位置样式 - 使用 escook 主题默认位置 left: 15px; bottom: 15px
 const positionStyle = computed(() => {
   // SSR 兼容性检查
   if (typeof window === 'undefined') {
     return {
-      left: 'auto',
-      top: 'auto',
-      right: '78px',  // 20px + 48px + 10px = 78px，播放器在回到顶部左侧
-      bottom: '20px',
-      transform: 'translate(0, 0)'
+      left: '15px',
+      bottom: '15px'
     }
   }
 
   if (isExpanded.value) {
+    // 展开时居中显示
     return {
-      left: `${position.value.x}px`,
-      top: `${position.value.y}px`,
-      transform: 'translate(0, 0)'
+      left: '50%',
+      top: '50%',
+      transform: 'translate(-50%, -50%)'
     }
   } else {
-    // 悬浮球状态使用bottom/right定位
-    const bottom = window.innerHeight - position.value.y - ballSize / 2
-    const right = window.innerWidth - position.value.x - ballSize / 2
+    // 收起时使用 escook 默认位置
     return {
-      left: 'auto',
-      top: 'auto',
-      right: `${right}px`,
-      bottom: `${bottom}px`,
-      transform: 'translate(0, 0)'
+      left: '15px',
+      bottom: '15px'
     }
   }
 })
