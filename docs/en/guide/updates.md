@@ -38,6 +38,15 @@
 - 🔧 Fixed playback failure handling logic, automatically skipping songs without copyright
 - 🔧 Fixed mobile device player touch interaction issues
 - 🔧 Fixed player positioning and overflow issues
+- 🔧 Fixed bsz component display issue, added busuanzi statistics script
+- 🔧 Fixed Giscus comment system configuration, updated category and theme settings
+
+**Other Improvements:**
+
+- 📝 Translated Markdown syntax tutorial to English documentation
+- 🎨 Added page scrollbar hiding feature while maintaining scroll functionality
+- 📁 Improved .gitignore file, added common frontend project ignore items
+- 🔧 Fixed component slot conflict issues, optimized layout structure
 
 ## 📅 2025
 
