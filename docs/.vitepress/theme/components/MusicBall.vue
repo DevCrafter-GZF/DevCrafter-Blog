@@ -7,152 +7,150 @@
   <Teleport to="body">
     <div
         :class="{
-        'expanded': isExpanded,
-        'playing': isPlaying,
-        'dragging': isDragging,
-        'mobile': isMobile
+        'active': isExpanded,
+        'escook-music-ball': true
       }"
         :style="positionStyle"
-        class="music-ball"
         @mouseenter="onMouseEnter"
         @mouseleave="onMouseLeave"
     >
       <!-- 圆形悬浮球 -->
       <div
           v-if="!isExpanded"
-          class="ball"
+          class="escook-music-ball__inner"
           @mousedown="startDrag"
           @touchend="handleTouchEnd"
           @touchstart.prevent="handleTouchStart"
           @click.stop="handleBallClick"
       >
-        <div :class="{ 'rotating': isPlaying }" class="ball-inner">
-          <img v-if="currentSong?.cover" :src="currentSong.cover" alt="" class="ball-cover">
-          <svg v-else class="music-icon" viewBox="0 0 24 24">
-            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-          </svg>
+        <!-- 播放/暂停按钮 -->
+        <div class="escook-play-pause" @click.stop="togglePlay">
+          <span v-if="!isPlaying" class="iconfont icon-playfill"></span>
+          <span v-else class="iconfont icon-pause"></span>
         </div>
-        <div v-if="isPlaying" class="playing-waves">
-          <span></span><span></span><span></span>
+        
+        <!-- 时间显示 -->
+        <div class="escook-time">{{ formatTime(currentTime) }} / {{ formatTime(duration) }}</div>
+        
+        <!-- 进度条 -->
+        <div class="escook-duration">
+          <el-slider
+              v-model="progressValue"
+              :show-tooltip="false"
+              @change="seek"
+          />
+        </div>
+        
+        <!-- 音量控制 -->
+        <div class="escook-volume">
+          <el-slider
+              v-model="volumeValue"
+              :show-tooltip="false"
+          />
+          <span v-if="isMuted" class="iconfont icon-ic_volume_off" @click="toggleMute"></span>
+          <span v-else class="iconfont icon-ic_volume_up" @click="toggleMute"></span>
+        </div>
+        
+        <!-- 播放列表按钮 -->
+        <div class="escook-music-list-button" @click.stop="expand">
+          <span class="iconfont icon-music_list"></span>
         </div>
       </div>
 
-      <!-- 展开面板 -->
+      <!-- 展开面板 - 使用 escook 样式 -->
       <div
           v-else
-          class="panel"
+          class="escook-music-ball__inner"
           @click.stop
       >
-        <!-- 移动端遮罩层 -->
-        <div v-if="isMobile" class="mobile-overlay" @click="collapse"></div>
-        <!-- 头部 -->
-        <div class="panel-header" @mousedown="startDrag">
-          <div class="now-playing">
-            <img v-if="currentSong?.cover" :src="currentSong.cover" alt="" class="np-cover">
-            <div class="np-info">
-              <div class="np-name">{{ currentSong?.name || '未播放' }}</div>
-              <div class="np-artist">{{ currentSong?.artist || '搜索添加歌曲' }}</div>
-            </div>
-          </div>
-          <button class="close-btn" @click="collapse">×</button>
+        <!-- 播放/暂停按钮 -->
+        <div class="escook-play-pause" @click.stop="togglePlay">
+          <span v-if="!isPlaying" class="iconfont icon-playfill"></span>
+          <span v-else class="iconfont icon-pause"></span>
+        </div>
+        
+        <!-- 时间显示 -->
+        <div class="escook-time">{{ formatTime(currentTime) }} / {{ formatTime(duration) }}</div>
+        
+        <!-- 进度条 -->
+        <div class="escook-duration">
+          <el-slider
+              v-model="progressValue"
+              :show-tooltip="false"
+              @change="seek"
+          />
+        </div>
+        
+        <!-- 音量控制 -->
+        <div class="escook-volume">
+          <el-slider
+              v-model="volumeValue"
+              :show-tooltip="false"
+          />
+          <span v-if="isMuted" class="iconfont icon-ic_volume_off" @click="toggleMute"></span>
+          <span v-else class="iconfont icon-ic_volume_up" @click="toggleMute"></span>
+        </div>
+        
+        <!-- 播放列表按钮 -->
+        <div class="escook-music-list-button" @click.stop="isExpanded = false">
+          <span class="iconfont icon-music_list"></span>
         </div>
 
-        <!-- 搜索 -->
-        <div class="search-area">
-          <div class="search-box">
+        <!-- 搜索框 -->
+        <div class="escook-search-box" style="position: absolute; bottom: 50px; left: 0; width: 100%; padding: 0 10px; box-sizing: border-box;">
+          <div style="display: flex; gap: 8px; background: var(--vp-c-bg); border-radius: 20px; padding: 5px; border: 1px solid var(--vp-c-divider);">
             <input
                 v-model="searchKeyword"
                 placeholder="搜索歌曲、歌手..."
                 type="text"
+                style="flex: 1; border: none; background: transparent; padding: 5px 10px; outline: none; color: var(--vp-c-text-1);"
                 @keyup.enter="searchMusic"
             >
-            <button :disabled="isSearching" @click="searchMusic">
+            <button :disabled="isSearching" style="border: none; background: var(--vp-c-brand); color: #fff; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;" @click="searchMusic">
               <span v-if="!isSearching">🔍</span>
-              <span v-else class="loading"></span>
+              <span v-else class="loading" style="display: inline-block; width: 14px; height: 14px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite;"></span>
             </button>
           </div>
-
         </div>
 
-        <!-- 搜索结果下拉框 - 在搜索框下方展开 -->
-        <div v-if="showSearchResults" class="search-dropdown" @click.stop>
-          <div class="search-dropdown-header">
-            <span>搜索结果 ({{ searchResults.length }})</span>
-            <button @click="showSearchResults = false">×</button>
+        <!-- 搜索结果下拉框 -->
+        <div v-if="showSearchResults" class="escook-search-results" style="position: absolute; bottom: 90px; left: 10px; right: 10px; background: var(--vp-c-bg); border: 1px solid var(--vp-c-divider); border-radius: 8px; max-height: 200px; overflow-y: auto; z-index: 100;">
+          <div style="padding: 8px 12px; border-bottom: 1px solid var(--vp-c-divider); display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 12px;">搜索结果 ({{ searchResults.length }})</span>
+            <button style="border: none; background: transparent; cursor: pointer;" @click="showSearchResults = false">×</button>
           </div>
-          <div class="search-dropdown-list">
+          <div>
             <div
                 v-for="song in searchResults"
                 :key="song.id"
-                class="search-dropdown-item"
+                style="padding: 8px 12px; cursor: pointer; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
                 @click="playSongImmediately(song)"
             >
-              <div class="search-dropdown-info">
-                <div class="search-dropdown-name">{{ song.name }}</div>
-                <div class="search-dropdown-artist">{{ song.artist }}</div>
-              </div>
-              <span class="search-dropdown-play">▶</span>
+              {{ song.name }} - {{ song.artist }}
             </div>
-            <div v-if="searchResults.length === 0 && hasSearched" class="search-dropdown-empty">
+            <div v-if="searchResults.length === 0 && hasSearched" style="padding: 12px; text-align: center; color: var(--vp-c-text-2); font-size: 12px;">
               未找到相关歌曲
             </div>
           </div>
         </div>
 
-        <!-- 播放列表 -->
-        <div class="playlist">
-          <div class="pl-header">
-            <span>播放列表 ({{ playlist.length }})</span>
-            <button v-if="playlist.length > 0" @click="clearPlaylist">清空</button>
+        <!-- 播放列表 - 使用 escook 样式 -->
+        <div class="escook-music-list">
+          <div
+              v-for="(song, index) in playlist"
+              :key="song.id"
+              :class="{ 'active': currentIndex === index }"
+              class="escook-music-list-item"
+              @click="playByIndex(index)"
+          >
+            <img v-if="currentIndex === index" src="data:image/gif;base64,R0lGODlhSABIAPfCAP/1+f9vn//i7P/7/P9rnf+Yuv94pf/6+/9xoP9rnP/9/v/o8P/m7v90ov/u9P/o7/+Ksf/8/f9zof9qnP/x9v+gwP9xof/+/v/0+P/n7//p8f/s8v95pf/7/f+qxv98p/+pxv/Q3/+rx//9/f9nmv9yof/4+//u8//z9//v9P/t8/+80v9pm//m7/+Zu/+dvf+80/9un/+Yu/9tnf9unv9nmf/d6P9tnv93pf+Gr/95pv/w9f9woP90o//y9v/c6P+Os//q8f/r8f+JsP9zov91o/+Rtf+hwf+vyv99qP+Aqv+Aq//k7f/p8P9+qf/K3P/5+//3+v/3+f/d6f/2+f/r8v+Frv/v9f+Drf/6/P9qm/92pP+Ir/+40P/f6f99qf/U4/+Jsf/P3/+VuP9om//S4f/L3f/W5P96p/+St/+Msv98qP+90//O3v/b5//T4f/T4v/R4P/h6/9wn/9omv/l7v/C1v+IsP+1zf/g6//4+v+jwf/y9/+50f+wy/+fv//e6f+Ptf+yzP/X5P/W4//E1/+bvf/a5v/I2v+CrP/C1//x9f+UuP++1P+pxf+Qtf+tyP/L3P+Frf+Ns//f6v/Z5v/A1f9snf+PtP/D1/+lw//B1f+nxP+kw/+Grv+DrP/M3f/J2//U4v+mw//l7f+gv/+hwP/c5/+2zv+evv/j7f+tyf/j7P/G2f+Rtv/1+P+mxP/Z5f+Hr//O3/96pv+Lsf/s8/+2z/+jwv/g6v+Ut//a5/+Vuf9/qv/H2v9/qf+Erf9mmf///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh/wtYTVAgRGF0YVhNUDw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDYuMC1jMDAyIDc5LjE2NDQ2MCwgMjAyMC8wNS8xMi0xNjowNDoxNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDIxLjIgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTczRTY3QTRGODczMTFFQkI0RjFFNzNEMDE1NTkzOUEiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTczRTY3QTVGODczMTFFQkI0RjFFNzNEMDE1NTkzOUEiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5NzNFNjdBMkY4NzMxMUVCQjRGMUU3M0QwMTU1OTM5QSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5NzNFNjdBM0Y4NzMxMUVCQjRGMUU3M0QwMTU1OTM5QSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgH//v38+/r5+Pf29fTz8vHw7+7t7Ovq6ejn5uXk4+Lh4N/e3dzb2tnY19bV1NPS0dDPzs3My8rJyMfGxcTDwsHAv769vLu6ubi3trW0s7KxsK+urayrqqmop6alpKOioaCfnp2cm5qZmJeWlZSTkpGQj46NjIuKiYiHhoWEg4KBgH9+fXx7enl4d3Z1dHNycXBvbm1sa2ppaGdmZWRjYmFgX15dXFtaWVhXVlVUU1JRUE9OTUxLSklIR0ZFRENCQUA/Pj08Ozo5ODc2NTQzMjEw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" alt="" class="image-live">
+            {{ song.name }}
           </div>
-          <div class="pl-list">
-            <div
-                v-for="(song, index) in playlist"
-                :key="song.id"
-                :class="{ 'active': currentIndex === index }"
-                class="pl-item"
-                @click="playByIndex(index)"
-            >
-              <span class="num">{{ index + 1 }}</span>
-              <div class="info">
-                <div class="name">{{ song.name }}</div>
-                <div class="artist">{{ song.artist }}</div>
-              </div>
-              <button class="del" @click.stop="removeSong(index)">×</button>
-            </div>
-            <div v-if="playlist.length === 0" class="empty">
-              搜索歌曲添加到你的播放列表
-            </div>
+          <div v-if="playlist.length === 0" class="escook-music-list-item" style="color: var(--vp-c-text-2);">
+            搜索歌曲添加到你的播放列表
           </div>
+          <div class="escook-music-list-sep"></div>
         </div>
-
-        <!-- 控制按钮 -->
-        <div class="controls">
-          <button title="上一首" @click="prevSong">
-            <svg fill="currentColor" viewBox="0 0 24 24">
-              <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
-            </svg>
-          </button>
-          <button :title="isPlaying ? '暂停' : '播放'" class="play-btn" @click="togglePlay">
-            <svg v-if="isPlaying" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-            </svg>
-            <svg v-else fill="currentColor" viewBox="0 0 24 24">
-              <path d="M8 5v14l11-7z"/>
-            </svg>
-          </button>
-          <button title="下一首" @click="nextSong">
-            <svg fill="currentColor" viewBox="0 0 24 24">
-              <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
-            </svg>
-          </button>
-        </div>
-
-        <!-- 进度条 -->
-        <div ref="progressRef" class="progress-bar" @click="seek">
-          <div :style="{ width: progress + '%' }" class="progress-fill"></div>
-        </div>
-        <div class="time">{{ formatTime(currentTime) }} / {{ formatTime(duration) }}</div>
       </div>
 
       <!-- 音频元素 -->
@@ -171,6 +169,7 @@
 
 <script lang="ts" setup>
 import {ref, computed, onMounted, onUnmounted, watch} from 'vue'
+import { ElSlider } from 'element-plus'
 
 // 本地默认音乐（备用，为空数组）
 const defaultSongs: any[] = []
@@ -183,6 +182,7 @@ const isExpanded = ref(false)
 const isPlaying = ref(false)
 const isDragging = ref(false)
 const isMobile = ref(false)
+const isMuted = ref(false)
 const searchKeyword = ref('')
 const searchResults = ref<any[]>([])
 const showSearchResults = ref(false)
@@ -193,6 +193,7 @@ const currentIndex = ref(0)
 const currentTime = ref(0)
 const duration = ref(0)
 const progress = ref(0)
+const volume = ref(50)
 
 // 位置
 const position = ref({x: 0, y: 0})
@@ -207,6 +208,31 @@ const progressRef = ref<HTMLElement>()
 
 // 当前歌曲
 const currentSong = computed(() => playlist.value[currentIndex.value] || null)
+
+// 进度条值（0-100）
+const progressValue = computed({
+  get() {
+    return duration.value ? (currentTime.value / duration.value) * 100 : 0
+  },
+  set(val: number) {
+    if (audioRef.value && duration.value) {
+      audioRef.value.currentTime = (val / 100) * duration.value
+    }
+  }
+})
+
+// 音量值（0-100）
+const volumeValue = computed({
+  get() {
+    return volume.value
+  },
+  set(val: number) {
+    volume.value = val
+    if (audioRef.value) {
+      audioRef.value.volume = val / 100
+    }
+  }
+})
 
 // 位置样式 - 使用bottom定位避免滚动时跟随
 const positionStyle = computed(() => {
@@ -591,6 +617,21 @@ const onTimeUpdate = () => {
   }
 }
 
+// 静音切换
+const toggleMute = () => {
+  isMuted.value = !isMuted.value
+  if (audioRef.value) {
+    audioRef.value.muted = isMuted.value
+  }
+}
+
+// 进度条拖动
+const seek = (val: number) => {
+  if (audioRef.value && duration.value) {
+    audioRef.value.currentTime = (val / 100) * duration.value
+  }
+}
+
 const onLoadedMetadata = () => {
   if (audioRef.value) {
     duration.value = audioRef.value.duration
@@ -841,645 +882,24 @@ const handleResize = () => {
 </script>
 
 <style scoped>
-.music-ball {
-  position: fixed;
-  z-index: 9999;
-  user-select: none;
-}
-
-/* 悬浮球 - 48px 与回到顶部按钮一致 */
-.ball {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.2s;
-}
-
-.ball:hover {
-  transform: scale(1.1);
-}
-
-.ball-inner {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: rotate 10s linear infinite;
-  animation-play-state: paused;
-  overflow: hidden;
-  position: relative;
-}
-
-.ball-inner.rotating {
-  animation-play-state: running;
-}
-
-.ball-cover {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.music-icon {
-  width: 24px;
-  height: 24px;
-  fill: white;
-}
-
-.playing-waves {
-  position: absolute;
-  bottom: 50%;
-  left: 50%;
-  transform: translate(-50%, 50%);
-  display: flex;
-  gap: 2px;
-  z-index: 10;
-}
-
-.playing-waves span {
-  width: 3px;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 2px;
-  animation: wave 0.5s ease-in-out infinite;
-}
-
-.playing-waves span:nth-child(2) {
-  animation-delay: 0.1s;
-  height: 12px;
-}
-
-.playing-waves span:nth-child(3) {
-  animation-delay: 0.2s;
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes wave {
-  0%, 100% {
-    transform: scaleY(1);
-  }
-  50% {
-    transform: scaleY(0.5);
-  }
-}
-
-/* 展开面板 */
-.panel {
-  width: 320px;
-  background: var(--vp-c-bg);
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--vp-c-divider);
-  overflow: hidden;
-}
-
-.panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  cursor: grab;
-}
-
-.now-playing {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-}
-
-.np-cover {
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
-  object-fit: cover;
-}
-
-.np-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.np-name {
-  color: #fff;
-  font-size: 14px;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.np-artist {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 12px;
-  margin-top: 2px;
-}
-
-.close-btn {
-  width: 28px;
-  height: 28px;
-  border: none;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* 搜索区域 */
-.search-area {
-  position: relative;
-}
-
-.search-box {
-  display: flex;
-  gap: 8px;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--vp-c-divider);
-}
-
-.search-box input {
-  flex: 1;
-  padding: 8px 12px;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 20px;
-  background: var(--vp-c-bg);
-  color: var(--vp-c-text-1);
-  font-size: 13px;
-  outline: none;
-}
-
-.search-box input:focus {
-  border-color: var(--vp-c-brand);
-}
-
-.search-box button {
-  width: 36px;
-  height: 36px;
-  border: none;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.loading {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
+/* 使用 escook 主题提供的样式，这里只添加搜索相关的额外样式 */
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-/* 搜索结果下拉框 - 在播放器面板内部、搜索框下方展开 */
-.search-dropdown {
-  position: absolute;
-  top: 140px; /* 搜索框下方40px */
-  left: 16px;
-  right: 16px;
-  background: var(--vp-c-bg);
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  z-index: 100;
-  max-height: 160px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+/* 搜索结果样式补充 */
+.escook-search-results::-webkit-scrollbar {
+  width: 6px;
 }
 
-.search-dropdown-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 16px;
-  background: var(--vp-c-bg-soft);
-  border-bottom: 1px solid var(--vp-c-divider);
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.search-dropdown-header button {
-  width: 20px;
-  height: 20px;
-  border: none;
-  border-radius: 50%;
-  background: var(--vp-c-bg-mute);
-  color: var(--vp-c-text-2);
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.search-dropdown-header button:hover {
-  background: var(--vp-c-danger-soft);
-  color: var(--vp-c-danger);
-}
-
-.search-dropdown-list {
-  overflow-y: auto;
-  padding: 8px;
-  max-height: 170px;
-}
-
-.search-dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.search-dropdown-item:hover {
-  background: var(--vp-c-bg-mute);
-}
-
-.search-dropdown-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.search-dropdown-name {
-  font-size: 13px;
-  color: var(--vp-c-text-1);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.search-dropdown-artist {
-  font-size: 11px;
-  color: var(--vp-c-text-2);
-  margin-top: 2px;
-}
-
-.search-dropdown-play {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--vp-c-brand);
-  font-size: 12px;
-}
-
-.search-dropdown-empty {
-  text-align: center;
-  padding: 20px;
-  color: var(--vp-c-text-2);
-  font-size: 13px;
-}
-
-/* 播放列表 */
-.playlist {
-  max-height: 200px;
-  display: flex;
-  flex-direction: column;
-}
-
-.pl-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--vp-c-divider);
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.pl-header button {
-  border: none;
-  background: none;
-  color: var(--vp-c-brand);
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.pl-list {
-  overflow-y: auto;
-  padding: 8px;
-  max-height: 150px;
-}
-
-.pl-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.pl-item:hover {
-  background: var(--vp-c-bg-mute);
-}
-
-.pl-item.active {
-  background: var(--vp-c-brand-soft);
-}
-
-.pl-item .num {
-  width: 20px;
-  text-align: center;
-  font-size: 12px;
-  color: var(--vp-c-text-2);
-}
-
-.pl-item .info {
-  flex: 1;
-  min-width: 0;
-}
-
-.pl-item .name {
-  font-size: 13px;
-  color: var(--vp-c-text-1);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.pl-item .artist {
-  font-size: 11px;
-  color: var(--vp-c-text-2);
-  margin-top: 2px;
-}
-
-.pl-item .del {
-  width: 20px;
-  height: 20px;
-  border: none;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--vp-c-text-2);
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.pl-item:hover .del {
-  opacity: 1;
-}
-
-.empty {
-  text-align: center;
-  padding: 20px;
-  color: var(--vp-c-text-2);
-  font-size: 13px;
-}
-
-/* 控制按钮 */
-.controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 16px;
-  border-top: 1px solid var(--vp-c-divider);
-}
-
-.controls button {
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: var(--vp-c-text-1);
-  transition: color 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-}
-
-.controls button:hover {
-  color: var(--vp-c-brand);
-}
-
-.controls button svg {
-  width: 24px;
-  height: 24px;
-}
-
-.controls .play-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
-
-.controls .play-btn svg {
-  width: 28px;
-  height: 28px;
-}
-
-.controls .play-btn:hover {
-  opacity: 0.9;
-  color: #fff;
-}
-
-/* 进度条 */
-.progress-bar {
-  height: 4px;
+.escook-search-results::-webkit-scrollbar-thumb {
   background: var(--vp-c-divider);
-  margin: 0 16px;
-  border-radius: 2px;
-  cursor: pointer;
-  position: relative;
+  border-radius: 3px;
 }
 
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #667eea, #764ba2);
-  border-radius: 2px;
-  transition: width 0.1s;
-}
-
-.time {
-  text-align: center;
-  font-size: 11px;
-  color: var(--vp-c-text-2);
-  padding: 8px 0;
-}
-
-/* 移动端适配 */
-@media (max-width: 768px) {
-  .music-ball {
-    /* 移动端禁用hover效果 */
-  }
-
-  .music-ball.mobile .ball {
-    width: 48px;
-    height: 48px;
-  }
-
-  .music-ball.mobile .ball-inner {
-    width: 40px;
-    height: 40px;
-  }
-
-  .music-ball.mobile .music-icon {
-    width: 24px;
-    height: 24px;
-  }
-
-  /* 移动端展开面板 - 屏幕居中显示 */
-  .music-ball.mobile.expanded {
-    position: fixed !important;
-    left: 0 !important;
-    top: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    transform: none !important;
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    justify-content: center; /* 水平居中 */
-    pointer-events: none; /* 允许点击穿透到遮罩层 */
-  }
-
-  .music-ball.mobile.expanded .panel {
-    width: calc(100vw - 32px);
-    max-width: 360px;
-    max-height: 70vh;
-    position: relative;
-    pointer-events: auto; /* 恢复面板内点击 */
-  }
-
-  .music-ball.mobile .mobile-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: -1;
-  }
-
-  .music-ball.mobile .search-dropdown {
-    position: static;
-    margin: 0 16px 12px;
-    max-height: 200px;
-  }
-
-  .music-ball.mobile .playlist {
-    max-height: 180px;
-  }
-
-  .music-ball.mobile .pl-list {
-    max-height: 130px;
-  }
-
-  .music-ball.mobile .controls {
-    padding: 16px;
-    gap: 24px;
-  }
-
-  .music-ball.mobile .controls button svg {
-    width: 28px;
-    height: 28px;
-  }
-
-  .music-ball.mobile .controls .play-btn {
-    width: 52px;
-    height: 52px;
-  }
-
-  .music-ball.mobile .controls .play-btn svg {
-    width: 32px;
-    height: 32px;
-  }
-
-  .music-ball.mobile .progress-bar {
-    margin: 0 16px;
-    height: 6px;
-  }
-
-  .music-ball.mobile .time {
-    padding: 12px 0;
-    font-size: 12px;
-  }
-
-  /* 增大移动端触摸区域 */
-  .music-ball.mobile .pl-item {
-    padding: 12px 8px;
-  }
-
-  .music-ball.mobile .search-dropdown-item {
-    padding: 14px 12px;
-  }
-
-  .music-ball.mobile .close-btn {
-    width: 36px;
-    height: 36px;
-    font-size: 24px;
-  }
-}
-
-/* 小屏幕手机额外优化 */
-@media (max-width: 375px) {
-  .music-ball.mobile .panel {
-    width: calc(100vw - 24px);
-    max-height: 75vh;
-  }
-
-  .music-ball.mobile .playlist {
-    max-height: 150px;
-  }
-
-  .music-ball.mobile .pl-list {
-    max-height: 100px;
-  }
-}
-
-/* 深色模式 */
-.dark .ball {
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-}
-
-.dark .panel {
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+.escook-music-list-item:hover {
+  color: #f16a97;
 }
 </style>
