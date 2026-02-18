@@ -182,10 +182,19 @@ export function useMusicPlayer() {
     }
   }
 
-  const playByIndex = (index: number) => {
+  const playByIndex = async (index: number) => {
     if (index < 0 || index >= playlist.value.length) return
     currentIndex.value = index
-    nextTick(() => play())
+    
+    await nextTick()
+    
+    // 确保音频元素存在并设置源
+    if (audioRef.value && currentSong.value) {
+      audioRef.value.src = currentSong.value.url
+      audioRef.value.load()
+    }
+    
+    play()
   }
 
   const addToPlaylist = (song: Song) => {
@@ -218,39 +227,54 @@ export function useMusicPlayer() {
   }
 
   const playSongImmediately = async (song: Song) => {
+    // 先添加到播放列表并设置当前索引
     const index = addToPlaylist(song)
     currentIndex.value = index
     
-    // 等待 DOM 更新后播放
+    // 等待 DOM 更新，确保 audio 元素已经绑定
     await nextTick()
     
-    if (audioRef.value) {
-      audioRef.value.load()
-      // 先尝试直接播放
-      try {
-        await audioRef.value.play()
-      } catch (error) {
-        console.error('直接播放失败，等待 canplay 事件:', error)
-        // 如果失败，等待 canplay 事件后再播放
-        const playWhenReady = () => {
-          audioRef.value?.play().catch(() => {})
-          audioRef.value?.removeEventListener('canplay', playWhenReady)
-        }
-        audioRef.value.addEventListener('canplay', playWhenReady)
-        // 500ms 后清理监听器
-        setTimeout(() => {
-          audioRef.value?.removeEventListener('canplay', playWhenReady)
-        }, 500)
+    // 确保音频元素存在
+    if (!audioRef.value) {
+      console.error('音频元素未找到')
+      return
+    }
+    
+    // 设置音频源
+    audioRef.value.src = song.url
+    audioRef.value.load()
+    
+    // 尝试播放
+    isLoading.value = true
+    try {
+      await audioRef.value.play()
+      isPlaying.value = true
+    } catch (error) {
+      console.error('播放失败:', error)
+      // 等待 canplay 事件后再尝试播放
+      const audio = audioRef.value
+      const playWhenReady = () => {
+        audio?.play().then(() => {
+          isPlaying.value = true
+        }).catch(() => {})
+        audio?.removeEventListener('canplay', playWhenReady)
       }
+      audio.addEventListener('canplay', playWhenReady)
+      // 3秒后清理监听器
+      setTimeout(() => {
+        audio?.removeEventListener('canplay', playWhenReady)
+        isLoading.value = false
+      }, 3000)
+      return
+    } finally {
+      isLoading.value = false
     }
     
     // 播放成功后再隐藏列表和清空搜索
-    setTimeout(() => {
-      isPlaylistVisible.value = false
-      searchResults.value = []
-      searchKeyword.value = ''
-      hasSearched.value = false
-    }, 100)
+    isPlaylistVisible.value = false
+    searchResults.value = []
+    searchKeyword.value = ''
+    hasSearched.value = false
   }
 
   // ========== 搜索功能 ==========
@@ -345,9 +369,15 @@ export function useMusicPlayer() {
 
   // ========== 键盘快捷键 ==========
   const handleKeydown = (e: KeyboardEvent) => {
-    // 忽略输入框中的快捷键
+    // 忽略输入框中的快捷键 - 更严格的检测
     const target = e.target as HTMLElement
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+    if (
+      target.tagName === 'INPUT' || 
+      target.tagName === 'TEXTAREA' || 
+      target.isContentEditable ||
+      target.closest('input') ||
+      target.closest('.search-box')
+    ) {
       return
     }
 
