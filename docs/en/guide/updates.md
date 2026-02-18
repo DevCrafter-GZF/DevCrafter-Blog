@@ -1,7 +1,43 @@
-# Updates <Badge type="tip" text="v0.2.0" />
+# Updates <Badge type="tip" text="v0.3.0" />
 
 > [!NOTE]
 > Record the update history and new feature releases of DevCrafter Blog.
+
+## 📅 2026
+
+### February
+
+#### February 18
+
+**New Features:**
+
+- ✨ **Music Player Component** - Brand new floating music player supporting NetEase Cloud Music hot songs
+  - Floating ball design with click to expand/collapse interaction
+  - Song search functionality (built-in popular songs + API search)
+  - Auto play next track, filtering songs without copyright
+  - Playback mode switching (list loop, single loop, shuffle)
+  - Local storage for playback history and settings
+  - Mobile device adaptation optimization
+
+**Improvements:**
+
+- 🎨 **Theme Configuration Optimization**
+  - Updated code block theme to catppuccin-frappe
+  - Optimized escook-override.css style overrides
+  - Hidden sidebar scrollbar for better visual experience
+- 🎯 **Interactive Experience Optimization**
+  - Intelligent player panel position judgment (bottom-left/bottom-right)
+  - Search debouncing optimization for improved response speed
+  - Keyboard shortcut support
+  - Error prompts and loading state optimization
+
+**Bug Fixes:**
+
+- 🔧 Fixed music player search space and click playback issues
+- 🔧 Fixed audio element proper binding to ensure stable playback functionality
+- 🔧 Fixed playback failure handling logic, automatically skipping songs without copyright
+- 🔧 Fixed mobile device player touch interaction issues
+- 🔧 Fixed player positioning and overflow issues
 
 ## 📅 2025
 
