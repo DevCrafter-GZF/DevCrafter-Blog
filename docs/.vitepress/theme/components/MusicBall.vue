@@ -21,7 +21,7 @@
             @mouseleave="setMouseOverPlaylist(false); hidePlaylist()"
         >
           <!-- 搜索区域 -->
-          <div class="search-section">
+          <div class="search-section" @mouseenter="setMouseOverPlaylist(true)">
             <div class="search-box">
               <input
                   v-model="searchKeyword"
@@ -41,7 +41,7 @@
           </div>
 
           <!-- 搜索结果 -->
-          <div v-if="showSearchResults" class="search-results">
+          <div v-if="showSearchResults" class="search-results" @mouseenter="setMouseOverPlaylist(true)">
             <div class="results-header">
               <span>搜索结果 ({{ searchResults.length }})</span>
               <button class="close-btn" @click="clearSearch">×</button>
@@ -63,7 +63,7 @@
           </div>
 
           <!-- 播放列表 -->
-          <div v-else class="playlist-content">
+          <div v-else class="playlist-content" @mouseenter="setMouseOverPlaylist(true)">
             <div class="playlist-header">
               <span>播放列表 ({{ playlist.length }})</span>
               <button
