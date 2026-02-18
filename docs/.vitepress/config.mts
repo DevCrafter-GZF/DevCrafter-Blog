@@ -1,12 +1,14 @@
-import { defineConfig } from 'vitepress'
-// import { groupIconMdPlugin, groupIconVitePlugin } from 'vitepress-plugin-group-icons'
-// import { devDependencies } from '../../package.json'
+import { defineConfigWithTheme } from 'vitepress'
+import escookConfig from '@escook/vitepress-theme/config'
 
 import { sharedConfig } from '../.vitepress/theme/config/share'
 import { zhConfig } from '../.vitepress/theme/config/zh'
 import { enConfig } from '../.vitepress/theme/config/en'
+
 // https://vitepress.dev/reference/site-config
-export default defineConfig({
+export default defineConfigWithTheme({
+  // 继承 escook 主题配置
+  extends: escookConfig,
   ...sharedConfig,
   base: '/DevCrafter-Blog/',
   locales: {

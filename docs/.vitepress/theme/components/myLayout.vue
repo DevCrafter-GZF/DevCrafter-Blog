@@ -4,18 +4,18 @@
  * @Description: 亮暗模式切换
 -->
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import MouseClick from "./MouseClick.vue";
 import MouseFollower from "./MouseFollower.vue";
-import { useData, useRoute } from 'vitepress'
+import {useData, useRoute} from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
-import { nextTick, provide, computed } from 'vue'
+import {nextTick, provide, computed} from 'vue'
 
 import BackToTop from "./backToTop.vue"
 // import notice from "./notice.vue"
 // import bsz from "./bsz.vue"
 
-const { isDark } = useData()
+const {isDark} = useData()
 const route = useRoute()
 
 // 判断是否在导航页面，导航页面不显示评论
@@ -24,10 +24,10 @@ const isNavigationPage = computed(() => {
 })
 
 const enableTransitions = () =>
-  'startViewTransition' in document &&
-  window.matchMedia('(prefers-reduced-motion: no-preference)').matches
+    'startViewTransition' in document &&
+    window.matchMedia('(prefers-reduced-motion: no-preference)').matches
 
-provide('toggle-appearance', async ({ clientX: x, clientY: y }: MouseEvent) => {
+provide('toggle-appearance', async ({clientX: x, clientY: y}: MouseEvent) => {
   if (!enableTransitions()) {
     isDark.value = !isDark.value
     return
@@ -36,8 +36,8 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }: MouseEvent) => {
   const clipPath = [
     `circle(0px at ${x}px ${y}px)`,
     `circle(${Math.hypot(
-      Math.max(x, innerWidth - x),
-      Math.max(y, innerHeight - y)
+        Math.max(x, innerWidth - x),
+        Math.max(y, innerHeight - y)
     )}px at ${x}px ${y}px)`
   ]
 
@@ -47,12 +47,12 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }: MouseEvent) => {
   }).ready
 
   document.documentElement.animate(
-    { clipPath: isDark.value ? clipPath.reverse() : clipPath },
-    {
-      duration: 300,
-      easing: 'ease-in',
-      pseudoElement: `::view-transition-${isDark.value ? 'old' : 'new'}(root)`
-    }
+      {clipPath: isDark.value ? clipPath.reverse() : clipPath},
+      {
+        duration: 300,
+        easing: 'ease-in',
+        pseudoElement: `::view-transition-${isDark.value ? 'old' : 'new'}(root)`
+      }
   )
 })
 </script>
@@ -60,18 +60,16 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }: MouseEvent) => {
 <template>
   <DefaultTheme.Layout>
     <template #doc-footer-before>
-      <BackToTop />
+      <BackToTop/>
     </template>
     <template #doc-after>
-      <GiscusComment v-if="!isNavigationPage" />
+      <GiscusComment v-if="!isNavigationPage"/>
     </template>
     <template #layout-top>
-      <MouseFollower />
-      <MouseClick />
+      <MouseFollower/>
+      <MouseClick/>
     </template>
-    <template #layout-bottom>
-      <MusicBall />
-    </template>
+    <!-- layout-bottom 插槽由 escook 主题自动处理 -->
     <!-- <template #layout-top>
       <notice />
     </template>

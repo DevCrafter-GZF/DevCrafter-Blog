@@ -21,5 +21,9 @@
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "deploy": "npm run docs:build && echo '构建完成，请通过 GitHub Actions 自动部署'"
+  },
+  "dependencies": {
+    "@escook/vitepress-theme": "^1.3.1",
+    "@shikijs/themes": "^3.22.0"
   }
 }

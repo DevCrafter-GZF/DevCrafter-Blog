@@ -1,54 +1,120 @@
-// https://vitepress.dev/guide/custom-theme
-import {h, onMounted, watch, nextTick} from 'vue'
-import type {Theme} from 'vitepress'
-import {useData, inBrowser, useRoute} from 'vitepress'
-import DefaultTheme from 'vitepress/theme'
-import {NProgress} from 'nprogress-v2/dist/index.js' // 进度条组件
-import 'nprogress-v2/dist/index.css' // 进度条样式
-import MyLayout from '../theme/components/myLayout.vue'
-import LinkCard from "../theme/components/linkCard.vue" // 卡片
-import HomeUnderline from "./components/HomeUnderline.vue" // 首页下划线
-import WatermelonPlayer from "./components/WatermelonPlayer.vue" // 音频播放器
-import confetti from "./components/confetti.vue" // 烟花
-import update from "./components/update.vue" // 更新
-import mediumZoom from 'medium-zoom'; // 图片缩放
-import MNavLinks from './components/MNavLinks.vue' // 导航
-import ArticleMetadata from './components/ArticleMetadata.vue' // 文章信息
-import GiscusComment from './components/GiscusComment.vue' // Giscus评论
-import MusicBall from './components/MusicBall.vue' // 悬浮音乐球
+// 基于 @escook/vitepress-theme 进行二次开发
+import { h, onMounted, watch, nextTick, provide } from 'vue'
+import type { Theme } from 'vitepress'
+import { useData, inBrowser, useRoute } from 'vitepress'
+import escookTheme from '@escook/vitepress-theme'
+import '@escook/vitepress-theme/style.css'
+import { NProgress } from 'nprogress-v2/dist/index.js'
+import 'nprogress-v2/dist/index.css'
+import mediumZoom from 'medium-zoom'
+
+// 导入自定义组件
+import LinkCard from './components/linkCard.vue'
+import HomeUnderline from './components/HomeUnderline.vue'
+import WatermelonPlayer from './components/WatermelonPlayer.vue'
+import confetti from './components/confetti.vue'
+import update from './components/update.vue'
+import MNavLinks from './components/MNavLinks.vue'
+import ArticleMetadata from './components/ArticleMetadata.vue'
+import GiscusComment from './components/GiscusComment.vue'
+import BackToTop from './components/backToTop.vue'
+import MouseFollower from './components/MouseFollower.vue'
+import MouseClick from './components/MouseClick.vue'
+
+// 导入自定义样式
 import './styles/index.css'
-import 'virtual:group-icons.css' //代码组样式
+import 'virtual:group-icons.css'
 
 let homePageStyle: HTMLStyleElement | undefined
 
+// 自定义亮暗色切换动画
+const enableTransitions = () =>
+  'startViewTransition' in document &&
+  window.matchMedia('(prefers-reduced-motion: no-preference)').matches
+
 export default {
-  extends: DefaultTheme,
-  Layout: () => {
-    // 获取 frontmatter
-    const {frontmatter} = useData()
+  // 继承 escook 主题
+  extends: escookTheme,
+  
+  // 使用 setup 来提供 toggle-appearance（确保在组件层级正确注入）
+  setup() {
+    const { isDark } = useData()
+    const route = useRoute()
     
-    /* 添加自定义 class */
+    // 提供自定义的亮暗色切换动画（圆形扩散效果）
+    provide('toggle-appearance', async ({ clientX: x, clientY: y }: MouseEvent) => {
+      if (!enableTransitions()) {
+        isDark.value = !isDark.value
+        return
+      }
+
+      const clipPath = [
+        `circle(0px at ${x}px ${y}px)`,
+        `circle(${Math.hypot(
+          Math.max(x, innerWidth - x),
+          Math.max(y, innerHeight - y)
+        )}px at ${x}px ${y}px)`
+      ]
+
+      await document.startViewTransition(async () => {
+        isDark.value = !isDark.value
+        await nextTick()
+      }).ready
+
+      document.documentElement.animate(
+        { clipPath: isDark.value ? clipPath.reverse() : clipPath },
+        {
+          duration: 300,
+          easing: 'ease-in',
+          pseudoElement: `::view-transition-${isDark.value ? 'old' : 'new'}(root)`
+        }
+      )
+    })
+    
+    // 图片缩放
+    const initZoom = () => {
+      mediumZoom('.VPContent img', { background: 'var(--vp-c-bg)' })
+    }
+    
+    onMounted(() => {
+      initZoom()
+    })
+    
+    watch(
+      () => route.path,
+      () => nextTick(() => initZoom())
+    )
+  },
+  
+  // 自定义 Layout，使用 escook 的 Layout 并添加插槽
+  Layout: () => {
+    const { frontmatter } = useData()
+    const route = useRoute()
+    
     const props = frontmatter.value?.layoutClass
       ? { class: frontmatter.value.layoutClass }
       : {}
     
-    return h(MyLayout, props)
+    // 判断是否在导航页面
+    const isNavigationPage = route.path.includes('/navigation/') || route.path.includes('/Navigation/')
+    
+    return h(escookTheme.Layout, props, {
+      // 在文档底部之前添加回到顶部按钮
+      'doc-footer-before': () => h(BackToTop),
+      
+      // 在文档后添加评论（非导航页）
+      'doc-after': () => isNavigationPage ? null : h(GiscusComment),
+      
+      // 在布局顶部添加鼠标效果
+      'layout-top': () => [
+        h(MouseFollower),
+        h(MouseClick)
+      ]
+    })
   },
-  setup() {
-    const route = useRoute();
-    const initZoom = () => {
-      // mediumZoom('[data-zoomable]', { background: 'var(--vp-c-bg)' }); // 默认
-      mediumZoom('.VPContent img', {background: 'var(--vp-c-bg)'}); // VitePress 主内容区图片缩放
-    };
-    onMounted(() => {
-      initZoom();
-    }),
-        watch(
-            () => route.path,
-            () => nextTick(() => initZoom())
-        );
-  },
-  enhanceApp({app, router, siteData}) {
+  
+  enhanceApp({ app, router }) {
+    // 注册自定义组件
     app.component('LinkCard', LinkCard)
     app.component('HomeUnderline', HomeUnderline)
     app.component('WatermelonPlayer', WatermelonPlayer)
@@ -57,24 +123,24 @@ export default {
     app.component('MNavLinks', MNavLinks)
     app.component('ArticleMetadata', ArticleMetadata)
     app.component('GiscusComment', GiscusComment)
-    app.component('MusicBall', MusicBall)
     
+    // 进度条
     if (inBrowser) {
-      NProgress.configure({showSpinner: false})
+      NProgress.configure({ showSpinner: false })
       router.onBeforeRouteChange = () => {
-        NProgress.start() // 开始进度条
+        NProgress.start()
       }
       router.onAfterRouteChanged = () => {
-        NProgress.done() // 停止进度条
+        NProgress.done()
       }
     }
     
-    // 彩虹背景动画样式
+    // 彩虹背景动画样式 - 首页
     if (typeof window !== 'undefined') {
       watch(
-          () => router.route.data.relativePath,
-          () => updateHomePageStyle(location.pathname === '/en/' || location.pathname === '/'),
-          {immediate: true},
+        () => router.route.data.relativePath,
+        () => updateHomePageStyle(location.pathname === '/en/' || location.pathname === '/'),
+        { immediate: true }
       )
     }
   }

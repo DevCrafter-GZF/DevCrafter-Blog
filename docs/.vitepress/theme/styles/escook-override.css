@@ -1,0 +1,121 @@
+/* 覆盖 escook 主题的样式，使用本项目的配置 */
+
+/* 移除标题的彩色下划线背景装饰 */
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3,
+.vp-doc h4,
+.vp-doc h5,
+.vp-doc h6 {
+  text-decoration: none !important;
+  background: none !important;
+}
+
+/* 移除 escook 音乐播放器的背景色 */
+.escook-music-ball {
+  background-color: transparent !important;
+}
+
+/* 深色模式下的音乐播放器背景 */
+.dark .escook-music-ball {
+  background-color: transparent !important;
+}
+
+/* 代码块样式 - 确保 escook 的三个圆点在一行显示 */
+
+/* 移除 VitePress 默认的代码块 before 伪元素 */
+.vp-doc div[class*=language-]::before,
+.vp-doc .vp-adaptive-theme::before {
+  display: none !important;
+}
+
+/* 使用 escook 的 after 伪元素显示三个圆点在一行 */
+.vp-doc .vp-adaptive-theme:after,
+.vp-doc div[class*=language-].vp-adaptive-theme:after {
+  content: " " !important;
+  display: block !important;
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 7px !important;
+  background-color: #ff5f56 !important;
+  position: absolute !important;
+  left: 12px !important;
+  top: 12px !important;
+  box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #27c93f, 0 0 5px rgba(0,0,0,0.2) !important;
+}
+
+/* 移除 code 内部的 before 和 after 伪元素 */
+.vp-doc .vp-adaptive-theme code:before,
+.vp-doc .vp-adaptive-theme code:after {
+  display: none !important;
+}
+
+/* 移除选中文本的橙色背景（使用默认样式） */
+::selection {
+  background-color: var(--vp-c-brand) !important;
+  color: var(--vp-c-bg) !important;
+}
+
+.dark ::selection {
+  background-color: var(--vp-c-brand) !important;
+  color: var(--vp-c-bg) !important;
+}
+
+/* 首页标题渐变文字效果 - 如果不需要可以移除 */
+:root {
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: transparent;
+  --vp-home-hero-image-background-image: none;
+  --vp-home-hero-image-filter: none;
+}
+
+/* 恢复 VitePress 默认的标题样式 */
+.VPHomeHero .name {
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  -webkit-text-fill-color: initial !important;
+  color: var(--vp-c-text-1) !important;
+}
+
+/* 亮暗色切换动画样式 - 圆形扩散效果 */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root),
+.dark::view-transition-new(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root),
+.dark::view-transition-old(root) {
+  z-index: 9999;
+}
+
+.VPSwitchAppearance .check {
+  transform: none !important;
+}
+
+/* 修正因视图过渡导致的月牙图标偏移 */
+.check .icon {
+  top: -2px;
+}
+
+/* 确保视图过渡伪元素正确显示 */
+::view-transition-group(root) {
+  animation: none;
+}
+
+::view-transition-image-pair(root) {
+  isolation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  display: block;
+}
