@@ -119,8 +119,8 @@
 
         <div class="escook-play-pause" :class="{ 'loading': isLoading }" title="播放/暂停 (空格)" @click.stop="togglePlay">
           <span v-if="isLoading" class="loading-spinner"></span>
-          <span v-else-if="!isPlaying" class="iconfont icon-playfill"></span>
-          <span v-else class="iconfont icon-pause"></span>
+          <span v-else-if="!isPlaying" class="play-icon">▶</span>
+          <span v-else class="pause-icon">⏸</span>
         </div>
 
         <!-- 下一首 -->
@@ -528,6 +528,13 @@ watch(searchKeyword, (newVal) => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+/* 播放/暂停图标 */
+.play-icon,
+.pause-icon {
+  font-size: 16px;
+  line-height: 1;
 }
 
 /* 控制按钮 */
