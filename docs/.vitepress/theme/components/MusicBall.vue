@@ -1,6 +1,6 @@
 <!--
  * @Author: GZF
- * @Description: 悬浮音乐球组件 - 支持网易云音乐搜索
+ * @Description: 悬浮音乐球组件 - 支持网易云音乐搜索（已适配移动端）
 -->
 
 <template>
@@ -9,7 +9,8 @@
         :class="{
         'expanded': isExpanded,
         'playing': isPlaying,
-        'dragging': isDragging
+        'dragging': isDragging,
+        'mobile': isMobile
       }"
         :style="positionStyle"
         class="music-ball"
@@ -21,6 +22,7 @@
           v-if="!isExpanded"
           class="ball"
           @mousedown="startDrag"
+          @touchstart.prevent="startDragTouch"
           @click.stop="handleBallClick"
       >
         <div :class="{ 'rotating': isPlaying }" class="ball-inner">
@@ -42,6 +44,8 @@
           @mouseleave="startCollapseTimer"
           @click.stop
       >
+        <!-- 移动端遮罩层 -->
+        <div v-if="isMobile" class="mobile-overlay" @click="collapse"></div>
         <!-- 头部 -->
         <div class="panel-header" @mousedown="startDrag">
           <div class="now-playing">
@@ -180,6 +184,7 @@ const defaultSongs = [
 const isExpanded = ref(false)
 const isPlaying = ref(false)
 const isDragging = ref(false)
+const isMobile = ref(false)
 const searchKeyword = ref('')
 const searchResults = ref<any[]>([])
 const showSearchResults = ref(false)
@@ -218,15 +223,23 @@ const positionStyle = computed(() => ({
 
 // 初始化
 onMounted(() => {
+  // 检测是否为移动端
+  checkMobile()
+  window.addEventListener('resize', handleResize)
+
   position.value = {
     x: window.innerWidth - ballSize / 2 - 20,
     y: window.innerHeight - ballSize / 2 - 20
   }
-  window.addEventListener('resize', handleResize)
 
   // 加载默认本地音乐
   playlist.value = [...defaultSongs]
 })
+
+// 检测移动端
+const checkMobile = () => {
+  isMobile.value = window.innerWidth <= 768 || 'ontouchstart' in window
+}
 
 onUnmounted(() => {
   clearAllTimers()
@@ -469,8 +482,9 @@ const formatTime = (time: number) => {
   return `${m}:${s.toString().padStart(2, '0')}`
 }
 
-// 拖拽
+// 拖拽 - 鼠标
 const startDrag = (e: MouseEvent) => {
+  if (isMobile.value) return // 移动端禁用拖拽
   isDragging.value = true
   dragOffset.value = {
     x: e.clientX - position.value.x,
@@ -498,6 +512,41 @@ const stopDrag = () => {
   isDragging.value = false
   document.removeEventListener('mousemove', onDrag)
   document.removeEventListener('mouseup', stopDrag)
+}
+
+// 拖拽 - 触摸（移动端）
+const startDragTouch = (e: TouchEvent) => {
+  if (isExpanded.value) return // 展开状态下禁用拖拽
+  isDragging.value = true
+  const touch = e.touches[0]
+  dragOffset.value = {
+    x: touch.clientX - position.value.x,
+    y: touch.clientY - position.value.y
+  }
+  document.addEventListener('touchmove', onDragTouch, { passive: false })
+  document.addEventListener('touchend', stopDragTouch)
+}
+
+const onDragTouch = (e: TouchEvent) => {
+  if (!isDragging.value) return
+  e.preventDefault()
+  const touch = e.touches[0]
+  let x = touch.clientX - dragOffset.value.x
+  let y = touch.clientY - dragOffset.value.y
+
+  const maxX = window.innerWidth - ballSize / 2 - 20
+  const maxY = window.innerHeight - ballSize / 2 - 20
+
+  x = Math.max(20, Math.min(maxX, x))
+  y = Math.max(20, Math.min(maxY, y))
+
+  position.value = {x, y}
+}
+
+const stopDragTouch = () => {
+  isDragging.value = false
+  document.removeEventListener('touchmove', onDragTouch)
+  document.removeEventListener('touchend', stopDragTouch)
 }
 
 // 展开/收起
@@ -543,11 +592,19 @@ const clearAllTimers = () => {
 }
 
 const expand = () => {
-  const maxX = window.innerWidth - panelWidth - 20
-  const maxY = window.innerHeight - panelHeight - 20
-  position.value = {
-    x: Math.min(position.value.x, maxX),
-    y: Math.min(position.value.y, maxY)
+  if (isMobile.value) {
+    // 移动端居中显示
+    position.value = {
+      x: 16,
+      y: window.innerHeight * 0.15
+    }
+  } else {
+    const maxX = window.innerWidth - panelWidth - 20
+    const maxY = window.innerHeight - panelHeight - 20
+    position.value = {
+      x: Math.min(position.value.x, maxX),
+      y: Math.min(position.value.y, maxY)
+    }
   }
   isExpanded.value = true
 }
@@ -563,6 +620,22 @@ const collapse = () => {
   position.value = {
     x: distToLeft < distToRight ? ballSize / 2 + 20 : window.innerWidth - ballSize / 2 - 20,
     y: window.innerHeight - ballSize / 2 - 20
+  }
+}
+
+// 移动端长按展开
+let longPressTimer: any = null
+const startLongPress = () => {
+  if (!isMobile.value || isExpanded.value) return
+  longPressTimer = setTimeout(() => {
+    expand()
+  }, 600)
+}
+
+const cancelLongPress = () => {
+  if (longPressTimer) {
+    clearTimeout(longPressTimer)
+    longPressTimer = null
   }
 }
 
@@ -583,9 +656,10 @@ const handleBallClick = (e: MouseEvent) => {
 }
 
 const handleResize = () => {
+  checkMobile()
   if (isExpanded.value) {
-    const maxX = window.innerWidth - panelWidth - 20
-    const maxY = window.innerHeight - panelHeight - 20
+    const maxX = window.innerWidth - (isMobile.value ? window.innerWidth - 32 : panelWidth) - 20
+    const maxY = window.innerHeight - (isMobile.value ? window.innerHeight * 0.7 : panelHeight) - 20
     position.value = {
       x: Math.min(position.value.x, maxX),
       y: Math.min(position.value.y, maxY)
@@ -1094,6 +1168,123 @@ const handleResize = () => {
   font-size: 11px;
   color: var(--vp-c-text-2);
   padding: 8px 0;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .music-ball {
+    /* 移动端禁用hover效果 */
+  }
+
+  .music-ball.mobile .ball {
+    width: 50px;
+    height: 50px;
+  }
+
+  .music-ball.mobile .ball-inner {
+    width: 42px;
+    height: 42px;
+  }
+
+  .music-ball.mobile .music-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .music-ball.mobile .panel {
+    width: calc(100vw - 32px);
+    max-width: 360px;
+    max-height: 70vh;
+    position: fixed;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
+  .music-ball.mobile .mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+  }
+
+  .music-ball.mobile .search-dropdown {
+    position: static;
+    margin: 0 16px 12px;
+    max-height: 200px;
+  }
+
+  .music-ball.mobile .playlist {
+    max-height: 180px;
+  }
+
+  .music-ball.mobile .pl-list {
+    max-height: 130px;
+  }
+
+  .music-ball.mobile .controls {
+    padding: 16px;
+    gap: 24px;
+  }
+
+  .music-ball.mobile .controls button svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .music-ball.mobile .controls .play-btn {
+    width: 52px;
+    height: 52px;
+  }
+
+  .music-ball.mobile .controls .play-btn svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .music-ball.mobile .progress-bar {
+    margin: 0 16px;
+    height: 6px;
+  }
+
+  .music-ball.mobile .time {
+    padding: 12px 0;
+    font-size: 12px;
+  }
+
+  /* 增大移动端触摸区域 */
+  .music-ball.mobile .pl-item {
+    padding: 12px 8px;
+  }
+
+  .music-ball.mobile .search-dropdown-item {
+    padding: 14px 12px;
+  }
+
+  .music-ball.mobile .close-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 24px;
+  }
+}
+
+/* 小屏幕手机额外优化 */
+@media (max-width: 375px) {
+  .music-ball.mobile .panel {
+    width: calc(100vw - 24px);
+    max-height: 75vh;
+  }
+
+  .music-ball.mobile .playlist {
+    max-height: 150px;
+  }
+
+  .music-ball.mobile .pl-list {
+    max-height: 100px;
+  }
 }
 
 /* 深色模式 */
