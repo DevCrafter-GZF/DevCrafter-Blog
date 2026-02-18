@@ -146,6 +146,7 @@
       <!-- 音频元素 -->
       <audio
           ref="audioRef"
+          :src="currentSong?.url"
           @ended="onAudioEnded"
           @loadedmetadata="onAudioLoadedMetadata"
           @pause="onAudioPause"

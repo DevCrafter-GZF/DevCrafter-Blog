@@ -188,14 +188,9 @@ export function useMusicPlayer() {
     if (index < 0 || index >= playlist.value.length) return
     currentIndex.value = index
     
-    await nextTick()
-    
-    // 确保音频元素存在
-    if (!audioRef.value || !currentSong.value) return
-    
     // 获取歌曲 URL（如果还没有）
-    let songUrl = currentSong.value.url
-    if (!songUrl) {
+    let songUrl = currentSong.value?.url
+    if (!songUrl && currentSong.value) {
       isLoading.value = true
       try {
         songUrl = await getSongUrl(currentSong.value.id)
@@ -216,29 +211,22 @@ export function useMusicPlayer() {
       return
     }
     
-    // 设置音频源
-    const audio = audioRef.value
-    audio.src = songUrl
+    // 等待 Vue 更新 DOM 和音频源
+    await nextTick()
     
-    // 先尝试直接播放，如果失败则等待 canplay 事件
-    try {
-      await audio.play()
-      isPlaying.value = true
-    } catch (err) {
-      // 等待 canplay 事件后再播放
-      const playWhenReady = async () => {
-        try {
-          await audio.play()
-          isPlaying.value = true
-        } catch (e) {
-          console.error('播放失败:', e)
-          errorMessage.value = '歌曲播放失败，请尝试其他歌曲'
-          setTimeout(() => errorMessage.value = '', 3000)
-        }
-        audio.removeEventListener('canplay', playWhenReady)
+    // 等待音频元素加载后播放
+    if (audioRef.value) {
+      audioRef.value.load()
+      const playWhenReady = () => {
+        audioRef.value?.play().catch(() => {})
+        audioRef.value?.removeEventListener('canplay', playWhenReady)
       }
-      audio.addEventListener('canplay', playWhenReady)
-      audio.load()
+      audioRef.value.addEventListener('canplay', playWhenReady)
+      // 超时处理
+      setTimeout(() => {
+        audioRef.value?.removeEventListener('canplay', playWhenReady)
+        audioRef.value?.play().catch(() => {})
+      }, 500)
     }
   }
   
