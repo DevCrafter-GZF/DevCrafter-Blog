@@ -47,3 +47,26 @@
   }
 
 }
+
+/* 移动端导航栏层级修复 */
+@media (max-width: 768px) {
+  /* 确保导航栏菜单在首页图片之上 */
+  .VPNavScreen {
+    z-index: 100 !important;
+  }
+  
+  /* 降低首页 hero 图片层级 */
+  .VPHero .image {
+    z-index: 1 !important;
+  }
+  
+  /* 确保导航栏在首页内容之上 */
+  .VPNav {
+    z-index: 99 !important;
+  }
+  
+  /* 导航栏展开菜单背景 */
+  .VPNavScreen-container {
+    z-index: 100 !important;
+  }
+}
