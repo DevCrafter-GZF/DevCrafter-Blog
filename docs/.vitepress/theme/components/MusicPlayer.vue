@@ -1582,23 +1582,10 @@ watch(volume, (val) => {
   appearance: none;
 }
 
-/* 移动端适配 - 优化音量控制 */
+/* 移动端适配 - 隐藏音量调节 */
 @media (max-width: 768px) {
-  .vol-bar-ui {
-    height: 30px; /* 增大触摸区域 */
-  }
-
-  .vol-bg {
-    height: 4px; /* 稍微增大高度 */
-  }
-
-  .vol-slider-overlay {
-    opacity: 0.01; /* 稍微增加透明度，确保触摸事件能被捕获 */
-  }
-
-  .vol-fill-ui::after {
-    width: 12px;
-    height: 12px; /* 增大滑块指示器 */
+  .progress-row:nth-child(2) { /* 隐藏第二行音量调节 */
+    display: none;
   }
 }
 
