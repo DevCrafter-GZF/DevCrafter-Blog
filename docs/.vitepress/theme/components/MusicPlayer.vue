@@ -1576,6 +1576,30 @@ watch(volume, (val) => {
   opacity: 0;
   cursor: pointer;
   margin: 0;
+  /* 移动端触摸支持 */
+  touch-action: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* 移动端适配 - 优化音量控制 */
+@media (max-width: 768px) {
+  .vol-bar-ui {
+    height: 30px; /* 增大触摸区域 */
+  }
+
+  .vol-bg {
+    height: 4px; /* 稍微增大高度 */
+  }
+
+  .vol-slider-overlay {
+    opacity: 0.01; /* 稍微增加透明度，确保触摸事件能被捕获 */
+  }
+
+  .vol-fill-ui::after {
+    width: 12px;
+    height: 12px; /* 增大滑块指示器 */
+  }
 }
 
 /* 保留旧的音量滑块样式（用于其他地方） */
