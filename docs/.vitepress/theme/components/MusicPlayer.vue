@@ -13,8 +13,8 @@
         <div v-else class="ball-inner" @click="togglePanel">
           <span class="ball-icon">♪</span>
         </div>
-        <!-- 播放状态指示器 -->
-        <div v-if="isPlaying" class="playing-indicator" @click="togglePlay">
+        <!-- 播放/暂停状态指示器 -->
+        <div v-if="currentSong.cover" :class="['play-pause-indicator', { 'playing': isPlaying }]" @click="togglePlay">
           <span></span>
           <span></span>
           <span></span>
@@ -744,8 +744,8 @@ watch(volume, (val) => {
   font-size: 24px;
 }
 
-/* 播放状态指示器 */
-.playing-indicator {
+/* 播放/暂停状态指示器 */
+.play-pause-indicator {
   position: absolute;
   bottom: 4px;
   left: 4px;
@@ -759,6 +759,8 @@ watch(volume, (val) => {
   gap: 2px;
   padding: 0 4px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
 }
 
 /* 展开面板按钮 */
@@ -778,19 +780,37 @@ watch(volume, (val) => {
   color: white;
 }
 
-.playing-indicator span {
+/* 暂停状态 - 静态波浪效果 */
+.play-pause-indicator span {
   width: 2px;
-  height: 8px;
+  height: 6px;
   background: white;
   border-radius: 1px;
+  transition: all 0.3s ease;
+}
+
+.play-pause-indicator span:nth-child(2) {
+  height: 8px;
+}
+
+.play-pause-indicator span:nth-child(3) {
+  height: 5px;
+}
+
+/* 播放状态 - 动态声波效果 */
+.play-pause-indicator.playing span {
   animation: sound 0.5s ease-in-out infinite;
 }
 
-.playing-indicator span:nth-child(2) {
+.play-pause-indicator.playing span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.play-pause-indicator.playing span:nth-child(2) {
   animation-delay: 0.1s;
 }
 
-.playing-indicator span:nth-child(3) {
+.play-pause-indicator.playing span:nth-child(3) {
   animation-delay: 0.2s;
 }
 

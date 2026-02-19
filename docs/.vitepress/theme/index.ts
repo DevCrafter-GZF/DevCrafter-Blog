@@ -127,7 +127,7 @@ export default {
     app.component('MNavLinks', MNavLinks)
     app.component('ArticleMetadata', ArticleMetadata)
     app.component('GiscusComment', GiscusComment)
-    app.component('MusicPlayer', MusicPlayer)
+    // app.component('MusicPlayer', MusicPlayer)
     app.component('MouseFollower', MouseFollower)
     app.component('MouseClick', MouseClick)
     app.component('DataPanel', DataPanel)
