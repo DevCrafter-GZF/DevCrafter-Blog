@@ -39,7 +39,10 @@
                 type="text"
                 @keyup.enter="search"
             />
-            <button class="search-btn" @click.stop.prevent="search">搜索</button>
+            <button class="search-btn" @click.stop.prevent="search">
+              <span class="search-btn-text">搜索</span>
+              <span class="search-btn-icon">🔍</span>
+            </button>
           </div>
 
           <!-- 搜索结果 -->
@@ -921,10 +924,38 @@ watch(volume, (val) => {
   border-radius: 18px;
   font-size: 13px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .search-btn:hover {
   background: #ee5a6f;
+}
+
+/* 搜索按钮文字和图标 */
+.search-btn-text {
+  display: inline;
+}
+
+.search-btn-icon {
+  display: none;
+  font-size: 14px;
+}
+
+/* 移动端适配 - 将搜索文字替换为图标 */
+@media (max-width: 768px) {
+  .search-btn {
+    padding: 0 12px;
+  }
+
+  .search-btn-text {
+    display: none;
+  }
+
+  .search-btn-icon {
+    display: inline;
+  }
 }
 
 /* 搜索结果 */
